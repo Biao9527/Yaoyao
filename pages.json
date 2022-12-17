@@ -1,0 +1,36 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}
+    ],
+	"subPackages": [
+		{
+			"root": "packageA",
+			"pages": [
+				{
+					"path": "page/user/user",
+					"style": {
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "page/followed/followed",
+					"style": {
+						"navigationStyle": "custom"
+					}
+				}
+			]
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {}
+}
