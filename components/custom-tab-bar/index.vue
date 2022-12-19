@@ -35,7 +35,7 @@ export default {
           break
         case 2:
           uni.reLaunch({
-            url: '/packageA/page/followed/followed'
+            url: '/packageA/page/tables/tables'
           })
           break
         case 3:

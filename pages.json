@@ -18,7 +18,13 @@
 					}
 				},
 				{
-					"path": "page/followed/followed",
+					"path": "page/tables/tables",
+					"style": {
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "page/tables/create-table/create-table",
 					"style": {
 						"navigationStyle": "custom"
 					}
