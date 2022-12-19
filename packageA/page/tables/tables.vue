@@ -38,7 +38,7 @@ export default {
 
   &-add {
     position: fixed;
-    bottom: 118rpx;
+    bottom: 200rpx;
     left: calc(50% - 30px);
   }
 }

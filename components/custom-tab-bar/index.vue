@@ -3,9 +3,14 @@
     <view v-for="item in tabList"
           :key="item.id"
           class="custom-tab-items "
-          :class="item.id === activeIndex ? 'active' : ''"
           @click="onItemClick(item)">
-      {{ item.text }}
+      <view>
+        <uni-icons :type="item.icon" :color="item.color" size="54rpx"/>
+      </view>
+      <view class="custom-tab-items-text"
+            :class="item.id === activeIndex ? 'active' : ''">
+        {{ item.text }}
+      </view>
     </view>
   </view>
 </template>
@@ -13,18 +18,27 @@
 <script>
 export default {
   props: ['activeIndex'],
-  computed: {
+  beforeMount() {
+    this.changeItemIcon()
   },
   data() {
     return {
       tabList: [
-        {id: 2, text: '标签'},
-        {id: 1, text: '记账'},
-        {id: 3, text: '记录'},
+        {id: 2, text: '标签', icon: 'flag', color: '#454C63'},
+        {id: 1, text: '记账', icon: 'home', color: '#454C63'},
+        {id: 3, text: '记录', icon: 'person', color: '#454C63'},
       ]
     }
   },
   methods: {
+    changeItemIcon() {
+      this.tabList.map((item, index) => {
+        if (this.activeIndex === item.id) {
+          this.tabList[index].icon = this.tabList[index].icon + '-filled'
+          this.tabList[index].color = '#007aff'
+        }
+      })
+    },
     onItemClick(item) {
       if (item.id === this.$props.activeIndex) return
       switch (item.id) {
@@ -53,25 +67,29 @@ export default {
 
 <style lang="scss">
 .custom-tab {
+  background: #FFFFFF;
   width: 100%;
-  height: 88rpx;
   position: fixed;
   bottom: 0;
   left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  margin-bottom: 30rpx;
+  padding-bottom: 44rpx;
+  padding-top: 10rpx;
 
   &-items {
     width: 33.333%;
     text-align: center;
+
+    &-text {
+      font-size: 20rpx;
+      margin-top: 6rpx;
+    }
   }
 
   .active {
-    font-weight: bold;
-    color: red;
+    color: #007aff;
   }
 }
 </style>
