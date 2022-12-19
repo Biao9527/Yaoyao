@@ -1,16 +1,18 @@
 <template>
 	<view>
-    <uni-nav-bar title="user" :border="false" :statusBar="true"/>
+    <NavBar title="我的"/>
   <CustomTabBar :active-index="3"/>
 	</view>
 </template>
 
 <script>
 import CustomTabBar from '../../../components/custom-tab-bar'
+import NavBar from "../../../components/nav-bar";
 
 	export default {
     components: {
-      CustomTabBar
+      CustomTabBar,
+      NavBar
     },
 		data() {
 			return {

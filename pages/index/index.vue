@@ -1,6 +1,6 @@
 <template>
 	<view>
-    <uni-nav-bar :border="false" :statusBar="true"/>
+    <NavBar/>
     <view class="content">
     <image class="logo" src="/static/logo.jpg"></image>
 		<view class="text-area">
@@ -13,7 +13,7 @@
 
 <script>
 import CustomTabBar from "../../components/custom-tab-bar";
-
+import NavBar from "../../components/nav-bar";
 	export default {
 		data() {
 			return {
@@ -23,7 +23,8 @@ import CustomTabBar from "../../components/custom-tab-bar";
 			}
 		},
     components: {
-      CustomTabBar
+      CustomTabBar,
+      NavBar
     },
 		onLoad() {
 

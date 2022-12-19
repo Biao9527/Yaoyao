@@ -1,6 +1,6 @@
 <template>
   <view class="tables">
-    <uni-nav-bar title="标签" :border="false" :statusBar="true"/>
+    <NavBar title="标签"/>
     <view class="tables-add"
           @click="onAddTableClick">
       <uni-icons type="plus-filled" size="60" color="#4cd964"/>
@@ -11,11 +11,13 @@
 
 <script>
 import CustomTabBar from '../../../components/custom-tab-bar'
+import NavBar from "../../../components/nav-bar";
 import {navigateToPage} from "../../../helpers/navigateTo";
 
 export default {
     components: {
-      CustomTabBar
+      CustomTabBar,
+      NavBar
     },
   data() {
     return {
