@@ -1,5 +1,6 @@
 <template>
-  <view class="custom-tab">
+  <view class="custom-tab"
+        :class="operationHeight !== '96rpx' ? 'set-height' : ''">
     <view v-for="item in tabList"
           :key="item.id"
           class="custom-tab-items "
@@ -16,10 +17,13 @@
 </template>
 
 <script>
+import {byModelsSetAction} from "../../helpers";
+
 export default {
   props: ['activeIndex'],
   beforeMount() {
     this.changeItemIcon()
+    byModelsSetAction.call(this)
   },
   data() {
     return {
@@ -27,7 +31,8 @@ export default {
         {id: 2, text: '标签', icon: 'flag', color: '#454C63'},
         {id: 1, text: '记账', icon: 'home', color: '#454C63'},
         {id: 3, text: '记录', icon: 'person', color: '#454C63'},
-      ]
+      ],
+      operationHeight: '10rpx'
     }
   },
   methods: {
@@ -69,14 +74,13 @@ export default {
 .custom-tab {
   background: #FFFFFF;
   width: 100%;
+  min-height: 112rpx;
   position: fixed;
   bottom: 0;
   left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-bottom: 44rpx;
-  padding-top: 10rpx;
 
   &-items {
     width: 33.333%;
@@ -91,5 +95,9 @@ export default {
   .active {
     color: #007aff;
   }
+}
+
+.set-height {
+  padding-bottom: 45rpx;
 }
 </style>
