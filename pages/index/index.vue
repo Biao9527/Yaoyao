@@ -1,10 +1,12 @@
 <template>
-	<view class="content">
+	<view>
     <uni-nav-bar :border="false" :statusBar="true"/>
+    <view class="content">
     <image class="logo" src="/static/logo.jpg"></image>
 		<view class="text-area">
 			<text class="title">{{title + value}}</text>
 		</view>
+    </view>
   <CustomTabBar :active-index="activeIndex"/>
 	</view>
 </template>

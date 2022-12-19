@@ -18,9 +18,9 @@ export default {
   data() {
     return {
       tabList: [
-        {id: 1, text: '首页'},
-        {id: 2, text: '关注'},
-        {id: 3, text: '我的'},
+        {id: 2, text: '标签'},
+        {id: 1, text: '记账'},
+        {id: 3, text: '记录'},
       ]
     }
   },
