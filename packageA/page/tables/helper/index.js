@@ -1,3 +1,11 @@
+export const ICON_LIST = [
+    'icon-Massage', 'icon-lanqiu', 'icon-pingpangqiu', 'icon-paiqiu', 'icon-zuqiu', 'icon-youyongquan', 'icon-yumaoqiu', 'icon-yaling',
+    'icon-wangqiu', 'icon-zihangche', 'icon-xiaomotuo', 'icon-changpengche', 'icon-chuzuche', 'icon-gongjiaoche', 'icon-huoche', 'icon-feiji',
+    'icon-huojian', 'icon-kafei', 'icon-pijiu', 'icon-malatang', 'icon-mianshi', 'icon-shuiguo', 'icon-waimai', 'icon-yinliao',
+    'icon-zaocan', 'icon-zhushi', 'icon-huoguo', 'icon-dangao', 'icon-chuanchuan', 'icon-icon_clothes', 'icon-icon_food', 'icon-icon_fuel',
+    'icon-icon_medicine', 'icon-icon_shopping', 'icon-icon_phone', 'icon-icon_tour', 'icon-icon_traffic'
+]
+
 export const recommend_tables = [
     {
         id: 0,

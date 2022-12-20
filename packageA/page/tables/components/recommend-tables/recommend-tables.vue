@@ -11,7 +11,8 @@
       </view>
     </scroll-view>
     <view class="recommend-tables-list">
-      <view class="recommend-tables-list-item" v-for="item in recommendTables[selectedIndex].tables">
+      <view class="recommend-tables-list-item"
+            v-for="item in recommendTables[selectedIndex].tables" :key="item.icon">
         <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
         <view class="recommend-tables-list-text">{{item.text}}</view>
       </view>
