@@ -1,0 +1,162 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3833186 */
+  /* Color fonts */
+  src: url('/static/icons/iconfont.ttf') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Massage:before {
+  content: "\e616";
+}
+
+.icon-lanqiu:before {
+  content: "\e8bd";
+}
+
+.icon-pingpangqiu:before {
+  content: "\e8be";
+}
+
+.icon-paiqiu:before {
+  content: "\e8bf";
+}
+
+.icon-zuqiu:before {
+  content: "\e8c0";
+}
+
+.icon-youyongquan:before {
+  content: "\e8c1";
+}
+
+.icon-yumaoqiu:before {
+  content: "\e8c2";
+}
+
+.icon-yaling:before {
+  content: "\e8c3";
+}
+
+.icon-wangqiu:before {
+  content: "\e8c4";
+}
+
+.icon-zihangche:before {
+  content: "\e629";
+}
+
+.icon-xiaomotuo:before {
+  content: "\e62a";
+}
+
+.icon-changpengche:before {
+  content: "\e62c";
+}
+
+.icon-chuzuche:before {
+  content: "\e62d";
+}
+
+.icon-gongjiaoche:before {
+  content: "\e62f";
+}
+
+.icon-huoche:before {
+  content: "\e635";
+}
+
+.icon-feiji:before {
+  content: "\e63a";
+}
+
+.icon-huojian:before {
+  content: "\e63b";
+}
+
+.icon-kafei:before {
+  content: "\f33a";
+}
+
+.icon-pijiu:before {
+  content: "\f33f";
+}
+
+.icon-malatang:before {
+  content: "\f33c";
+}
+
+.icon-mianshi:before {
+  content: "\f33d";
+}
+
+.icon-shuiguo:before {
+  content: "\f342";
+}
+
+.icon-waimai:before {
+  content: "\f343";
+}
+
+.icon-yinliao:before {
+  content: "\f345";
+}
+
+.icon-zaocan:before {
+  content: "\f346";
+}
+
+.icon-zhushi:before {
+  content: "\f348";
+}
+
+.icon-huoguo:before {
+  content: "\f34d";
+}
+
+.icon-dangao:before {
+  content: "\f350";
+}
+
+.icon-chuanchuan:before {
+  content: "\f351";
+}
+
+.icon-icon_clothes:before {
+  content: "\e76f";
+}
+
+.icon-icon_food:before {
+  content: "\e770";
+}
+
+.icon-icon_fuel:before {
+  content: "\e771";
+}
+
+.icon-icon_medicine:before {
+  content: "\e772";
+}
+
+.icon-icon_shopping:before {
+  content: "\e773";
+}
+
+.icon-icon_phone:before {
+  content: "\e774";
+}
+
+.icon-icon_tour:before {
+  content: "\e775";
+}
+
+.icon-icon_traffic:before {
+  content: "\e777";
+}
+

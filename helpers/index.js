@@ -1,5 +1,5 @@
 // 根据机型设置操作栏高度
-export const byModelsSetAction = () => {
+export function byModelsSetAction() {
     uni.getSystemInfo({
         success: (res) => {
             const type = [
