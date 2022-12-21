@@ -1,4 +1,4 @@
-export async function UpdateTablesStorage(data) {
+export async function UpdateTablesStorage(data, isEdit = false) {
     return new Promise(resolve => {
         try {
             let tables = uni.getStorageSync('tables')
@@ -12,7 +12,13 @@ export async function UpdateTablesStorage(data) {
                     resolve(false)
                     return
                 }
-                tables.push(data)
+                if (isEdit) {
+                    const tabIndex = tables.findIndex(item => item.id === data.id)
+                    tables[tabIndex].icon = data.icon
+                    tables[tabIndex].name = data.name
+                } else {
+                    tables.push(data)
+                }
             } else {
                 tables = [data]
             }

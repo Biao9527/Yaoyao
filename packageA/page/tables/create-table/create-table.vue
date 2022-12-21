@@ -3,6 +3,7 @@
     <NavBar title="创建标签" left-icon="left"/>
     <view class="create-table-list">
       <view class="create-table-list-item"
+            @click="updateTable(item)"
             v-for="item in getMyTableList" :key="item.id">
         <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
         <view class="create-table-list-text">{{ item.name }}</view>
@@ -17,6 +18,8 @@
     <RecommendTables :selected-index.sync="selectedIndex"
                      @recommendItem="recommendItem"/>
     <CreateTableModal :is-opened.sync="isOpenedAddModal"
+                      :is-edit.sync="isEdit"
+                      :select-table.sync="selectTable"
                       :table-icon.sync="tableIcon"
                       :table-name.sync="tableName"/>
   </view>
@@ -44,13 +47,22 @@ export default {
       isOpenedAddModal: false,
       selectedIndex: 0,
       tableIcon: '',
-      tableName: ''
+      tableName: '',
+      selectTable: null,
+      isEdit: false
     }
   },
   methods: {
-    ...mapMutations(['addTable']),
+    ...mapMutations(['addTable', 'updateTable']),
     createTable() {
       this.isOpenedAddModal = true
+    },
+    updateTable(item) {
+      this.isOpenedAddModal = true
+      this.tableName = item.name
+      this.tableIcon = item.icon
+      this.selectTable = item
+      this.isEdit = true
     },
     recommendItem(item) {
       this.tableName = item.text

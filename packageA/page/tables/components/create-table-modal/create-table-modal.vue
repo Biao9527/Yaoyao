@@ -1,7 +1,9 @@
 <template>
   <view v-if="isOpened" class="table-model" @click="onTableModelClick">
     <view class="table-model-add">
-      <view class="table-model-title">创建标签</view>
+      <view class="table-model-title">
+        {{ isEdit && selectTable ? '修改标签' : '创建标签' }}
+      </view>
       <view class="table-model-add-content">
         <view class="table-model-add-icon"
               v-if="!tableIcon"
@@ -22,7 +24,9 @@
       </view>
       <view class="table-model-buttons">
         <button class="button-cancel" @click.stop="onCancel">取消</button>
-        <button class="button-confirm" @click.stop="onConfirm">保存</button>
+        <button class="button-confirm" @click.stop="onConfirm">
+          {{ isEdit && selectTable ? '修改' : '保存' }}
+        </button>
       </view>
     </view>
     <view class="table-model-icons" v-if="showIcons">
@@ -38,7 +42,7 @@
 import {ICON_LIST} from '../../helper/index'
 import {autoIncrementId, UpdateTablesStorage} from "../../helper/updateTablesStorage";
 export default {
-  props: ['isOpened','tableIcon', 'tableName'],
+  props: ['isOpened','tableIcon', 'tableName', 'isEdit', 'selectTable'],
   data() {
     return {
       iconList: ICON_LIST,
@@ -68,24 +72,27 @@ export default {
         this.showToast('请输入标签名')
         return
       }
+      const isEdit = this.isEdit && !!this.selectTable
       const data = {
-        id: autoIncrementId('tablesMaxId'),
+        id: isEdit ? this.selectTable.id : autoIncrementId('tablesMaxId'),
         icon: this.tableIcon,
         name: this.tableName
       }
-      const success = await UpdateTablesStorage(data)
+      const success = await UpdateTablesStorage(data, isEdit)
       if (!success) {return}
       this.$store.commit({
-            type: 'addTable',
+            type: isEdit ? 'updateTable' : 'addTable',
             data: data
           })
-      this.showToast('保存成功')
+      this.showToast(isEdit ? '修改成功' : '保存成功')
       this.onCancel()
     },
     onCancel() {
       this.$emit('update:tableName', '')
       this.$emit('update:isOpened', false)
       this.$emit('update:tableIcon', '')
+      this.$emit('update:isEdit', false)
+      this.$emit('update:selectTable', null)
     },
     showToast(title) {
       uni.showToast({
