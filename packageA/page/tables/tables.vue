@@ -13,12 +13,21 @@
 import CustomTabBar from '../../../components/custom-tab-bar'
 import NavBar from "../../../components/nav-bar";
 import {navigateToPage} from "../../../helpers/navigateTo";
+import {mapState,mapGetters} from 'vuex'
 
 export default {
     components: {
       CustomTabBar,
       NavBar
     },
+  computed: {
+    ...mapState({
+      tableList: state => state.tables.tableList
+    }),
+    ...mapGetters([
+      'getMyTableList'
+    ])
+  },
   data() {
     return {
 

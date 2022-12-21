@@ -16,12 +16,18 @@
 import NavBar from "../../../../components/nav-bar";
 import RecommendTables from "../components/recommend-tables/recommend-tables";
 import CreateTableModal from "../components/create-table-modal/create-table-modal";
+import {mapState} from 'vuex'
 
 export default {
   components: {
     NavBar,
     RecommendTables,
     CreateTableModal
+  },
+  computed: {
+    ...mapState({
+      tableList: state => state.tables.tableList
+    })
   },
   data() {
     return {
