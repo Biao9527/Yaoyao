@@ -17,7 +17,6 @@
         </view>
 
         <uni-easyinput :value="tableName"
-                       focus
                        placeholder="请说点什么~"
                        @input="onTableNameInput"/>
       </view>
@@ -37,8 +36,9 @@
 
 <script>
 import {ICON_LIST} from '../../helper/index'
+import {UpdateTablesStorage} from "../../helper/updateTablesStorage";
 export default {
-  props: ['isOpened','tableIcon', 'tableName', 'onConfirm'],
+  props: ['isOpened','tableIcon', 'tableName'],
   data() {
     return {
       iconList: ICON_LIST,
@@ -59,10 +59,30 @@ export default {
     onTableNameInput(e) {
       this.$emit('update:tableName', e)
     },
+    async onConfirm() {
+      if (!this.tableIcon) {
+        this.showToast('请选择图标')
+        return
+      }
+      if (!this.tableName) {
+        this.showToast('请输入标签名')
+        return
+      }
+      const success = await UpdateTablesStorage({icon: this.tableIcon, name: this.tableName})
+      if (!success) {return}
+      this.showToast('保存成功')
+      this.onCancel()
+    },
     onCancel() {
       this.$emit('update:tableName', '')
       this.$emit('update:isOpened', false)
       this.$emit('update:tableIcon', '')
+    },
+    showToast(title) {
+      uni.showToast({
+        title,
+        icon: 'none'
+      })
     }
   }
 }

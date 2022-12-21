@@ -7,8 +7,7 @@
     <RecommendTables :selected-index.sync="selectedIndex"/>
     <CreateTableModal :is-opened.sync="isOpenedAddModal"
                       :table-icon.sync="tableIcon"
-                      :table-name.sync="tableName"
-                      :onConfirm="onConfirm"/>
+                      :table-name.sync="tableName"/>
   </view>
 </template>
 
@@ -16,6 +15,7 @@
 import NavBar from "../../../../components/nav-bar";
 import RecommendTables from "../components/recommend-tables/recommend-tables";
 import CreateTableModal from "../components/create-table-modal/create-table-modal";
+
 export default {
   components: {
     NavBar,
@@ -33,10 +33,6 @@ export default {
   methods: {
     createTable() {
       this.isOpenedAddModal = true
-    },
-    onConfirm() {
-      this.isOpenedAddModal = false
-      console.log(this.tableIcon, this.tableName);
     }
   }
 }
