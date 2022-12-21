@@ -1,8 +1,17 @@
 <template>
   <view class="create-table">
     <NavBar title="创建标签" left-icon="left"/>
-    <view @click="createTable">
-      新建标签
+    <view class="create-table-list">
+      <view class="create-table-list-item"
+            v-for="item in getMyTableList" :key="item.id">
+        <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
+        <view class="create-table-list-text">{{ item.name }}</view>
+      </view>
+      <view class="create-table-list-item"
+            @click="createTable">
+        <uni-icons type="plus-filled" size="50rpx" color="#9B9B9B"/>
+        <view class="create-table-list-text">新建标签</view>
+      </view>
     </view>
     <RecommendTables :selected-index.sync="selectedIndex"
                      @recommendItem="recommendItem"/>
@@ -16,7 +25,7 @@
 import NavBar from "../../../../components/nav-bar";
 import RecommendTables from "../components/recommend-tables/recommend-tables";
 import CreateTableModal from "../components/create-table-modal/create-table-modal";
-import {mapState} from 'vuex'
+import {mapGetters} from 'vuex'
 
 export default {
   components: {
@@ -25,9 +34,9 @@ export default {
     CreateTableModal
   },
   computed: {
-    ...mapState({
-      tableList: state => state.tables.tableList
-    })
+    ...mapGetters([
+      'getMyTableList'
+    ])
   },
   data() {
     return {
@@ -57,6 +66,29 @@ page {
 }
 .create-table {
 
+  &-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 26rpx;
 
+    &-item {
+      width: max-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 22rpx 0 6rpx;
+      height: 62rpx;
+      border: 1px solid rgba(220, 220, 220, 0.3);
+      border-radius: 32rpx;
+      margin: 24rpx 24rpx 0 0;
+      text-align: center;
+    }
+
+    &-text {
+      font-size: 26rpx;
+      color: #9B9B9B;
+      margin-left: 12rpx;
+    }
+  }
 }
 </style>
