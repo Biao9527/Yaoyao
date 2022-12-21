@@ -1,16 +1,19 @@
 <template>
-  <view class="custom-tab"
+  <view class="custom-tab-wrapper"
         :class="operationHeight !== '96rpx' ? 'set-height' : ''">
-    <view v-for="item in tabList"
-          :key="item.id"
-          class="custom-tab-items "
-          @click="onItemClick(item)">
-      <view>
-        <uni-icons :type="item.icon" :color="item.color" size="54rpx"/>
-      </view>
-      <view class="custom-tab-items-text"
-            :class="item.id === activeIndex ? 'active' : ''">
-        {{ item.text }}
+    <view class="custom-tab"
+          :class="operationHeight !== '96rpx' ? 'set-height' : ''">
+      <view v-for="item in tabList"
+            :key="item.id"
+            class="custom-tab-items "
+            @click="onItemClick(item)">
+        <view>
+          <uni-icons :type="item.icon" :color="item.color" size="54rpx"/>
+        </view>
+        <view class="custom-tab-items-text"
+              :class="item.id === activeIndex ? 'active' : ''">
+          {{ item.text }}
+        </view>
       </view>
     </view>
   </view>
@@ -71,6 +74,10 @@ export default {
 </script>
 
 <style lang="scss">
+.custom-tab-wrapper {
+  height: 112rpx;
+}
+
 .custom-tab {
   background: #FFFFFF;
   width: 100%;
