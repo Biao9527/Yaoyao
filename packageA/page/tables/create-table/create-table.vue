@@ -13,6 +13,7 @@
         <view class="create-table-list-text">新建标签</view>
       </view>
     </view>
+    <view class="recommend-view"/>
     <RecommendTables :selected-index.sync="selectedIndex"
                      @recommendItem="recommendItem"/>
     <CreateTableModal :is-opened.sync="isOpenedAddModal"
@@ -25,7 +26,7 @@
 import NavBar from "../../../../components/nav-bar";
 import RecommendTables from "../components/recommend-tables/recommend-tables";
 import CreateTableModal from "../components/create-table-modal/create-table-modal";
-import {mapGetters} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
 
 export default {
   components: {
@@ -47,6 +48,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['addTable']),
     createTable() {
       this.isOpenedAddModal = true
     },
@@ -89,6 +91,10 @@ page {
       color: #9B9B9B;
       margin-left: 12rpx;
     }
+  }
+
+  .recommend-view {
+    height: 600rpx;
   }
 }
 </style>

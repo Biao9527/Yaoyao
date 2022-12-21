@@ -45,10 +45,12 @@ export default {
 @import "../../../../../static/icons/iconfont.css";
 .recommend-tables {
   width: 100%;
-  min-height: 40%;
+  min-height: 520rpx;
   position: fixed;
   bottom: 0;
   left: 0;
+  padding-top: 16rpx;
+  background: #FFFFFF;
 
   &-list {
     display: flex;

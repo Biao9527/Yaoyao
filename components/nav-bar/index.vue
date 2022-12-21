@@ -1,6 +1,7 @@
 <template>
   <uni-nav-bar :border="false"
                :statusBar="true"
+               :fixed="true"
                :leftText="leftText"
                :leftIcon="leftIcon"
                @clickLeft="onLeftClick"

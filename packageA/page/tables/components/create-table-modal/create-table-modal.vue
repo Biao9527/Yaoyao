@@ -36,7 +36,7 @@
 
 <script>
 import {ICON_LIST} from '../../helper/index'
-import {UpdateTablesStorage} from "../../helper/updateTablesStorage";
+import {autoIncrementId, UpdateTablesStorage} from "../../helper/updateTablesStorage";
 export default {
   props: ['isOpened','tableIcon', 'tableName'],
   data() {
@@ -68,8 +68,17 @@ export default {
         this.showToast('请输入标签名')
         return
       }
-      const success = await UpdateTablesStorage({icon: this.tableIcon, name: this.tableName})
+      const data = {
+        id: autoIncrementId('tablesMaxId'),
+        icon: this.tableIcon,
+        name: this.tableName
+      }
+      const success = await UpdateTablesStorage(data)
       if (!success) {return}
+      this.$store.commit({
+            type: 'addTable',
+            data: data
+          })
       this.showToast('保存成功')
       this.onCancel()
     },

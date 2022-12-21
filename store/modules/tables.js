@@ -13,7 +13,13 @@ export default {
         }
     },
     mutations: {
-
+        addTable(state, data) {
+            if (Array.isArray(state.tableList) && state.tableList.length > 0) {
+                state.tableList.push(data.data)
+            } else {
+                state.tableList = [data.data]
+            }
+        }
     },
     actions: {
 

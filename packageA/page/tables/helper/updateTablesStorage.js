@@ -12,7 +12,6 @@ export async function UpdateTablesStorage(data) {
                     resolve(false)
                     return
                 }
-                data.id = autoIncrementId('tablesMaxId')
                 tables.push(data)
             } else {
                 tables = [data]
