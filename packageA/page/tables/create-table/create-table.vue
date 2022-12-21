@@ -4,7 +4,8 @@
     <view @click="createTable">
       新建标签
     </view>
-    <RecommendTables :selected-index.sync="selectedIndex"/>
+    <RecommendTables :selected-index.sync="selectedIndex"
+                     @recommendItem="recommendItem"/>
     <CreateTableModal :is-opened.sync="isOpenedAddModal"
                       :table-icon.sync="tableIcon"
                       :table-name.sync="tableName"/>
@@ -32,6 +33,11 @@ export default {
   },
   methods: {
     createTable() {
+      this.isOpenedAddModal = true
+    },
+    recommendItem(item) {
+      this.tableName = item.text
+      this.tableIcon = item.icon
       this.isOpenedAddModal = true
     }
   }

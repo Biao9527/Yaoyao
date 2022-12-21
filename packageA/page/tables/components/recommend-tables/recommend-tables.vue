@@ -12,7 +12,8 @@
     </scroll-view>
     <view class="recommend-tables-list">
       <view class="recommend-tables-list-item"
-            v-for="item in recommendTables[selectedIndex].tables" :key="item.icon">
+            v-for="item in recommendTables[selectedIndex].tables"
+            :key="item.icon" @click="onRecommendTablesItem(item)">
         <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
         <view class="recommend-tables-list-text">{{item.text}}</view>
       </view>
@@ -23,7 +24,7 @@
 <script>
 import {recommend_tables} from '../../helper/index'
 export default {
-  props: ['selectedIndex'],
+  props: ['selectedIndex', 'isOpened', 'tableIcon', 'tableName'],
   data() {
     return {
       recommendTables: recommend_tables,
@@ -32,6 +33,9 @@ export default {
   methods: {
     onTabsItem(items) {
       this.$emit('update:selectedIndex', items.id)
+    },
+    onRecommendTablesItem(items) {
+      this.$emit('recommendItem', items)
     }
   }
 }
