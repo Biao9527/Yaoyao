@@ -9,6 +9,13 @@ const store = new Vuex.Store({
     modules: {
         tables
     },
-    state: {}
+    state: {
+        operationHeight: ''
+    },
+    mutations: {
+        setOperationHeight(state, payload) {
+            state.operationHeight = payload
+        }
+    }
 })
 export default store

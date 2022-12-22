@@ -18,7 +18,8 @@
           @click="onAddTableClick">
       <uni-icons type="plus-filled" size="60" color="#4cd964"/>
     </view>
-    <CustomTabBar :active-index="2"/>
+    <CustomTabBar :active-index="2"
+                  :operation-height="operationHeight"/>
   </view>
 </template>
 
@@ -34,9 +35,10 @@ export default {
       NavBar
     },
   computed: {
-    ...mapState({
-      tableList: state => state.tables.tableList
-    }),
+    ...mapState([
+      'tableList',
+      'operationHeight'
+    ]),
     ...mapGetters([
       'getMyTableList'
     ])

@@ -7,14 +7,22 @@
 			<text class="title">{{title + value}}</text>
 		</view>
     </view>
-  <CustomTabBar :active-index="activeIndex"/>
+  <CustomTabBar :active-index="activeIndex"
+                :operation-height="operationHeight"/>
 	</view>
 </template>
 
 <script>
 import CustomTabBar from "../../components/custom-tab-bar";
 import NavBar from "../../components/nav-bar";
+import {mapState} from 'vuex'
+
 	export default {
+    computed: {
+      ...mapState([
+        'operationHeight'
+      ]),
+    },
 		data() {
 			return {
 				title: 'Hello',
