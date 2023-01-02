@@ -77,8 +77,8 @@ export const recommend_tables = [
             {icon: 'icon-Massage', text: '推拿'},
             {icon: 'icon-Massage', text: '蹦迪'},
             {icon: 'icon-Massage', text: '加了个钟'},
-            {icon: 'icon-Massage', text: '打游戏不充钱，打什么游戏'},
-            {icon: 'icon-Massage', text: '洗脚不加钟，洗什么脚'},
+            {icon: 'icon-Massage', text: '就充了亿点点钱而已'},
+            {icon: 'icon-Massage', text: '加了亿点点钟'},
         ]
     }
 ]

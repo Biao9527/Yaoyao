@@ -20,6 +20,7 @@
 
         <uni-easyinput :value="tableName"
                        placeholder="请说点什么~"
+                       :maxlength="10"
                        @input="onTableNameInput"/>
       </view>
       <view class="table-model-buttons">
