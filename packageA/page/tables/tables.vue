@@ -16,7 +16,7 @@
     </view>
     <view class="tables-add"
           @click="onAddTableClick">
-      <uni-icons type="plus-filled" size="60" color="#4cd964"/>
+      <uni-icons type="plus-filled" size="120rpx" color="#4cd964"/>
     </view>
     <CustomTabBar :active-index="2"
                   :operation-height="operationHeight"/>
