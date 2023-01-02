@@ -9,7 +9,7 @@
                                @change="swipeChange($event, item)">
           <view class="tables-list-item">
             <uni-icons custom-prefix="iconfont" :type="item.icon" size="88rpx"/>
-            <view class="tables-list-item-text">{{item.name}}</view>
+            <view class="tables-list-item-text">{{ item.name }}</view>
           </view>
         </uni-swipe-action-item>
       </uni-swipe-action>
@@ -20,6 +20,11 @@
     </view>
     <CustomTabBar :active-index="2"
                   :operation-height="operationHeight"/>
+    <CreateTableModal :is-opened.sync="isOpenedAddModal"
+                      :is-edit.sync="isEdit"
+                      :select-table.sync="selectTableItem"
+                      :table-icon.sync="tableIcon"
+                      :table-name.sync="tableName"/>
   </view>
 </template>
 
@@ -27,13 +32,16 @@
 import CustomTabBar from '../../../components/custom-tab-bar'
 import NavBar from "../../../components/nav-bar";
 import {navigateToPage} from "../../../helpers/navigateTo";
-import {mapState,mapGetters} from 'vuex'
+import {mapState, mapGetters, mapMutations} from 'vuex'
+import CreateTableModal from "./components/create-table-modal/create-table-modal";
+import {removeTableStorage} from "./helper/updateTablesStorage";
 
 export default {
-    components: {
-      CustomTabBar,
-      NavBar
-    },
+  components: {
+    CustomTabBar,
+    NavBar,
+    CreateTableModal
+  },
   computed: {
     ...mapState([
       'tableList',
@@ -45,30 +53,66 @@ export default {
   },
   data() {
     return {
-      options:[
+      options: [
         {
-          text: '取消',
+          text: '编辑',
           style: {
             backgroundColor: '#007aff'
           }
         }, {
-          text: '确认',
+          text: '删除',
           style: {
             backgroundColor: '#dd524d'
           }
         }
-      ]
+      ],
+      selectTableItem: null,
+      tableIcon: '',
+      tableName: '',
+      isOpenedAddModal: false,
+      isEdit: false
     };
   },
   methods: {
-      onAddTableClick() {
-        navigateToPage('createTable')
-      },
-    bindClick(e){
-      console.log('点击了'+(e.position === 'left' ? '左侧' : '右侧') + e.content.text + '按钮')
+    ...mapMutations(['removeTable']),
+    onAddTableClick() {
+      navigateToPage('createTable')
     },
-    swipeChange(e,index){
-      console.log('当前状态：'+ e +'，下标：' + index)
+    bindClick(e) {
+      if (e.index === 0) {
+        this.isOpenedAddModal = true
+        this.tableName = this.selectTableItem.name
+        this.tableIcon = this.selectTableItem.icon
+        this.isEdit = true
+      }
+      if (e.index === 1) {
+        this.removeTableModal()
+      }
+    },
+    swipeChange(e, item) {
+      this.selectTableItem = item
+    },
+    removeTableModal() {
+      uni.showModal({
+        title: '确定删除标签',
+        success: async (res) => {
+          if (res.confirm) {
+            const success = await removeTableStorage(this.selectTableItem)
+            if (!success) {
+              this.showToast('删除失败')
+              return
+            }
+            this.removeTable(this.selectTableItem)
+            this.showToast('删除成功')
+          }
+        }
+      })
+    },
+    showToast(title) {
+      uni.showToast({
+        title,
+        icon: 'none'
+      })
     }
   }
 }
@@ -76,6 +120,7 @@ export default {
 
 <style lang="scss">
 @import "../../../static/icons/iconfont.css";
+
 .tables {
   position: relative;
 

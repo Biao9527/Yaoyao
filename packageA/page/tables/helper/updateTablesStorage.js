@@ -25,7 +25,29 @@ export async function UpdateTablesStorage(data, isEdit = false) {
             uni.setStorageSync('tables', tables)
             resolve(true)
         } catch (e) {
+            resolve(false)
+        }
+    })
+}
+
+export async function removeTableStorage(data) {
+    return new Promise(resolve => {
+        try {
+            let tables = uni.getStorageSync('tables')
+            if (!tables) {
+                resolve(false)
+                return
+            }
+            const index = tables.findIndex(item => item.id === data.id)
+            if (index < 0) {
+                resolve(false)
+                return;
+            }
+            tables.splice(index, 1)
+            uni.setStorageSync('tables', tables)
             resolve(true)
+        } catch (e) {
+            resolve(false)
         }
     })
 }

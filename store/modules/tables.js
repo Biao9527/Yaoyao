@@ -24,6 +24,10 @@ export default {
             const tabIndex = state.tableList.findIndex(item => item.id === data.data.id)
             state.tableList[tabIndex].icon = data.data.icon
             state.tableList[tabIndex].name = data.data.name
+        },
+        removeTable(state, data) {
+            const tabIndex = state.tableList.findIndex(item => item.id === data.id)
+            state.tableList.splice(tabIndex, 1)
         }
     },
     actions: {
