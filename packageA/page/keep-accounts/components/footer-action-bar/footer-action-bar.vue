@@ -5,7 +5,8 @@
           :class="setOperationHeight">
       <view class="action-bar-list">
         <view class="action-bar-list-item"
-              v-for="items in actionList" :key="items.id">
+              v-for="items in actionList" :key="items.id"
+              @click="onItemClick(items)">
           <image :src="items.svg"/>
           <view>{{ items.text }}</view>
         </view>
@@ -23,7 +24,7 @@ import timeSvg from '../../assets/time.svg'
 import tableSvg from '../../assets/table.svg'
 
 export default {
-  props: ['operationHeight'],
+  props: ['operationHeight', 'onTableItemClick'],
   computed: {
     setOperationHeight() {
       return this.operationHeight !== '96rpx' ? 'set-height' : ''
@@ -36,6 +37,21 @@ export default {
         {id: 1, svg: timeSvg, text: '日期'},
         {id: 2, svg: tableSvg, text: '标签'}
       ]
+    }
+  },
+  methods: {
+    onItemClick(item) {
+      switch (item.id) {
+        case 0:
+          break
+        case 1:
+          break
+        case 2:
+          this.$emit('onTableItemClick')
+          break
+        default:
+          break
+      }
     }
   }
 }

@@ -39,24 +39,37 @@
         </view>
       </view>
     </view>
-    <FooterActionBar :operation-height="operationHeight"/>
+    <FooterActionBar :operation-height="operationHeight"
+                     @onTableItemClick="openedTable"/>
+    <SelectedTable :is-opened.sync="isOpenedTable"
+                   :table-list.sync="getMyTableList"
+                   :nav-bar-height="statusBarHeight + 44"/>
   </view>
 </template>
 
 <script>
 import NavBar from "../../../components/nav-bar";
 import FooterActionBar from "./components/footer-action-bar/footer-action-bar";
-import {mapState} from 'vuex'
+import SelectedTable from "./components/selected-table/selected-table";
+import {mapState, mapGetters} from 'vuex'
 
 export default {
   components: {
     NavBar,
-    FooterActionBar
+    FooterActionBar,
+    SelectedTable
+  },
+  onReady() {
+    const {statusBarHeight} = uni.getSystemInfoSync()
+    this.statusBarHeight = statusBarHeight ? statusBarHeight : 44
   },
   computed: {
     ...mapState([
       'operationHeight'
     ]),
+    ...mapGetters([
+      'getMyTableList'
+    ])
   },
   data() {
     return {
@@ -64,6 +77,8 @@ export default {
       notes: '',
       table: null,
       money: null,
+      isOpenedTable: false,
+      statusBarHeight: 44
     }
   },
   methods: {
@@ -72,12 +87,17 @@ export default {
     },
     onMoneyInput(e) {
       this.money = e.detail.value
+    },
+    openedTable() {
+      this.isOpenedTable = true
     }
   }
 }
 </script>
 
 <style lang="scss">
+@import "../../../static/icons/iconfont.css";
+
 page {
   background: #FFFFFF;
 }
