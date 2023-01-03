@@ -1,13 +1,11 @@
 <template>
-	<view>
+	<view class="post">
     <NavBar/>
-    <view class="content">
-    <image class="logo" src="/static/logo.jpg"></image>
-		<view class="text-area">
-			<text class="title">{{title + value}}</text>
-		</view>
+    <view class="post-add-account" @click="goKeepAccounts">
+      <uni-icons type="paperplane-filled" size="60rpx" color="#FFFFFF"/>
+      <view class="post-add-account-text">记一笔</view>
     </view>
-  <CustomTabBar :active-index="activeIndex"
+  <CustomTabBar :active-index="1"
                 :operation-height="operationHeight"/>
 	</view>
 </template>
@@ -16,27 +14,13 @@
 import CustomTabBar from "../../components/custom-tab-bar";
 import NavBar from "../../components/nav-bar";
 import {mapState} from 'vuex'
+import {navigateToPage} from "../../helpers/navigateTo";
 
 	export default {
-    computed: {
-      ...mapState([
-        'operationHeight'
-      ]),
-    },
-		data() {
-			return {
-				title: 'Hello',
-				value: 'Wrold',
-        activeIndex: 1
-			}
-		},
     components: {
       CustomTabBar,
       NavBar
     },
-		onLoad() {
-
-		},
     onShareAppMessage(res) {
       if (res.from === 'button') {// 来自页面内分享按钮
       }
@@ -45,33 +29,43 @@ import {mapState} from 'vuex'
         path: '/pages/index/index'
       }
     },
+    computed: {
+      ...mapState([
+        'operationHeight'
+      ]),
+    },
+		data() {
+			return {
+			}
+		},
 		methods: {
+      goKeepAccounts() {
+        navigateToPage('keepAccounts')
+      }
 		}
 	}
 </script>
 
 <style lang="scss">
-	.content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.logo {
+.post {
+  &-add-account {
+    width: 120rpx;
+    height: 120rpx;
+    z-index: 500;
+    position: fixed;
+    bottom: 200rpx;
+    right: 32rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
-		height: 200rpx;
-		width: 200rpx;
-    margin: 200rpx auto 50rpx;
+    background: #4cd964;
+
+    &-text {
+      font-size: 20rpx;
+      color: #FFFFFF;
+    }
   }
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
-	}
+}
 </style>
