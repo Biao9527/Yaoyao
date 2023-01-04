@@ -9,6 +9,7 @@
               @click="onItemClick(items)">
           <uni-datetime-picker :value="selectedDate"
                                return-type="timestamp"
+                               :end="Date.now()"
                                hide-second
                                v-if="items.id === 1" @change="onDateChange">
             <view class="item-wrapper">

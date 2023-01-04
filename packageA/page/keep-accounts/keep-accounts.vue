@@ -26,6 +26,7 @@
         <view class="accounts-date-wrapper">
           <uni-datetime-picker :value="selectedDate"
                                return-type="timestamp"
+                               :end="Date.now()"
                                hide-second
                                @change="onDateChange"/>
         </view>
