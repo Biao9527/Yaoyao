@@ -23,13 +23,22 @@
       <view class="accounts-date"
             v-if="selectedDate">
         <view class="accounts-date-title">时间：</view>
-        <view class="accounts-date-wrapper">
           <uni-datetime-picker :value="selectedDate"
                                return-type="timestamp"
                                :end="Date.now()"
                                hide-second
-                               @change="onDateChange"/>
-        </view>
+                               @change="onDateChange">
+            <view class="accounts-date-wrapper">
+              <uni-icons type="calendar" size="46rpx" color="#c0c4cc"/>
+              <view class="accounts-date-wrapper-text">
+                <uni-dateformat :date="selectedDate" format="yyyy-M-d hh:mm"/>
+              </view>
+              <view class="accounts-date-wrapper-clear"
+                    @click="onClearDate">
+                <uni-icons type="clear" size="50rpx" color="#c0c4cc"/>
+              </view>
+            </view>
+          </uni-datetime-picker>
       </view>
       <view class="accounts-money">
         <view>金额：</view>
@@ -187,6 +196,9 @@ export default {
     onDateChange(e) {
       this.selectedDate = e
     },
+    onClearDate() {
+      this.selectedDate = null
+    },
     onChooseLocation() {
       uni.chooseLocation({
         latitude: this.address ? this.address.latitude : undefined,
@@ -255,6 +267,7 @@ page {
     justify-content: space-between;
     padding-bottom: 26rpx;
     border-bottom: 1rpx solid #f2f2f2;
+    height: 76rpx;
 
     &-title {
       font-size: 30rpx;
@@ -262,8 +275,28 @@ page {
     }
 
     &-wrapper {
+      display: flex;
+      align-items: center;
       flex-grow: 1;
       margin: 0 26rpx 0 32rpx;
+      height: 76rpx;
+      border: 1px solid #e5e5e5;
+      padding: 0 26rpx;
+      border-radius: 13rpx;
+      position: relative;
+
+      &-text {
+        font-size: 30rpx;
+        color: #454c63;
+        margin: 0 16rpx;
+      }
+
+      &-clear {
+        padding: 0 10rpx;
+        position: absolute;
+        right: 0;
+        top: calc(50% - 25rpx);
+      }
     }
   }
 
