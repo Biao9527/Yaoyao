@@ -5,14 +5,20 @@
       <view class="accounts-type-tabs">
         <view class="accounts-type-items"
               :class="tallyType === '-' ? 'active' : ''"
-              @click="tallyType = '-'">支出</view>
+              @click="tallyType = '-'">支出
+        </view>
         <view class="accounts-type-items"
               :class="tallyType === '+' ? 'active' : ''"
-              @click="tallyType = '+'">收入</view>
+              @click="tallyType = '+'">收入
+        </view>
       </view>
-      <view class="accounts-table">
-        <uni-icons custom-prefix="iconfont" :type="table.icon" size="88rpx"/>
-        <view>{{ table.name }}</view>
+      <view class="accounts-table"
+            v-if="selectedTable">
+        <view class="accounts-table-title">绑定标签</view>
+        <view class="accounts-table-wrapper" @click="openedTable">
+          <uni-icons custom-prefix="iconfont" :type="selectedTable.icon" size="80rpx"/>
+          <view class="accounts-table-name">{{ selectedTable.name }}</view>
+        </view>
       </view>
       <view class="accounts-money">
         <view>金额：</view>
@@ -30,7 +36,7 @@
         <view>备注</view>
         <view class="accounts-notes-textarea-wrapper">
           <textarea class="accounts-notes-textarea"
-                    placeholder-class	="accounts-notes-placeholder"
+                    placeholder-class="accounts-notes-placeholder"
                     :value="notes"
                     type="textarea"
                     placeholder="请输入账单备注~"
@@ -43,6 +49,7 @@
                      @onTableItemClick="openedTable"/>
     <SelectedTable :is-opened.sync="isOpenedTable"
                    :table-list.sync="getMyTableList"
+                   :selected-table.sync="selectedTable"
                    :nav-bar-height="statusBarHeight + 44"/>
   </view>
 </template>
@@ -75,8 +82,8 @@ export default {
     return {
       tallyType: '-',
       notes: '',
-      table: null,
       money: null,
+      selectedTable: null,
       isOpenedTable: false,
       statusBarHeight: 44
     }
@@ -101,15 +108,43 @@ export default {
 page {
   background: #FFFFFF;
 }
+
 .accounts {
 
   &-content {
     margin: 32rpx 0 32rpx 26rpx;
   }
 
+  &-table {
+    margin-right: 26rpx;
+    margin-bottom: 50rpx;
+
+    &-title {
+      font-size: 32rpx;
+      color: #131C38;
+      margin-bottom: 16rpx;
+    }
+
+    &-wrapper {
+      padding: 0 20rpx;
+      height: 110rpx;
+      display: flex;
+      align-items: center;
+      border: 1px solid #e5e5e5;
+      border-radius: 26rpx;
+    }
+
+    &-name {
+      font-size: 32rpx;
+      color: #454c63;
+      margin-left: 32rpx;
+    }
+  }
+
   &-type-tabs {
     display: flex;
     justify-content: center;
+    margin-bottom: 80rpx;
 
     .active {
       background: #007aff;
@@ -136,10 +171,10 @@ page {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 30rpx;
+    font-size: 32rpx;
     color: #131c38;
     height: 76rpx;
-    margin: 80rpx 26rpx 26rpx 0;
+    margin: 0 26rpx 26rpx 0;
 
     &-input-wrapper {
       display: flex;
@@ -162,7 +197,7 @@ page {
   &-notes {
     border-top: 1rpx solid #f2f2f2;
     padding: 26rpx 26rpx 0 0;
-    font-size: 30rpx;
+    font-size: 32rpx;
     color: #131C38;
 
     &-textarea-wrapper {
@@ -179,7 +214,7 @@ page {
     }
 
     &-placeholder {
-      color:#D6D6D6
+      color: #D6D6D6
     }
   }
 }

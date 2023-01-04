@@ -8,7 +8,9 @@
       <scroll-view scroll-y :style="scrollHeight">
         <view class="selected-table-list">
           <view class="selected-table-list-item"
-                v-for="item in tableList" :key="item.id">
+                :class="item.id === selectedTable.id ? 'selected' : ''"
+                v-for="item in tableList" :key="item.id"
+                @click="onTableItem(item)">
             <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
             <view class="selected-table-list-item-text">{{ item.name }}</view>
           </view>
@@ -28,7 +30,7 @@ export default {
       return `height: calc(100vh - ${this.navBarHeight + 80}px)`
     }
   },
-  props: ['isOpened', 'tableList', 'navBarHeight'],
+  props: ['isOpened', 'selectedTable', 'tableList', 'navBarHeight'],
   data() {
     return {}
   },
@@ -36,6 +38,10 @@ export default {
     onMaskClick() {
       if (!this.isOpened) return
       this.$emit('update:isOpened', false)
+    },
+    onTableItem(item) {
+      this.$emit('update:selectedTable', item)
+      this.onMaskClick()
     }
   }
 }
@@ -89,6 +95,15 @@ export default {
         margin-left: 12rpx;
         font-size: 26rpx;
         color: #9b9b9b;
+      }
+    }
+
+    .selected {
+      border-color: #dcdcdc;
+      background: #F0F0F2;
+
+      .selected-table-list-item-text {
+        color: #131C38;
       }
     }
   }
