@@ -20,6 +20,16 @@
           <view class="accounts-table-name">{{ selectedTable.name }}</view>
         </view>
       </view>
+      <view class="accounts-date"
+            v-if="selectedDate">
+        <view class="accounts-date-title">时间：</view>
+        <view class="accounts-date-wrapper">
+          <uni-datetime-picker :value="selectedDate"
+                               return-type="timestamp"
+                               hide-second
+                               @change="onDateChange"/>
+        </view>
+      </view>
       <view class="accounts-money">
         <view>金额：</view>
         <view class="accounts-money-input-wrapper">
@@ -46,6 +56,7 @@
       </view>
     </view>
     <FooterActionBar :operation-height="operationHeight"
+                     :selected-date.sync="selectedDate"
                      @onTableItemClick="openedTable"/>
     <SelectedTable :is-opened.sync="isOpenedTable"
                    :table-list.sync="getMyTableList"
@@ -83,6 +94,7 @@ export default {
       tallyType: '-',
       notes: '',
       money: null,
+      selectedDate: null,
       selectedTable: null,
       isOpenedTable: false,
       statusBarHeight: 44
@@ -97,6 +109,9 @@ export default {
     },
     openedTable() {
       this.isOpenedTable = true
+    },
+    onDateChange(e) {
+      this.selectedDate = e
     }
   }
 }
@@ -120,7 +135,7 @@ page {
     margin-bottom: 50rpx;
 
     &-title {
-      font-size: 32rpx;
+      font-size: 30rpx;
       color: #131C38;
       margin-bottom: 16rpx;
     }
@@ -138,6 +153,24 @@ page {
       font-size: 32rpx;
       color: #454c63;
       margin-left: 32rpx;
+    }
+  }
+
+  &-date {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 26rpx;
+    border-bottom: 1rpx solid #f2f2f2;
+
+    &-title {
+      font-size: 30rpx;
+      color: #131C38;
+    }
+
+    &-wrapper {
+      flex-grow: 1;
+      margin: 0 26rpx 0 32rpx;
     }
   }
 
@@ -171,10 +204,10 @@ page {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 32rpx;
+    font-size: 30rpx;
     color: #131c38;
     height: 76rpx;
-    margin: 0 26rpx 26rpx 0;
+    margin: 26rpx 26rpx 26rpx 0;
 
     &-input-wrapper {
       display: flex;
@@ -197,7 +230,7 @@ page {
   &-notes {
     border-top: 1rpx solid #f2f2f2;
     padding: 26rpx 26rpx 0 0;
-    font-size: 32rpx;
+    font-size: 30rpx;
     color: #131C38;
 
     &-textarea-wrapper {

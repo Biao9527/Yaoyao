@@ -7,8 +7,19 @@
         <view class="action-bar-list-item"
               v-for="items in actionList" :key="items.id"
               @click="onItemClick(items)">
-          <image :src="items.svg"/>
-          <view>{{ items.text }}</view>
+          <uni-datetime-picker :value="selectedDate"
+                               return-type="timestamp"
+                               hide-second
+                               v-if="items.id === 1" @change="onDateChange">
+            <view class="item-wrapper">
+              <image :src="items.svg"/>
+              <view>{{ items.text }}</view>
+            </view>
+          </uni-datetime-picker>
+          <view class="item-wrapper" v-else>
+            <image :src="items.svg"/>
+            <view>{{ items.text }}</view>
+          </view>
         </view>
       </view>
       <button class="action-bar-button">
@@ -24,7 +35,7 @@ import timeSvg from '../../assets/time.svg'
 import tableSvg from '../../assets/table.svg'
 
 export default {
-  props: ['operationHeight', 'onTableItemClick'],
+  props: ['operationHeight', 'selectedDate', 'onTableItemClick'],
   computed: {
     setOperationHeight() {
       return this.operationHeight !== '96rpx' ? 'set-height' : ''
@@ -52,6 +63,9 @@ export default {
         default:
           break
       }
+    },
+    onDateChange(e) {
+      this.$emit('update:selectedDate', e)
     }
   }
 }
@@ -83,10 +97,13 @@ export default {
       color: #454c63;
       text-align: center;
       margin-left: 50rpx;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+
+      .item-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
 
       image {
         width: 54rpx;
