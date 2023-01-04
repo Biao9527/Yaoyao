@@ -56,7 +56,15 @@
             "minified" : true
         },
         "usingComponents" : true,
-        "permission" : {}
+        "permission" : {
+            "scope.userLocation" : {
+                "desc" : "记账选择位置需要定位服务"
+            }
+        },
+		"requiredPrivateInfos": [
+		      "getFuzzyLocation",
+		      "chooseLocation"
+		    ]
     },
     "mp-alipay" : {
         "usingComponents" : true

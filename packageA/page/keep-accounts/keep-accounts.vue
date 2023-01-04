@@ -75,9 +75,39 @@
                     @blur="onNotesBlur"/>
         </view>
       </view>
+      <view v-if="address"
+            class="accounts-map">
+        <view class="accounts-map-title">位置信息</view>
+        <view class="accounts-map-info"
+              v-if="address.name && address.address"
+              @click="onChooseLocation">
+          <image :src="locationSvg"/>
+          <view class="accounts-map-address">
+            <view class="accounts-map-name">{{address.name}}</view>
+            <view class="accounts-map-text">{{address.address}}</view>
+          </view>
+        </view>
+        <view class="accounts-map-wrapper">
+          <view class="accounts-map-wrapper-mask"
+                @click="openMapClick"/>
+          <map class="select-map"
+               :markers="[{
+             latitude: address.latitude,
+             longitude: address.longitude,
+             width: 20,
+             height: 30,
+             iconPath: location
+             }]"
+               :longitude="address.longitude"
+               :latitude="address.latitude"
+               :enable-zoom="false"
+               :enable-scroll="false"/>
+        </view>
+      </view>
     </view>
     <FooterActionBar :operation-height="operationHeight"
                      :selected-date.sync="selectedDate"
+                     @onLocationClick="onChooseLocation"
                      @onTableItemClick="openedTable"/>
     <SelectedTable :is-opened.sync="isOpenedTable"
                    :table-list.sync="getMyTableList"
@@ -91,6 +121,7 @@ import NavBar from "../../../components/nav-bar";
 import FooterActionBar from "./components/footer-action-bar/footer-action-bar";
 import SelectedTable from "./components/selected-table/selected-table";
 import {mapState, mapGetters} from 'vuex'
+import locationSvg from './assets/locationSvg.svg'
 
 export default {
   components: {
@@ -126,7 +157,9 @@ export default {
       isOpenedTable: false,
       statusBarHeight: 44,
       showMoneyInput: false,
-      showNotesInput: false
+      showNotesInput: false,
+      address: null,
+      locationSvg
     }
   },
   methods: {
@@ -153,6 +186,25 @@ export default {
     },
     onDateChange(e) {
       this.selectedDate = e
+    },
+    onChooseLocation() {
+      uni.chooseLocation({
+        latitude: this.address ? this.address.latitude : undefined,
+        longitude: this.address ? this.address.longitude : undefined,
+        success: res => {
+          this.address = res
+        }
+      })
+    },
+    openMapClick() {
+      uni.showLoading()
+      uni.openLocation({
+        ...this.address,
+        scale: 14,
+        complete: () => {
+          uni.hideLoading()
+        }
+      })
     }
   }
 }
@@ -168,7 +220,7 @@ page {
 .accounts {
 
   &-content {
-    margin: 32rpx 0 32rpx 26rpx;
+    margin: 32rpx 0 100rpx 26rpx;
   }
 
   &-table {
@@ -289,6 +341,75 @@ page {
 
     &-placeholder {
       color: #D6D6D6
+    }
+  }
+
+  &-map {
+    margin-top: 40rpx;
+    padding-right: 26rpx;
+
+    &-info {
+      margin-bottom: 32rpx;
+      border: 1px solid #e5e5e5;
+      height: 120rpx;
+      display: flex;
+      align-items: center;
+      border-radius: 13rpx;
+      padding: 0 26rpx;
+
+      image {
+        width: 94rpx;
+        height: 94rpx;
+      }
+    }
+
+    &-name {
+      font-size: 26rpx;
+      color: #131c38;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &-text {
+      margin-top: 4rpx;
+      font-size: 26rpx;
+      color: #454c63;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &-address {
+      margin-left: 26rpx;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &-title {
+      color: #131c38;
+      font-size: 32rpx;
+      font-weight: bold;
+      margin-bottom: 16rpx;
+    }
+
+    &-wrapper {
+      width: 100%;
+      height: 436rpx;
+      position: relative;
+
+      &-mask {
+        position: absolute;
+        width: 100%;
+        height: 436rpx;
+        top: 0;
+        left: 0;
+        z-index: 10;
+      }
+
+      .select-map {
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 }

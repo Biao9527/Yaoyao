@@ -36,7 +36,7 @@ import timeSvg from '../../assets/time.svg'
 import tableSvg from '../../assets/table.svg'
 
 export default {
-  props: ['operationHeight', 'selectedDate', 'onTableItemClick'],
+  props: ['operationHeight', 'selectedDate', 'onLocationClick', 'onTableItemClick'],
   computed: {
     setOperationHeight() {
       return this.operationHeight !== '96rpx' ? 'set-height' : ''
@@ -55,6 +55,7 @@ export default {
     onItemClick(item) {
       switch (item.id) {
         case 0:
+          this.$emit('onLocationClick')
           break
         case 1:
           break
@@ -78,10 +79,13 @@ export default {
 }
 
 .action-bar {
+  z-index: 20;
+  background: #FFFFFF;
   width: 100%;
   height: 136rpx;
   position: fixed;
   bottom: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
