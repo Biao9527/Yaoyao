@@ -34,24 +34,44 @@
         <view>金额：</view>
         <view class="accounts-money-input-wrapper">
           <view>￥</view>
+          <view class="accounts-money-input"
+                v-if="!showMoneyInput"
+                :style="inputPlaceholderStyle"
+                @click="onMoneyFocus">
+            {{money ? money : '请输入金额~'}}
+          </view>
           <input class="accounts-money-input"
+                 v-else
                  :value="money"
+                 :focus="showMoneyInput"
                  type="digit"
                  placeholder="请输入金额~"
                  placeholderStyle="color:#D6D6D6"
-                 @input="onMoneyInput"/>
+                 @input="onMoneyInput"
+                 @focus="onMoneyFocus"
+                 @blur="onMoneyBlur"/>
         </view>
       </view>
       <view class="accounts-notes">
         <view>备注</view>
         <view class="accounts-notes-textarea-wrapper">
+          <view class="accounts-notes-textarea"
+                :style="textareaPlaceholderStyle"
+                @click="onNotesFocus"
+                v-if="!showNotesInput">
+            {{notes ? notes : '请输入账单备注~'}}
+          </view>
           <textarea class="accounts-notes-textarea"
+                    v-else
                     placeholder-class="accounts-notes-placeholder"
                     :value="notes"
+                    :focus="showNotesInput"
                     type="textarea"
                     placeholder="请输入账单备注~"
                     :maxlength="100"
-                    @input="onNotesInput"/>
+                    @input="onNotesInput"
+                    @focus="onNotesFocus"
+                    @blur="onNotesBlur"/>
         </view>
       </view>
     </view>
@@ -87,7 +107,13 @@ export default {
     ]),
     ...mapGetters([
       'getMyTableList'
-    ])
+    ]),
+    inputPlaceholderStyle() {
+      return this.money ? '' : 'color: #D6D6D6'
+    },
+    textareaPlaceholderStyle() {
+      return this.notes ? '' : 'color: #D6D6D6'
+    }
   },
   data() {
     return {
@@ -97,15 +123,29 @@ export default {
       selectedDate: null,
       selectedTable: null,
       isOpenedTable: false,
-      statusBarHeight: 44
+      statusBarHeight: 44,
+      showMoneyInput: false,
+      showNotesInput: false
     }
   },
   methods: {
     onNotesInput(e) {
       this.notes = e.detail.value
     },
+    onNotesFocus() {
+      this.showNotesInput = true
+    },
+    onNotesBlur() {
+      this.showNotesInput = false
+    },
     onMoneyInput(e) {
       this.money = e.detail.value
+    },
+    onMoneyFocus() {
+      this.showMoneyInput = true
+    },
+    onMoneyBlur() {
+      this.showMoneyInput = false
     },
     openedTable() {
       this.isOpenedTable = true
