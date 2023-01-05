@@ -57,6 +57,7 @@
                  type="digit"
                  placeholder="请输入金额~"
                  placeholderStyle="color:#D6D6D6"
+                 :maxlength="10"
                  @input="onMoneyInput"
                  @focus="onMoneyFocus"
                  @blur="onMoneyBlur"/>
@@ -193,11 +194,13 @@ export default {
       this.showMoneyInput = true
     },
     onMoneyBlur(e) {
-      if (e.detail.value && !verificationIsNumber(e.detail.value)) {
+      if (!e.detail.value && e.detail.value !== 0) return
+      if (!verificationIsNumber(e.detail.value)) {
         this.showToast('输的什么勾吧')
         this.money = ''
+        return
       }
-      this.money = parseFloat(parseFloat(this.money).toFixed(2))
+      this.money = parseFloat(this.money).toFixed(2)
       this.showMoneyInput = false
     },
     openedTable() {
@@ -238,7 +241,7 @@ export default {
         type: this.tallyType,
         table: this.selectedTable,
         date: this.selectedDate,
-        money: parseFloat(parseFloat(this.money).toFixed(2)),
+        money: parseFloat(this.money).toFixed(2),
         notes: this.notes,
         address: this.address
       }
