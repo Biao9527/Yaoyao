@@ -48,7 +48,7 @@
                 v-if="!showMoneyInput"
                 :style="inputPlaceholderStyle"
                 @click="onMoneyFocus">
-            {{money ? money : '请输入金额~'}}
+            {{money || money === 0 ? money : '请输入金额~'}}
           </view>
           <input class="accounts-money-input"
                  v-else
@@ -133,7 +133,7 @@ import SelectedTable from "./components/selected-table/selected-table";
 import {mapGetters, mapState, mapMutations} from 'vuex'
 import locationSvg from './assets/locationSvg.svg'
 import {updateAccountsStorage, verificationTallyForm} from "./helpers/accountsStorage";
-import {autoIncrementId} from "../../../helpers";
+import {autoIncrementId, verificationIsNumber} from "../../../helpers";
 
 export default {
   components: {
@@ -153,7 +153,7 @@ export default {
       'getMyTableList'
     ]),
     inputPlaceholderStyle() {
-      return this.money ? '' : 'color: #D6D6D6'
+      return (this.money || this.money === 0) ? '' : 'color: #D6D6D6'
     },
     textareaPlaceholderStyle() {
       return this.notes ? '' : 'color: #D6D6D6'
@@ -191,7 +191,12 @@ export default {
     onMoneyFocus() {
       this.showMoneyInput = true
     },
-    onMoneyBlur() {
+    onMoneyBlur(e) {
+      if (!verificationIsNumber(e.detail.value)) {
+        this.showToast('输的什么勾吧')
+        this.money = ''
+      }
+      this.money = parseFloat(parseFloat(this.money).toFixed(2))
       this.showMoneyInput = false
     },
     openedTable() {

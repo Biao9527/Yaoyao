@@ -1,4 +1,6 @@
 // 根据机型设置操作栏高度
+import {verificationTallyForm} from "../packageA/page/keep-accounts/helpers/accountsStorage";
+
 export function byModelsSetAction() {
     return new Promise(resolve => {
         uni.getSystemInfo({
@@ -24,6 +26,11 @@ export function byModelsSetAction() {
     })
 }
 
+/**
+ * ID自增生成器
+ * @param key
+ * @returns string
+ */
 export function autoIncrementId(key) {
     try {
         let value = uni.getStorageSync(key)
@@ -36,4 +43,14 @@ export function autoIncrementId(key) {
     } catch (e) {
 
     }
+}
+
+/**
+ * 校验是否为正数、负数、和小数
+ * @param text string
+ * @returns boolean
+ */
+export function verificationIsNumber(text) {
+    const reg = new RegExp('^(\\-|\\+)?\\d+(\\.\\d+)?$','g')
+    return reg.test(text)
 }
