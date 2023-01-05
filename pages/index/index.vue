@@ -2,7 +2,11 @@
   <view class="post">
     <NavBar/>
     <view class="post-content">
-      <AccountList :account-list="getAccountList"/>
+      <AccountList v-if="Array.isArray(getAccountList) && getAccountList.length > 0"
+                   :account-list="getAccountList"/>
+      <view class="post-nothing" v-else>
+        <Nothing text="这里什么都没有~"/>
+      </view>
     </view>
     <view class="post-add-account" @click="goKeepAccounts">
       <uni-icons type="paperplane-filled" size="60rpx" color="#FFFFFF"/>
@@ -17,6 +21,7 @@
 import CustomTabBar from "../../components/custom-tab-bar";
 import NavBar from "../../components/nav-bar";
 import AccountList from "../../components/account-list/account-list";
+import Nothing from "../../components/nothing/nothing";
 import {mapState, mapGetters} from 'vuex'
 import {navigateToPage} from "../../helpers/navigateTo";
 
@@ -24,7 +29,8 @@ export default {
   components: {
     CustomTabBar,
     NavBar,
-    AccountList
+    AccountList,
+    Nothing
   },
   onShareAppMessage(res) {
     if (res.from === 'button') {// 来自页面内分享按钮
@@ -60,6 +66,10 @@ export default {
 .post {
 
   &-content {
+  }
+
+  &-nothing {
+    margin-top: 40%;
   }
 
   &-add-account {

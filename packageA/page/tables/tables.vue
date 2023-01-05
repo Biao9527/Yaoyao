@@ -1,7 +1,8 @@
 <template>
   <view class="tables">
     <NavBar title="标签"/>
-    <view class="tables-list">
+    <view class="tables-list"
+          v-if="Array.isArray(getMyTableList) && getMyTableList.length > 0">
       <uni-swipe-action>
         <uni-swipe-action-item v-for="(item) in getMyTableList" :key="item.id"
                                :right-options="options"
@@ -13,6 +14,9 @@
           </view>
         </uni-swipe-action-item>
       </uni-swipe-action>
+    </view>
+    <view class="tables-nothing" v-else>
+      <Nothing text="这里什么都没有~"/>
     </view>
     <view class="tables-add"
           @click="onAddTableClick">
@@ -31,6 +35,7 @@
 <script>
 import CustomTabBar from '../../../components/custom-tab-bar'
 import NavBar from "../../../components/nav-bar";
+import Nothing from "../../../components/nothing/nothing";
 import {navigateToPage} from "../../../helpers/navigateTo";
 import {mapState, mapGetters, mapMutations} from 'vuex'
 import CreateTableModal from "./components/create-table-modal/create-table-modal";
@@ -40,7 +45,8 @@ export default {
   components: {
     CustomTabBar,
     NavBar,
-    CreateTableModal
+    CreateTableModal,
+    Nothing
   },
   computed: {
     ...mapState([
@@ -148,6 +154,10 @@ export default {
     position: fixed;
     bottom: 200rpx;
     left: calc(50% - 30px);
+  }
+
+  &-nothing {
+    margin-top: 40%;
   }
 }
 </style>

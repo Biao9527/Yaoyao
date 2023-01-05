@@ -4,24 +4,42 @@
     <view class="selected-table-content"
           :style="topHeight"
           @click.stop="">
-      <view class="selected-table-title">我的标签</view>
-      <scroll-view scroll-y :style="scrollHeight">
-        <view class="selected-table-list">
-          <view class="selected-table-list-item"
-                :class="item.id === selectedTable.id ? 'selected' : ''"
-                v-for="item in tableList" :key="item.id"
-                @click="onTableItem(item)">
-            <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
-            <view class="selected-table-list-item-text">{{ item.name }}</view>
-          </view>
+      <view v-if="Array.isArray(tableList) && tableList.length > 0">
+        <view class="selected-table-header">
+          <view class="selected-table-title">我的标签</view>
+          <view class="selected-table-create" @click="goCreateTable">创建</view>
         </view>
-      </scroll-view>
+        <scroll-view scroll-y :style="scrollHeight">
+          <view class="selected-table-list">
+            <view class="selected-table-list-item"
+                  :class="item.id === selectedTable.id ? 'selected' : ''"
+                  v-for="item in tableList" :key="item.id"
+                  @click="onTableItem(item)">
+              <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
+              <view class="selected-table-list-item-text">{{ item.name }}</view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+      <view class="selected-table-nothing" v-else>
+        <Nothing text="这里什么都没有~"/>
+        <view class="selected-table-none-button"
+              @click="goCreateTable">
+          去创建
+        </view>
+      </view>
     </view>
   </view>
 </template>
 
 <script>
+import Nothing from "../../../../../components/nothing/nothing";
+import {navigateToPage} from "../../../../../helpers/navigateTo";
+
 export default {
+  components: {
+    Nothing
+  },
   computed: {
     topHeight() {
       return `padding-top: calc(${this.navBarHeight}px + 26rpx)`
@@ -42,6 +60,9 @@ export default {
     onTableItem(item) {
       this.$emit('update:selectedTable', item)
       this.onMaskClick()
+    },
+    goCreateTable() {
+      navigateToPage('createTable')
     }
   }
 }
@@ -66,12 +87,30 @@ export default {
     top: 0;
   }
 
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 26rpx 16rpx;
+  }
+
+  &-create {
+    font-size: 24rpx;
+    color: #FFFFFF;
+    font-weight: bold;
+    height: 44rpx;
+    border-radius: 100rpx;
+    padding: 0 28rpx;
+    background: #4cd964;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   &-title {
     font-size: 32rpx;
     color: #181818;
     font-weight: bold;
-    margin-left: 26rpx;
-    margin-bottom: 16rpx;
   }
 
   &-list {
@@ -106,6 +145,27 @@ export default {
         color: #131C38;
       }
     }
+  }
+
+  &-nothing {
+    margin-top: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &-none-button {
+    font-size: 26rpx;
+    color: #FFFFFF;
+    font-weight: bold;
+    border-radius: 100rpx;
+    background: #4cd964;
+    height: 60rpx;
+    margin-top: 40rpx;
+    padding: 0 26rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>
