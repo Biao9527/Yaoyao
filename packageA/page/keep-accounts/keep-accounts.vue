@@ -79,6 +79,7 @@
                     type="textarea"
                     placeholder="请输入账单备注~"
                     :maxlength="100"
+                    :show-confirm-bar="false"
                     @input="onNotesInput"
                     @focus="onNotesFocus"
                     @blur="onNotesBlur"/>

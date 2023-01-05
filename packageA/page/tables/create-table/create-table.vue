@@ -37,6 +37,11 @@ export default {
     RecommendTables,
     CreateTableModal
   },
+  onLoad(options) {
+    if (options.selectedId) {
+      this.selectedId = parseInt(options.selectedId)
+    }
+  },
   computed: {
     ...mapGetters([
       'getMyTableList'
@@ -49,7 +54,8 @@ export default {
       tableIcon: '',
       tableName: '',
       selectTable: null,
-      isEdit: false
+      isEdit: false,
+      selectedId: null
     }
   },
   methods: {
@@ -58,6 +64,13 @@ export default {
       this.isOpenedAddModal = true
     },
     updateTable(item) {
+      if (this.selectedId && this.selectedId === item.id) {
+        uni.showToast({
+          title: '标签已选中，无法修改',
+          icon: 'none'
+        })
+        return
+      }
       this.isOpenedAddModal = true
       this.tableName = item.name
       this.tableIcon = item.icon

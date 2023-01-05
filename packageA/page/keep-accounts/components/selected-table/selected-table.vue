@@ -63,7 +63,7 @@ export default {
       this.onMaskClick()
     },
     goCreateTable() {
-      navigateToPage('createTable')
+      navigateToPage('createTable', this.selectedTable ? `?selectedId=${this.selectedTable.id}` : '')
     }
   }
 }
