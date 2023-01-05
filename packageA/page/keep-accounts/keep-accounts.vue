@@ -232,7 +232,7 @@ export default {
         type: this.tallyType,
         table: this.selectedTable,
         date: this.selectedDate,
-        money: parseFloat(this.money),
+        money: parseFloat(parseFloat(this.money).toFixed(2)),
         notes: this.notes,
         address: this.address
       }
@@ -241,7 +241,6 @@ export default {
       payload.id = autoIncrementId('tallyMaxId')
       const success = updateAccountsStorage(payload)
       if (!success) return
-      this.showToast('保存成功')
       this.addAccount(payload)
       uni.navigateBack()
     },
