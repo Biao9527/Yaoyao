@@ -1,49 +1,52 @@
 <template>
-	<view class="post">
+  <view class="post">
     <NavBar/>
     <view class="post-add-account" @click="goKeepAccounts">
       <uni-icons type="paperplane-filled" size="60rpx" color="#FFFFFF"/>
       <view class="post-add-account-text">记一笔</view>
     </view>
-  <CustomTabBar :active-index="1"
-                :operation-height="operationHeight"/>
-	</view>
+    <CustomTabBar :active-index="1"
+                  :operation-height="operationHeight"/>
+  </view>
 </template>
 
 <script>
 import CustomTabBar from "../../components/custom-tab-bar";
 import NavBar from "../../components/nav-bar";
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 import {navigateToPage} from "../../helpers/navigateTo";
 
-	export default {
-    components: {
-      CustomTabBar,
-      NavBar
-    },
-    onShareAppMessage(res) {
-      if (res.from === 'button') {// 来自页面内分享按钮
-      }
-      return {
-        title: '摇摇晃摇',
-        path: '/pages/index/index'
-      }
-    },
-    computed: {
-      ...mapState([
-        'operationHeight'
-      ]),
-    },
-		data() {
-			return {
-			}
-		},
-		methods: {
-      goKeepAccounts() {
-        navigateToPage('keepAccounts')
-      }
-		}
-	}
+export default {
+  components: {
+    CustomTabBar,
+    NavBar
+  },
+  onShareAppMessage(res) {
+    if (res.from === 'button') {// 来自页面内分享按钮
+    }
+    return {
+      title: '摇摇晃摇',
+      path: '/pages/index/index'
+    }
+  },
+  computed: {
+    ...mapState([
+      'operationHeight',
+      'accountList'
+    ]),
+    ...mapGetters([
+      'getAccountList'
+    ])
+  },
+  data() {
+    return {}
+  },
+  methods: {
+    goKeepAccounts() {
+      navigateToPage('keepAccounts')
+    }
+  }
+}
 </script>
 
 <style lang="scss">

@@ -41,7 +41,9 @@
 
 <script>
 import {ICON_LIST} from '../../helper/index'
-import {autoIncrementId, UpdateTablesStorage} from "../../helper/updateTablesStorage";
+import {UpdateTablesStorage} from "../../helper/updateTablesStorage";
+import {autoIncrementId} from '../../../../../helpers'
+
 export default {
   props: ['isOpened','tableIcon', 'tableName', 'isEdit', 'selectTable'],
   data() {

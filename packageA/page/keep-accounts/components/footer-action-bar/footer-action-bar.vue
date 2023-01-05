@@ -23,7 +23,8 @@
           </view>
         </view>
       </view>
-      <button class="action-bar-button">
+      <button class="action-bar-button"
+              @click="onSubmitClick">
         保存
       </button>
     </view>
@@ -36,7 +37,7 @@ import timeSvg from '../../assets/time.svg'
 import tableSvg from '../../assets/table.svg'
 
 export default {
-  props: ['operationHeight', 'selectedDate', 'onLocationClick', 'onTableItemClick'],
+  props: ['operationHeight', 'selectedDate', 'onLocationClick', 'onTableItemClick', 'onSubmit'],
   computed: {
     setOperationHeight() {
       return this.operationHeight !== '96rpx' ? 'set-height' : ''
@@ -68,6 +69,9 @@ export default {
     },
     onDateChange(e) {
       this.$emit('update:selectedDate', e)
+    },
+    onSubmitClick() {
+      this.$emit('onSubmit')
     }
   }
 }

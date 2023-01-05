@@ -117,7 +117,8 @@
     <FooterActionBar :operation-height="operationHeight"
                      :selected-date.sync="selectedDate"
                      @onLocationClick="onChooseLocation"
-                     @onTableItemClick="openedTable"/>
+                     @onTableItemClick="openedTable"
+                     @onSubmit="onSubmit"/>
     <SelectedTable :is-opened.sync="isOpenedTable"
                    :table-list.sync="getMyTableList"
                    :selected-table.sync="selectedTable"
@@ -129,8 +130,10 @@
 import NavBar from "../../../components/nav-bar";
 import FooterActionBar from "./components/footer-action-bar/footer-action-bar";
 import SelectedTable from "./components/selected-table/selected-table";
-import {mapState, mapGetters} from 'vuex'
+import {mapGetters, mapState, mapMutations} from 'vuex'
 import locationSvg from './assets/locationSvg.svg'
+import {updateAccountsStorage, verificationTallyForm} from "./helpers/accountsStorage";
+import {autoIncrementId} from "../../../helpers";
 
 export default {
   components: {
@@ -172,6 +175,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['addAccount']),
     onNotesInput(e) {
       this.notes = e.detail.value
     },
@@ -204,7 +208,12 @@ export default {
         latitude: this.address ? this.address.latitude : undefined,
         longitude: this.address ? this.address.longitude : undefined,
         success: res => {
-          this.address = res
+          this.address = {
+            name: res.name,
+            address: res.address,
+            latitude: res.latitude,
+            longitude: res.longitude
+          }
         }
       })
     },
@@ -216,6 +225,30 @@ export default {
         complete: () => {
           uni.hideLoading()
         }
+      })
+    },
+    onSubmit() {
+      const payload = {
+        type: this.tallyType,
+        table: this.selectedTable,
+        date: this.selectedDate,
+        money: parseFloat(this.money),
+        notes: this.notes,
+        address: this.address
+      }
+      const isPass = verificationTallyForm.call(this, payload)
+      if (isPass) return
+      payload.id = autoIncrementId('tallyMaxId')
+      const success = updateAccountsStorage(payload)
+      if (!success) return
+      this.showToast('保存成功')
+      this.addAccount(payload)
+      uni.navigateBack()
+    },
+    showToast(title) {
+      uni.showToast({
+        title,
+        icon: 'none'
       })
     }
   }

@@ -51,17 +51,3 @@ export async function removeTableStorage(data) {
         }
     })
 }
-
-export function autoIncrementId(key) {
-    try {
-        let value = uni.getStorageSync(key)
-        if (value) {
-            uni.setStorageSync(key, value += 1)
-            return value
-        }
-        uni.setStorageSync(key, 1)
-        return 1
-    } catch (e) {
-
-    }
-}
