@@ -192,7 +192,7 @@ export default {
       this.showMoneyInput = true
     },
     onMoneyBlur(e) {
-      if (!verificationIsNumber(e.detail.value)) {
+      if (e.detail.value && !verificationIsNumber(e.detail.value)) {
         this.showToast('输的什么勾吧')
         this.money = ''
       }

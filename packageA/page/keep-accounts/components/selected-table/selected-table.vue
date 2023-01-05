@@ -58,6 +58,7 @@ export default {
       this.$emit('update:isOpened', false)
     },
     onTableItem(item) {
+      if (this.selectedTable && item.id === this.selectedTable.id) return
       this.$emit('update:selectedTable', item)
       this.onMaskClick()
     },

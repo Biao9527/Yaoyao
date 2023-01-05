@@ -61,10 +61,7 @@
                 "desc" : "记账选择位置需要定位服务"
             }
         },
-		"requiredPrivateInfos": [
-		      "getFuzzyLocation",
-		      "chooseLocation"
-		    ]
+        "requiredPrivateInfos" : [ "getFuzzyLocation", "chooseLocation" ]
     },
     "mp-alipay" : {
         "usingComponents" : true
