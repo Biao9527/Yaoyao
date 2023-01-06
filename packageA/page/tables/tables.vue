@@ -9,8 +9,16 @@
                                @click="bindClick"
                                @change="swipeChange($event, item)">
           <view class="tables-list-item">
-            <uni-icons custom-prefix="iconfont" :type="item.icon" size="88rpx"/>
-            <view class="tables-list-item-text">{{ item.name }}</view>
+            <view class="tables-list-item-right">
+              <uni-icons custom-prefix="iconfont" :type="item.icon" size="88rpx"/>
+              <view class="tables-list-item-text">{{ item.name }}</view>
+              <uni-icons type="help" size="40rpx" color="#dd524d"
+                         @click="showToast('向左滑动即可操作标签')"/>
+            </view>
+            <view class="tables-list-item-left" @click="goKeepAccounts(item.id)">
+              <view class="left_text">去记账</view>
+              <uni-icons type="right" size="34rpx" color="#BBBBBB"/>
+            </view>
           </view>
         </uni-swipe-action-item>
       </uni-swipe-action>
@@ -114,6 +122,9 @@ export default {
         }
       })
     },
+    goKeepAccounts(id) {
+      navigateToPage('keepAccounts', `?tableId=${id}`)
+    },
     showToast(title) {
       uni.showToast({
         title,
@@ -140,10 +151,33 @@ export default {
       height: 120rpx;
       background: #FFFFFF;
       align-items: center;
+      justify-content: space-between;
       border-bottom: 1rpx solid #f2f2f2;
+
+      &-right {
+        display: flex;
+        align-items: center;
+      }
+
+      &-left {
+        height: 48rpx;
+        display: flex;
+        align-items: center;
+        background: #F6F6F6;
+        padding: 0 16rpx 0 26rpx;
+        margin-right: 26rpx;
+        border-radius: 8rpx;
+
+        .left_text {
+          color: #bbbbbb;
+          font-size: 26rpx;
+          margin-right: 4rpx;
+        }
+      }
 
       &-text {
         margin-left: 44rpx;
+        margin-right: 8rpx;
         font-size: 32rpx;
         color: #030303;
       }

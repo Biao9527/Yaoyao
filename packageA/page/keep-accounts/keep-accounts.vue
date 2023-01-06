@@ -23,22 +23,22 @@
       <view class="accounts-date"
             v-if="selectedDate">
         <view class="accounts-date-title">时间：</view>
-          <uni-datetime-picker :value="selectedDate"
-                               return-type="timestamp"
-                               :end="Date.now()"
-                               hide-second
-                               @change="onDateChange">
-            <view class="accounts-date-wrapper">
-              <uni-icons type="calendar" size="46rpx" color="#c0c4cc"/>
-              <view class="accounts-date-wrapper-text">
-                <uni-dateformat :date="selectedDate" format="yyyy-M-d hh:mm"/>
-              </view>
-              <view class="accounts-date-wrapper-clear"
-                    @click="onClearDate">
-                <uni-icons type="clear" size="50rpx" color="#c0c4cc"/>
-              </view>
+        <uni-datetime-picker :value="selectedDate"
+                             return-type="timestamp"
+                             :end="Date.now()"
+                             hide-second
+                             @change="onDateChange">
+          <view class="accounts-date-wrapper">
+            <uni-icons type="calendar" size="46rpx" color="#c0c4cc"/>
+            <view class="accounts-date-wrapper-text">
+              <uni-dateformat :date="selectedDate" format="yyyy-M-d hh:mm"/>
             </view>
-          </uni-datetime-picker>
+            <view class="accounts-date-wrapper-clear"
+                  @click="onClearDate">
+              <uni-icons type="clear" size="50rpx" color="#c0c4cc"/>
+            </view>
+          </view>
+        </uni-datetime-picker>
       </view>
       <view class="accounts-money">
         <view>金额：</view>
@@ -48,7 +48,7 @@
                 v-if="!showMoneyInput"
                 :style="inputPlaceholderStyle"
                 @click="onMoneyFocus">
-            {{money || money === 0 ? money : '请输入金额~'}}
+            {{ money || money === 0 ? money : '请输入金额~' }}
           </view>
           <input class="accounts-money-input"
                  v-else
@@ -70,7 +70,7 @@
                 :style="textareaPlaceholderStyle"
                 @click="onNotesFocus"
                 v-if="!showNotesInput">
-            {{notes ? notes : '请输入账单备注~'}}
+            {{ notes ? notes : '请输入账单备注~' }}
           </view>
           <textarea class="accounts-notes-textarea"
                     v-else
@@ -94,8 +94,8 @@
               @click="onChooseLocation">
           <image :src="locationSvg"/>
           <view class="accounts-map-address">
-            <view class="accounts-map-name">{{address.name}}</view>
-            <view class="accounts-map-text">{{address.address}}</view>
+            <view class="accounts-map-name">{{ address.name }}</view>
+            <view class="accounts-map-text">{{ address.address }}</view>
           </view>
         </view>
         <view class="accounts-map-wrapper">
@@ -146,6 +146,11 @@ export default {
   onReady() {
     const {statusBarHeight} = uni.getSystemInfoSync()
     this.statusBarHeight = statusBarHeight ? statusBarHeight : 44
+  },
+  onLoad(options) {
+    if (options.tableId) {
+      this.selectedTable = this.getMyTableList.filter(item => item.id === parseInt(options.tableId))[0]
+    }
   },
   computed: {
     ...mapState([

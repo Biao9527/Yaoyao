@@ -34,7 +34,7 @@ export const recommend_tables = [
             {icon: 'icon-dangao', text: '蛋糕'},
             {icon: 'icon-chuanchuan', text: '烧烤'},
             {icon: 'icon-kafei', text: '咖啡'},
-            {icon: 'icon-pijiu', text: '喝脾酒'},
+            {icon: 'icon-pijiu', text: '喝啤酒'},
             {icon: 'icon-zhushi', text: '中/晚餐'},
             {icon: 'icon-malatang', text: '麻辣烫'}
         ]
