@@ -3,7 +3,8 @@
     <NavBar/>
     <view class="post-content">
       <AccountList v-if="Array.isArray(getAccountList) && getAccountList.length > 0"
-                   :account-list="getAccountList"/>
+                   :account-list="getAccountList"
+                   :table-list="getMyTableList"/>
       <view class="post-nothing" v-else>
         <Nothing text="这里什么都没有~"/>
       </view>
@@ -46,7 +47,8 @@ export default {
       'accountList'
     ]),
     ...mapGetters([
-      'getAccountList'
+      'getAccountList',
+      'getMyTableList'
     ])
   },
   data() {

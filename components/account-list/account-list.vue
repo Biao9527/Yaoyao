@@ -4,8 +4,8 @@
           v-for="items in accountList" :key="items.id">
       <view class="account-list-item-header">
         <view class="account-list-item-table">
-          <uni-icons custom-prefix="iconfont" :type="items.table.icon" size="68rpx"/>
-          <view class="table-name">{{ items.table.name }}</view>
+          <uni-icons custom-prefix="iconfont" :type="filterTable(items).icon" size="68rpx"/>
+          <view class="table-name">{{ filterTable(items).name }}</view>
         </view>
         <view class="account-list-item-money">{{items.type}}￥{{ items.money }}</view>
       </view>
@@ -33,7 +33,14 @@
 
 <script>
 export default {
-  props: ['accountList']
+  props: ['accountList', 'tableList'],
+  computed: {
+    filterTable() {
+      return function (data) {
+        return this.tableList.filter(item => item.id === data.tableId)[0]
+      }
+    }
+  }
 }
 </script>
 

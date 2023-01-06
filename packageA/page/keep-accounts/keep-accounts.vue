@@ -244,7 +244,7 @@ export default {
     onSubmit() {
       const payload = {
         type: this.tallyType,
-        table: this.selectedTable,
+        tableId: this.selectedTable.id,
         date: this.selectedDate,
         money: parseFloat(this.money).toFixed(2),
         notes: this.notes,
