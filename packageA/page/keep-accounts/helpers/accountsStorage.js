@@ -15,6 +15,28 @@ export async function updateAccountsStorage (data) {
     })
 }
 
+export async function removeAccountsStorage(data) {
+    return new Promise(resolve => {
+        try {
+            let tallyList = uni.getStorageSync('tally')
+            if (!tallyList) {
+                resolve(false)
+                return
+            }
+            data.map(items => {
+                const index = tallyList.findIndex(item => item.id === items.id)
+                if (index >= 0) {
+                    tallyList.splice(index, 1)
+                }
+            })
+            uni.setStorageSync('tally', tallyList)
+            resolve(true)
+        } catch (e) {
+            resolve(false)
+        }
+    })
+}
+
 export function verificationTallyForm (data) {
     if (!data.type) {
         this.showToast('请选择账单类型')

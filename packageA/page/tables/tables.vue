@@ -48,6 +48,7 @@ import {navigateToPage} from "../../../helpers/navigateTo";
 import {mapState, mapGetters, mapMutations} from 'vuex'
 import CreateTableModal from "./components/create-table-modal/create-table-modal";
 import {removeTableStorage} from "./helper/updateTablesStorage";
+import {removeAccountsStorage} from "../keep-accounts/helpers/accountsStorage";
 
 export default {
   components: {
@@ -62,7 +63,8 @@ export default {
       'operationHeight'
     ]),
     ...mapGetters([
-      'getMyTableList'
+      'getMyTableList',
+      'getAccountList'
     ])
   },
   data() {
@@ -88,7 +90,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(['removeTable']),
+    ...mapMutations(['removeTable', 'removeAccount']),
     onAddTableClick() {
       navigateToPage('createTable')
     },
@@ -107,10 +109,35 @@ export default {
       this.selectTableItem = item
     },
     removeTableModal() {
+      const filterItem = this.getAccountList.filter(item => item.tableId === this.selectTableItem.id)
+      if (filterItem && filterItem.length > 0) {
+        uni.showModal({
+          title: '此标签已绑定记账数据，若继续删除会将绑定数据一同删除！',
+          confirmText: '继续删除',
+          confirmColor: '#dd524d',
+          success: res => {
+            if (res.confirm) {
+              this.deleteTable(filterItem)
+            }
+          }
+        })
+      } else {
+        this.deleteTable()
+      }
+    },
+    deleteTable(filterItem) {
       uni.showModal({
         title: '确定删除标签',
         success: async (res) => {
           if (res.confirm) {
+            if (filterItem && filterItem.length > 0) {
+              const successAcc = removeAccountsStorage(filterItem)
+              if (!successAcc) {
+                this.showToast('删除失败')
+                return
+              }
+              this.removeAccount(filterItem)
+            }
             const success = await removeTableStorage(this.selectTableItem)
             if (!success) {
               this.showToast('删除失败')

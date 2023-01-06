@@ -20,6 +20,14 @@ export default {
                 state.accountList = [data]
             }
         },
+        removeAccount(state, data) {
+            data.map(items => {
+                const index = state.accountList.findIndex(item => item.id === items.id)
+                if (index >= 0) {
+                    state.accountList.splice(index, 1)
+                }
+            })
+        }
     },
     actions: {}
 }
