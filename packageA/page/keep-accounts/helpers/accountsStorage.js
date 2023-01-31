@@ -47,7 +47,7 @@ export function verificationTallyForm (data) {
     } else if (!data.date) {
         this.showToast('请选择时间')
         return true
-    } else if (!data.money && data.money !== 0) {
+    } else if (!data.money) {
         this.showToast('请输入金额')
         return true
     } else if (!data.notes) {
