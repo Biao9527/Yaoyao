@@ -1,6 +1,8 @@
 <template>
   <view class="post">
     <NavBar/>
+    <PostScreenTab :selected-index.sync="selectedTab"
+                   @onTabsClick="onTabsClick"/>
     <view class="post-content">
       <AccountList v-if="Array.isArray(getAccountList) && getAccountList.length > 0"
                    :account-list="getAccountList"
@@ -23,6 +25,7 @@ import CustomTabBar from "../../components/custom-tab-bar";
 import NavBar from "../../components/nav-bar";
 import AccountList from "../../components/account-list/account-list";
 import Nothing from "../../components/nothing/nothing";
+import PostScreenTab from "./post-screen-tab/post-screen-tab";
 import {mapState, mapGetters} from 'vuex'
 import {navigateToPage} from "../../helpers/navigateTo";
 
@@ -31,7 +34,8 @@ export default {
     CustomTabBar,
     NavBar,
     AccountList,
-    Nothing
+    Nothing,
+    PostScreenTab
   },
   onShareAppMessage(res) {
     if (res.from === 'button') {// 来自页面内分享按钮
@@ -52,11 +56,16 @@ export default {
     ])
   },
   data() {
-    return {}
+    return {
+      selectedTab: 0
+    }
   },
   methods: {
     goKeepAccounts() {
       navigateToPage('keepAccounts')
+    },
+    onTabsClick(id) {
+      this.selectedTab = id
     }
   }
 }
