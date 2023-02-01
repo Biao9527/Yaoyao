@@ -95,6 +95,8 @@ export default {
     }
 
     &-notes {
+      white-space: pre-wrap;
+      word-break: break-word;
       background: #F6F6F6;
       margin: 26rpx 0;
       padding: 16rpx;
