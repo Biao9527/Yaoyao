@@ -1,8 +1,9 @@
 <template>
   <view class="post">
-    <NavBar/>
+    <NavBar title="摇摇晃摇"/>
     <PostScreenTab :selected-index.sync="selectedTab"
-                   @onTabsClick="onTabsClick"/>
+                   @onTabsClick="onTabsClick"
+                   @onTabsSearch="onTabsSearch"/>
     <view class="post-content">
       <AccountList v-if="Array.isArray(list) && list.length > 0"
                    :account-list="list"
@@ -71,6 +72,9 @@ export default {
     onTabsClick(id) {
       this.selectedTab = id
       this.filterAccountList()
+    },
+    onTabsSearch() {
+      navigateToPage('search')
     },
     filterAccountList() {
       const typeHash = {

@@ -1,6 +1,7 @@
 const PAGE_BASE_URL = {
     createTable: '/packageA/page/tables/create-table/create-table',
-    keepAccounts: '/packageA/page/keep-accounts/keep-accounts'
+    keepAccounts: '/packageA/page/keep-accounts/keep-accounts',
+    search: '/packageA/page/search/search'
 }
 
 export const navigateToPage = (url, params = '') => {

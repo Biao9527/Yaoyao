@@ -9,7 +9,7 @@
           {{ item.name }}
         </view>
       </view>
-      <view class="post-tabs-screen">
+      <view class="post-tabs-screen" @click="onSearch">
         <uni-icons type="bars" size="36rpx" color="#131C38"/>
         <view class="post-tabs-screen-text">筛选</view>
       </view>
@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  props: ['selectedIndex', 'onTabsClick'],
+  props: ['selectedIndex', 'onTabsClick', 'onTabsSearch'],
   data() {
     return {
       tabList: [
@@ -32,6 +32,9 @@ export default {
   methods: {
     onTabsItem(id) {
       this.$emit('onTabsClick', id)
+    },
+    onSearch() {
+      this.$emit('onTabsSearch')
     }
   }
 }
