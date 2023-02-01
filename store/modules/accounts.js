@@ -5,7 +5,10 @@ export default {
     getters: {
         getAccountList: state => {
             try {
-                state.accountList = uni.getStorageSync('tally')
+                const list = uni.getStorageSync('tally')
+                state.accountList = list.sort((a, b) => {
+                    return a.date < b.date ? 1 : -1
+                })
                 return state.accountList
             } catch (e) {
 
