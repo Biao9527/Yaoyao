@@ -4,8 +4,8 @@
     <PostScreenTab :selected-index.sync="selectedTab"
                    @onTabsClick="onTabsClick"/>
     <view class="post-content">
-      <AccountList v-if="Array.isArray(getAccountList) && getAccountList.length > 0"
-                   :account-list="getAccountList"
+      <AccountList v-if="Array.isArray(list) && list.length > 0"
+                   :account-list="list"
                    :table-list="getMyTableList"/>
       <view class="post-nothing" v-else>
         <Nothing text="这里什么都没有~"/>
@@ -45,6 +45,9 @@ export default {
       path: '/pages/index/index'
     }
   },
+  onShow() {
+    this.filterAccountList()
+  },
   computed: {
     ...mapState([
       'operationHeight',
@@ -57,7 +60,8 @@ export default {
   },
   data() {
     return {
-      selectedTab: 0
+      selectedTab: 0,
+      list: []
     }
   },
   methods: {
@@ -66,6 +70,18 @@ export default {
     },
     onTabsClick(id) {
       this.selectedTab = id
+      this.filterAccountList()
+    },
+    filterAccountList() {
+      const typeHash = {
+        1: '-',
+        2: '+'
+      }
+      if (this.selectedTab !== 0) {
+        this.list = this.getAccountList.filter(item => item.type === typeHash[this.selectedTab])
+      } else {
+        this.list = this.getAccountList
+      }
     }
   }
 }
