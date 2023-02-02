@@ -8,12 +8,22 @@
               :class="selectedIndex === items.id ? 'active' : ''"
               @click="onTabsItem(items)"
               v-for="items in filterList" :key="items.id">
-          {{ items.title }}
+          <uni-datetime-picker v-if="items.id === 3"
+                               type="datetimerange"
+                               return-type="timestamp"
+                               hide-second
+                               :end="Date.now()"
+                               @change="onDateChange">
+            {{ items.title }}
+          </uni-datetime-picker>
+          <view v-else>
+            {{ items.title }}
+          </view>
         </view>
       </view>
       <view class="search-filter-title"
             v-if="filterList[selectedIndex].name">
-        {{filterList[selectedIndex].name}}
+        {{ filterList[selectedIndex].name }}
       </view>
       <view class="search-filter-list"
             v-if="filterList[selectedIndex].list">
@@ -21,7 +31,7 @@
               :class="(filterType === item.value || sortValue === item.value) ? 'active' : ''"
               v-for="(item, index) in filterList[selectedIndex].list"
               :key="index" @click="onFilterItemClick(item)">
-          {{item.text}}
+          {{ item.text }}
         </view>
       </view>
     </view>
@@ -32,7 +42,7 @@
 import {FILTER_LIST} from "../helper";
 
 export default {
-  props: ['isOpened', 'selectedIndex', 'filterType', 'sortValue', 'onFilterItem', 'onFilterTabClick'],
+  props: ['isOpened', 'selectedIndex', 'filterType', 'sortValue', 'onFilterItem', 'onFilterTabClick', 'onFilterDateClick'],
   data() {
     return {
       filterList: FILTER_LIST
@@ -44,7 +54,12 @@ export default {
         this.$emit('update:isOpened', false)
       }
     },
+    onDateChange(e) {
+      this.$emit('onFilterDateClick', e)
+      this.onMaskClose()
+    },
     onTabsItem(item) {
+      if (item.id === 3) return
       this.$emit('onFilterTabClick', item.id)
     },
     onFilterItemClick(item) {
@@ -62,6 +77,7 @@ export default {
   width: 100%;
   background: rgba(0, 0, 0, 0.4);
 }
+
 .search-filter {
   padding: 12rpx 0;
   position: fixed;

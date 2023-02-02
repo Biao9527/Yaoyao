@@ -9,7 +9,8 @@
                   :filter-type="selectedTabIndex"
                   :sort-value="sortValue"
                   @onFilterTabClick="onFilterTabClick"
-                  @onFilterItem="onFilterItemClick"/>
+                  @onFilterItem="onFilterItemClick"
+                  @onFilterDateClick="onFilterDate"/>
     <view class="search-content">
       <AccountList v-if="Array.isArray(dataList) && dataList.length > 0"
                    :account-list="dataList"
@@ -69,6 +70,7 @@ export default {
       selectFilterIndex: 0,
       dataList: [],
       filterTableId: [],
+      filterDateList: [],
       showFilter: false,
       isOpenedTable: false,
       sortValue: 'time_down',
@@ -91,6 +93,10 @@ export default {
       }
       this.selectFilterIndex = id
     },
+    onFilterDate(date) {
+      this.filterDateList = date
+      this.filterAccountList()
+    },
     onFilterItemClick(item) {
       this.showFilter = false
       switch (this.selectFilterIndex) {
@@ -107,9 +113,11 @@ export default {
     },
     filterAccountList() {
       this.dataList = this.getAccountList
+      //筛选类型
       if (this.selectedTabIndex !== 0) {
         this.dataList = this.dataList.filter(item => item.type === TYPE_HASH[this.selectedTabIndex])
       }
+      //筛选标签
       if (this.filterTableId.length > 0) {
         let list = []
         this.filterTableId.map(item => {
@@ -117,6 +125,11 @@ export default {
         })
         this.dataList = list
       }
+      //筛选日期
+      if (this.filterDateList.length === 2) {
+        this.dataList = this.dataList.filter(i => i.date >= this.filterDateList[0] && i.date <= this.filterDateList[1])
+      }
+      //筛选排序方式
       switch (this.sortValue) {
         case "time_up":
           this.dataList = this.dataList.sort((a, b) => {
