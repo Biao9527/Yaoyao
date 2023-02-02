@@ -22,7 +22,8 @@
                    :is-opened.sync="isOpenedTable"
                    :table-list.sync="getMyTableList"
                    :selected-table.sync="filterTableId"
-                   :nav-bar-height="statusBarHeight + 44"/>
+                   :nav-bar-height="statusBarHeight + 44"
+                   :operation-height="operationHeight"/>
   </view>
 </template>
 
@@ -33,7 +34,7 @@ import Nothing from "../../../components/nothing/nothing";
 import PostScreenTab from "../../../pages/index/post-screen-tab/post-screen-tab";
 import SearchFilter from "./search-filter/search-filter";
 import SelectedTable from "../keep-accounts/components/selected-table/selected-table";
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import {TYPE_HASH} from "./helper";
 
 export default {
@@ -53,6 +54,9 @@ export default {
     this.filterAccountList()
   },
   computed: {
+    ...mapState([
+      'operationHeight'
+    ]),
     ...mapGetters([
       'getAccountList',
       'getMyTableList'

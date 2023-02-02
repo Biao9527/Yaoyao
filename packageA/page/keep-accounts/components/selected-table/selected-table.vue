@@ -10,7 +10,8 @@
           <view class="selected-table-create" @click="goCreateTable">创建</view>
         </view>
         <scroll-view scroll-y :style="scrollHeight">
-          <view class="selected-table-list">
+          <view class="selected-table-list"
+                :style="footerHeight">
             <view class="selected-table-list-item"
                   :class="((multiSelect && selectedTable.findIndex(i => i === item.id) >= 0) ||
                   (selectedTable && item.id === selectedTable.id)) ? 'selected' : ''"
@@ -30,6 +31,11 @@
         </view>
       </view>
     </view>
+    <view class="selected-table-buttons"
+          :class="setOperationHeight" v-if="multiSelect">
+      <view class="selected-table-buttons-item cancel">取消</view>
+      <view class="selected-table-buttons-item confirm">确定</view>
+    </view>
   </view>
 </template>
 
@@ -47,15 +53,21 @@ export default {
     },
     scrollHeight() {
       return `height: calc(100vh - ${this.navBarHeight + 80}px)`
+    },
+    footerHeight() {
+      return this.multiSelect ? `padding-bottom: ${this.operationHeight !== '96rpx' ? 98 + 45 : 98}rpx` : ''
+    },
+    setOperationHeight() {
+      return this.operationHeight !== '96rpx' ? 'set-height' : ''
     }
   },
-  props: ['isOpened', 'multiSelect', 'selectedTable', 'tableList', 'navBarHeight'],
+  props: ['isOpened', 'multiSelect', 'selectedTable', 'tableList', 'navBarHeight', 'operationHeight'],
   data() {
     return {}
   },
   methods: {
     onMaskClick() {
-      if (!this.isOpened) return
+      if (!this.isOpened || this.multiSelect) return
       this.$emit('update:isOpened', false)
     },
     onTableItem(item) {
@@ -180,6 +192,39 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  &-buttons {
+    width: 70%;
+    height: 98rpx;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    background: linear-gradient(90deg, rgba(255,255,255,1) 40%, rgba(76,217,100,1) 40%);
+
+    &-item {
+      font-size: 30rpx;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cancel {
+      width: 40%;
+      color: #9b9b9b;
+    }
+
+    .confirm {
+      width: 60%;
+      background: #4cd964;
+      color: #FFFFFF;
+    }
+  }
+
+  .set-height {
+    padding-bottom: 45rpx;
   }
 }
 </style>
