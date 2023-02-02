@@ -33,8 +33,10 @@
     </view>
     <view class="selected-table-buttons"
           :class="setOperationHeight" v-if="multiSelect">
-      <view class="selected-table-buttons-item cancel">取消</view>
-      <view class="selected-table-buttons-item confirm">确定</view>
+      <view class="selected-table-buttons-item cancel"
+            @click="onMaskClick">取消</view>
+      <view class="selected-table-buttons-item confirm"
+            @click="onConfirmClick">确定</view>
     </view>
   </view>
 </template>
@@ -61,13 +63,17 @@ export default {
       return this.operationHeight !== '96rpx' ? 'set-height' : ''
     }
   },
-  props: ['isOpened', 'multiSelect', 'selectedTable', 'tableList', 'navBarHeight', 'operationHeight'],
+  props: ['isOpened', 'multiSelect', 'selectedTable', 'tableList', 'navBarHeight', 'operationHeight', 'onConfirm'],
   data() {
     return {}
   },
   methods: {
     onMaskClick() {
-      if (!this.isOpened || this.multiSelect) return
+      if (!this.isOpened) return
+      this.$emit('update:isOpened', false)
+    },
+    onConfirmClick() {
+      this.$emit('onConfirm')
       this.$emit('update:isOpened', false)
     },
     onTableItem(item) {

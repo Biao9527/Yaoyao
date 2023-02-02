@@ -14,7 +14,7 @@
       <AccountList v-if="Array.isArray(dataList) && dataList.length > 0"
                    :account-list="dataList"
                    :table-list="getMyTableList"/>
-      <view class="post-nothing" v-else>
+      <view class="search-nothing" v-else>
         <Nothing text="这里什么都没有~"/>
       </view>
     </view>
@@ -23,7 +23,8 @@
                    :table-list.sync="getMyTableList"
                    :selected-table.sync="filterTableId"
                    :nav-bar-height="statusBarHeight + 44"
-                   :operation-height="operationHeight"/>
+                   :operation-height="operationHeight"
+                   @onConfirm="filterAccountList"/>
   </view>
 </template>
 
@@ -109,6 +110,13 @@ export default {
       if (this.selectedTabIndex !== 0) {
         this.dataList = this.dataList.filter(item => item.type === TYPE_HASH[this.selectedTabIndex])
       }
+      if (this.filterTableId.length > 0) {
+        let list = []
+        this.filterTableId.map(item => {
+          list = list.concat(this.dataList.filter(i => i.tableId === item))
+        })
+        this.dataList = list
+      }
       switch (this.sortValue) {
         case "time_up":
           this.dataList = this.dataList.sort((a, b) => {
@@ -139,5 +147,9 @@ export default {
 @import "../../../static/icons/iconfont.css";
 
 .search {
+
+  &-nothing {
+    margin-top: 40%;
+  }
 }
 </style>
