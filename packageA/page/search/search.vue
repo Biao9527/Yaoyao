@@ -8,7 +8,8 @@
                   :selected-index.sync="selectFilterIndex"
                   :filter-type="selectedTabIndex"
                   :sort-value="sortValue"
-                  @onFilterItem="onFilterItem"/>
+                  @onFilterTabClick="onFilterTabClick"
+                  @onFilterItem="onFilterItemClick"/>
     <view class="search-content">
       <AccountList v-if="Array.isArray(dataList) && dataList.length > 0"
                    :account-list="dataList"
@@ -17,6 +18,11 @@
         <Nothing text="这里什么都没有~"/>
       </view>
     </view>
+    <SelectedTable :multi-select="true"
+                   :is-opened.sync="isOpenedTable"
+                   :table-list.sync="getMyTableList"
+                   :selected-table.sync="filterTableId"
+                   :nav-bar-height="statusBarHeight + 44"/>
   </view>
 </template>
 
@@ -26,6 +32,7 @@ import AccountList from "../../../components/account-list/account-list";
 import Nothing from "../../../components/nothing/nothing";
 import PostScreenTab from "../../../pages/index/post-screen-tab/post-screen-tab";
 import SearchFilter from "./search-filter/search-filter";
+import SelectedTable from "../keep-accounts/components/selected-table/selected-table";
 import {mapGetters} from 'vuex'
 import {TYPE_HASH} from "./helper";
 
@@ -35,7 +42,12 @@ export default {
     AccountList,
     Nothing,
     PostScreenTab,
-    SearchFilter
+    SearchFilter,
+    SelectedTable
+  },
+  onReady() {
+    const {statusBarHeight} = uni.getSystemInfoSync()
+    this.statusBarHeight = statusBarHeight ? statusBarHeight : 44
   },
   onShow() {
     this.filterAccountList()
@@ -51,8 +63,11 @@ export default {
       selectedTabIndex: 0,
       selectFilterIndex: 0,
       dataList: [],
+      filterTableId: [],
       showFilter: false,
-      sortValue: 'time_down'
+      isOpenedTable: false,
+      sortValue: 'time_down',
+      statusBarHeight: 44
     }
   },
   methods: {
@@ -63,7 +78,15 @@ export default {
     onTabsSearch() {
       this.showFilter = !this.showFilter
     },
-    onFilterItem(item) {
+    onFilterTabClick(id) {
+      if (id === 2) {
+        this.showFilter = false
+        this.isOpenedTable = true
+        return
+      }
+      this.selectFilterIndex = id
+    },
+    onFilterItemClick(item) {
       this.showFilter = false
       switch (this.selectFilterIndex) {
         case 0:
@@ -101,7 +124,7 @@ export default {
           })
           break
         default:
-            break
+          break
       }
     }
   }

@@ -12,7 +12,8 @@
         <scroll-view scroll-y :style="scrollHeight">
           <view class="selected-table-list">
             <view class="selected-table-list-item"
-                  :class="item.id === selectedTable.id ? 'selected' : ''"
+                  :class="((multiSelect && selectedTable.findIndex(i => i === item.id) >= 0) ||
+                  (selectedTable && item.id === selectedTable.id)) ? 'selected' : ''"
                   v-for="item in tableList" :key="item.id"
                   @click="onTableItem(item)">
               <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
@@ -48,7 +49,7 @@ export default {
       return `height: calc(100vh - ${this.navBarHeight + 80}px)`
     }
   },
-  props: ['isOpened', 'selectedTable', 'tableList', 'navBarHeight'],
+  props: ['isOpened', 'multiSelect', 'selectedTable', 'tableList', 'navBarHeight'],
   data() {
     return {}
   },
@@ -58,6 +59,18 @@ export default {
       this.$emit('update:isOpened', false)
     },
     onTableItem(item) {
+      if (this.multiSelect && Array.isArray(this.selectedTable)) {
+        const filterId = this.selectedTable.findIndex(i => i === item.id)
+        const idList = this.selectedTable
+        if (filterId >= 0) {
+          idList.splice(filterId, 1)
+          this.$emit('update:selectedTable', idList)
+        } else {
+          idList.push(item.id)
+          this.$emit('update:selectedTable', idList)
+        }
+        return;
+      }
       if (this.selectedTable && item.id === this.selectedTable.id) return
       this.$emit('update:selectedTable', item)
       this.onMaskClick()

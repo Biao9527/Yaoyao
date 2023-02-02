@@ -20,7 +20,7 @@
         <view class="search-filter-list-item"
               :class="(filterType === item.value || sortValue === item.value) ? 'active' : ''"
               v-for="(item, index) in filterList[selectedIndex].list"
-              :key="index" @click="onFilterItem(item)">
+              :key="index" @click="onFilterItemClick(item)">
           {{item.text}}
         </view>
       </view>
@@ -32,7 +32,7 @@
 import {FILTER_LIST} from "../helper";
 
 export default {
-  props: ['isOpened', 'selectedIndex', 'filterType', 'sortValue', 'onFilterItem'],
+  props: ['isOpened', 'selectedIndex', 'filterType', 'sortValue', 'onFilterItem', 'onFilterTabClick'],
   data() {
     return {
       filterList: FILTER_LIST
@@ -45,9 +45,9 @@ export default {
       }
     },
     onTabsItem(item) {
-      this.$emit('update:selectedIndex', item.id)
+      this.$emit('onFilterTabClick', item.id)
     },
-    onFilterItem(item) {
+    onFilterItemClick(item) {
       this.$emit('onFilterItem', item)
     }
   }
@@ -68,7 +68,7 @@ export default {
   width: 100%;
   background: #FFFFFF;
   border-top: 1PX solid #f2f2f2;
-  z-index: 998;
+  z-index: 800;
 
   &-tabs {
     height: 68rpx;
