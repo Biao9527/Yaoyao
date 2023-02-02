@@ -1,6 +1,7 @@
 <template>
   <view>
-    <view class="search-filter-mask" v-if="isOpened"/>
+    <view class="search-filter-mask" v-if="isOpened"
+          @click="onMaskClose"/>
     <view class="search-filter" v-if="isOpened">
       <view class="search-filter-tabs">
         <view class="search-filter-tabs-item"
@@ -17,8 +18,9 @@
       <view class="search-filter-list"
             v-if="filterList[selectedIndex].list">
         <view class="search-filter-list-item"
+              :class="(filterType === item.value || sortValue === item.value) ? 'active' : ''"
               v-for="(item, index) in filterList[selectedIndex].list"
-              :key="index" @click="onRecommendTablesItem(item)">
+              :key="index" @click="onFilterItem(item)">
           {{item.text}}
         </view>
       </view>
@@ -30,15 +32,23 @@
 import {FILTER_LIST} from "../helper";
 
 export default {
-  props: ['isOpened', 'selectedIndex'],
+  props: ['isOpened', 'selectedIndex', 'filterType', 'sortValue', 'onFilterItem'],
   data() {
     return {
       filterList: FILTER_LIST
     }
   },
   methods: {
+    onMaskClose() {
+      if (this.isOpened) {
+        this.$emit('update:isOpened', false)
+      }
+    },
     onTabsItem(item) {
       this.$emit('update:selectedIndex', item.id)
+    },
+    onFilterItem(item) {
+      this.$emit('onFilterItem', item)
     }
   }
 }
@@ -53,6 +63,7 @@ export default {
   background: rgba(0, 0, 0, 0.4);
 }
 .search-filter {
+  padding: 12rpx 0;
   position: fixed;
   width: 100%;
   background: #FFFFFF;
@@ -108,6 +119,11 @@ export default {
       text-align: center;
       border-radius: 100rpx;
       margin-right: 42rpx;
+    }
+
+    .active {
+      color: #007aff;
+      border: 1PX solid #007aff;
     }
   }
 }

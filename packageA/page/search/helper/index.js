@@ -19,10 +19,10 @@ export const FILTER_LIST = [
         title: '排序',
         name: '排序方式',
         list: [
-            {text: '时间 ⬆', value: 0},
-            {text: '时间 ⬇', value: 1},
-            {text: '金额 ⬆', value: 2},
-            {text: '金额 ⬇', value: 2}
+            {text: '时间 ⬆', value: 'time_up'},
+            {text: '时间 ⬇', value: 'time_down'},
+            {text: '金额 ⬆', value: 'money_up'},
+            {text: '金额 ⬇', value: 'money_down'}
         ]
     },
     {

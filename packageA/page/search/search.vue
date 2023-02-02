@@ -4,8 +4,11 @@
     <PostScreenTab :selected-index.sync="selectedTabIndex"
                    @onTabsClick="onTabsClick"
                    @onTabsSearch="onTabsSearch"/>
-    <SearchFilter :is-opened="showFilter"
-                  :selected-index.sync="selectFilterIndex"/>
+    <SearchFilter :is-opened.sync="showFilter"
+                  :selected-index.sync="selectFilterIndex"
+                  :filter-type="selectedTabIndex"
+                  :sort-value="sortValue"
+                  @onFilterItem="onFilterItem"/>
     <view class="search-content">
       <AccountList v-if="Array.isArray(dataList) && dataList.length > 0"
                    :account-list="dataList"
@@ -49,6 +52,7 @@ export default {
       selectFilterIndex: 0,
       dataList: [],
       showFilter: false,
+      sortValue: 'time_down'
     }
   },
   methods: {
@@ -59,11 +63,45 @@ export default {
     onTabsSearch() {
       this.showFilter = !this.showFilter
     },
+    onFilterItem(item) {
+      this.showFilter = false
+      switch (this.selectFilterIndex) {
+        case 0:
+          this.selectedTabIndex = item.value
+          break
+        case 1:
+          this.sortValue = item.value
+          break
+        default:
+          break
+      }
+      this.filterAccountList()
+    },
     filterAccountList() {
+      this.dataList = this.getAccountList
       if (this.selectedTabIndex !== 0) {
-        this.dataList = this.getAccountList.filter(item => item.type === TYPE_HASH[this.selectedTabIndex])
-      } else {
-        this.dataList = this.getAccountList
+        this.dataList = this.dataList.filter(item => item.type === TYPE_HASH[this.selectedTabIndex])
+      }
+      switch (this.sortValue) {
+        case "time_up":
+          this.dataList = this.dataList.sort((a, b) => {
+            return a.date > b.date ? 1 : -1
+          })
+          break
+        case "time_down":
+          break
+        case "money_up":
+          this.dataList = this.dataList.sort((a, b) => {
+            return Number(a.money) > Number(b.money) ? 1 : -1
+          })
+          break
+        case "money_down":
+          this.dataList = this.dataList.sort((a, b) => {
+            return Number(a.money) < Number(b.money) ? 1 : -1
+          })
+          break
+        default:
+            break
       }
     }
   }
