@@ -29,6 +29,7 @@ import Nothing from "../../components/nothing/nothing";
 import PostScreenTab from "./post-screen-tab/post-screen-tab";
 import {mapState, mapGetters} from 'vuex'
 import {navigateToPage} from "../../helpers/navigateTo";
+import {TYPE_HASH} from "../../packageA/page/search/helper";
 
 export default {
   components: {
@@ -77,12 +78,8 @@ export default {
       navigateToPage('search')
     },
     filterAccountList() {
-      const typeHash = {
-        1: '-',
-        2: '+'
-      }
       if (this.selectedTab !== 0) {
-        this.list = this.getAccountList.filter(item => item.type === typeHash[this.selectedTab])
+        this.list = this.getAccountList.filter(item => item.type === TYPE_HASH[this.selectedTab])
       } else {
         this.list = this.getAccountList
       }

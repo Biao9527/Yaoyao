@@ -46,6 +46,7 @@ export default {
 }
 
 .post-tabs {
+  z-index: 998;
   position: fixed;
   display: flex;
   justify-content: space-between;
