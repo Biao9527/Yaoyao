@@ -17,7 +17,9 @@
                   :table-ids="filterTableId"
                   @onFilterDateClick="onFilterDate"
                   @onClearDate="onClearFilterDate"
-                  @onSortType="onSortType"/>
+                  @onSortType="onSortType"
+                  @removeFilterTable="removeFilterTable"
+                  @openTableList="openTableList"/>
       <AccountList v-if="Array.isArray(dataList) && dataList.length > 0"
                    :account-list="dataList"
                    :table-list="getMyTableList"/>
@@ -29,6 +31,7 @@
                    :is-opened.sync="isOpenedTable"
                    :table-list.sync="getMyTableList"
                    :selected-table.sync="filterTableId"
+                   :last-select-table="lastFilterTableId"
                    :nav-bar-height="statusBarHeight + 44"
                    :operation-height="operationHeight"
                    @onConfirm="filterAccountList"/>
@@ -78,6 +81,7 @@ export default {
       selectFilterIndex: 0,
       dataList: [],
       filterTableId: [],
+      lastFilterTableId: [],
       filterDateList: [],
       showFilter: false,
       isOpenedTable: false,
@@ -99,8 +103,7 @@ export default {
     },
     onFilterTabClick(id) {
       if (id === 2) {
-        this.showFilter = false
-        this.isOpenedTable = true
+        this.openTableList()
         return
       }
       this.selectFilterIndex = id
@@ -111,6 +114,15 @@ export default {
     },
     onClearFilterDate() {
       this.filterDateList = []
+      this.filterAccountList()
+    },
+    openTableList() {
+      this.showFilter = false
+      this.lastFilterTableId = this.filterTableId
+      this.isOpenedTable = true
+    },
+    removeFilterTable(id) {
+      this.filterTableId.splice(this.filterTableId.indexOf(id), 1)
       this.filterAccountList()
     },
     onFilterItemClick(item) {

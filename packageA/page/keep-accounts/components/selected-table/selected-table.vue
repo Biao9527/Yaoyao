@@ -63,13 +63,16 @@ export default {
       return this.operationHeight !== '96rpx' ? 'set-height' : ''
     }
   },
-  props: ['isOpened', 'multiSelect', 'selectedTable', 'tableList', 'navBarHeight', 'operationHeight', 'onConfirm'],
+  props: ['isOpened', 'multiSelect', 'selectedTable', 'lastSelectTable', 'tableList', 'navBarHeight', 'operationHeight', 'onConfirm'],
   data() {
     return {}
   },
   methods: {
     onMaskClick() {
       if (!this.isOpened) return
+      if (this.multiSelect && Array.isArray(this.selectedTable)) {
+        this.$emit('update:selectedTable', this.lastSelectTable)
+      }
       this.$emit('update:isOpened', false)
     },
     onConfirmClick() {

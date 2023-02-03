@@ -31,12 +31,23 @@
     </view>
     <view class="search-tips-item"
           v-if="tableIds.length > 0">
-      <view class="search-tips-title">选中标签：</view>
-      <view class="search-tips-table"
-            v-for="tag in tableIds" :key="tag">
-        <uni-icons custom-prefix="iconfont" :type="filterTable(tag).icon" size="50rpx"/>
-        <view class="search-tips-table-text">{{ filterTable(tag).name }}</view>
-      </view>
+      <view class="search-tips-title title-fixed">选中标签：</view>
+      <scroll-view scroll-x class="search-tips-table-scroll">
+        <view class="search-tips-table-list"
+              @click="onTableListClick">
+          <!--此处用于占位-->
+          <view class="search-tips-title hidden">选中标签：</view>
+          <!--此处用于占位-->
+          <view class="search-tips-table"
+                v-for="tag in tableIds" :key="tag">
+            <uni-icons custom-prefix="iconfont" :type="filterTable(tag).icon" size="50rpx"/>
+            <view class="search-tips-table-text">{{ filterTable(tag).name }}</view>
+            <view class="search-tips-table-delete" @click.stop="removeTable(tag)">
+              <uni-icons type="clear" size="44rpx" color="#c0c4cc"/>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -46,7 +57,7 @@ import {SORT_TEXT} from "../helper";
 import {mapGetters} from 'vuex'
 
 export default {
-  props: ['sortValue', 'tableIds', 'dateList', 'onClearDate', 'onFilterDateClick', 'onSortType'],
+  props: ['sortValue', 'tableIds', 'dateList', 'onClearDate', 'onFilterDateClick', 'onSortType', 'removeFilterTable', 'openTableList'],
   computed: {
     ...mapGetters([
       'getMyTableList'
@@ -69,6 +80,12 @@ export default {
     },
     onSortTypeClick() {
       this.$emit('onSortType')
+    },
+    removeTable(id) {
+      this.$emit('removeFilterTable', id)
+    },
+    onTableListClick() {
+      this.$emit('openTableList')
     }
   }
 }
@@ -81,6 +98,7 @@ export default {
   padding-left: 26rpx;
 
   &-item {
+    position: relative;
     display: flex;
     align-items: center;
     min-height: 80rpx;
@@ -93,27 +111,62 @@ export default {
     font-weight: bold;
   }
 
+  .hidden {
+    opacity: 0;
+  }
+
+  .title-fixed {
+    background: #FFFFFF;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
   &-text {
     font-size: 28rpx;
     color: #7f7f7f;
   }
 
+  &-table-scroll {
+    position: absolute;
+    left: 0;
+    height: 100%;
+  }
+
+  &-table-list {
+    height: 100%;
+    width: max-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 26rpx;
+  }
+
   &-table {
-    height: 62rpx;
+    height: 60rpx;
     width: max-content;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1rpx solid #dcdcdc;
     border-radius: 100rpx;
-    padding: 0 22rpx 0 6rpx;
+    padding: 0 16rpx 0 6rpx;
     text-align: center;
+    margin-right: 16rpx;
 
     &-text {
       white-space: nowrap;
       margin-left: 12rpx;
       font-size: 26rpx;
       color: #9b9b9b;
+    }
+
+    &-delete {
+      margin-left: 6rpx;
     }
   }
 
@@ -136,5 +189,11 @@ export default {
       padding: 16rpx;
     }
   }
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
 }
 </style>
