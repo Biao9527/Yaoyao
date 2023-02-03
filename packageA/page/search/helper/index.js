@@ -3,6 +3,13 @@ export const TYPE_HASH = {
     2: '+'
 }
 
+export const SORT_TEXT = {
+    'time_up': '时间由远到近',
+    'time_down': '时间由近到远',
+    'money_up': '金额由低到高',
+    'money_down': '金额由高到低',
+}
+
 export const FILTER_LIST = [
     {
         id: 0,

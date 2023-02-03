@@ -12,6 +12,12 @@
                   @onFilterItem="onFilterItemClick"
                   @onFilterDateClick="onFilterDate"/>
     <view class="search-content">
+      <SearchTips :sort-value="sortValue"
+                  :date-list="filterDateList"
+                  :table-ids="filterTableId"
+                  @onFilterDateClick="onFilterDate"
+                  @onClearDate="onClearFilterDate"
+                  @onSortType="onSortType"/>
       <AccountList v-if="Array.isArray(dataList) && dataList.length > 0"
                    :account-list="dataList"
                    :table-list="getMyTableList"/>
@@ -36,6 +42,7 @@ import Nothing from "../../../components/nothing/nothing";
 import PostScreenTab from "../../../pages/index/post-screen-tab/post-screen-tab";
 import SearchFilter from "./search-filter/search-filter";
 import SelectedTable from "../keep-accounts/components/selected-table/selected-table";
+import SearchTips from "./search-tips/search-tips";
 import {mapGetters, mapState} from 'vuex'
 import {TYPE_HASH} from "./helper";
 
@@ -46,7 +53,8 @@ export default {
     Nothing,
     PostScreenTab,
     SearchFilter,
-    SelectedTable
+    SelectedTable,
+    SearchTips
   },
   onReady() {
     const {statusBarHeight} = uni.getSystemInfoSync()
@@ -85,6 +93,10 @@ export default {
     onTabsSearch() {
       this.showFilter = !this.showFilter
     },
+    onSortType() {
+      this.selectFilterIndex = 1
+      this.showFilter = true
+    },
     onFilterTabClick(id) {
       if (id === 2) {
         this.showFilter = false
@@ -95,6 +107,10 @@ export default {
     },
     onFilterDate(date) {
       this.filterDateList = date
+      this.filterAccountList()
+    },
+    onClearFilterDate() {
+      this.filterDateList = []
       this.filterAccountList()
     },
     onFilterItemClick(item) {
