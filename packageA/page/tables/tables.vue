@@ -8,14 +8,17 @@
                                :right-options="options"
                                @click="bindClick"
                                @change="swipeChange($event, item)">
-          <view class="tables-list-item">
+          <view class="tables-list-item"
+                @click="goSearchPage(item.id)">
             <view class="tables-list-item-right">
               <uni-icons custom-prefix="iconfont" :type="item.icon" size="88rpx"/>
               <view class="tables-list-item-text">{{ item.name }}</view>
-              <uni-icons type="help" size="40rpx" color="#dd524d"
-                         @click="showToast('向左滑动即可操作标签')"/>
+              <view @click.stop="showToast('向左滑动即可操作标签')">
+                <uni-icons type="help" size="40rpx" color="#dd524d"/>
+              </view>
             </view>
-            <view class="tables-list-item-left" @click="goKeepAccounts(item.id)">
+            <view class="tables-list-item-left"
+                  @click.stop="goKeepAccounts(item.id)">
               <view class="left_text">去记账</view>
               <uni-icons type="right" size="34rpx" color="#BBBBBB"/>
             </view>
@@ -151,6 +154,9 @@ export default {
     },
     goKeepAccounts(id) {
       navigateToPage('keepAccounts', `?tableId=${id}`)
+    },
+    goSearchPage(id) {
+      navigateToPage('search', `?tableId=${id}`)
     },
     showToast(title) {
       uni.showToast({

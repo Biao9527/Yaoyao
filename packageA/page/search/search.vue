@@ -67,6 +67,14 @@ export default {
   onShow() {
     this.filterAccountList()
   },
+  onLoad(options) {
+    if (options.openFilter) {
+      this.showFilter = true
+    }
+    if (options.tableId) {
+      this.filterTableId = [Number(options.tableId)]
+    }
+  },
   computed: {
     ...mapState([
       'operationHeight'

@@ -7,7 +7,8 @@
     <view class="post-content">
       <AccountList v-if="Array.isArray(list) && list.length > 0"
                    :account-list="list"
-                   :table-list="getMyTableList"/>
+                   :table-list="getMyTableList"
+                   @onTableClick="onTabsSearch"/>
       <view class="post-nothing" v-else>
         <Nothing text="这里什么都没有~"/>
       </view>
@@ -74,8 +75,12 @@ export default {
       this.selectedTab = id
       this.filterAccountList()
     },
-    onTabsSearch() {
-      navigateToPage('search')
+    onTabsSearch(id) {
+      let params = '?openFilter=true'
+      if (id) {
+        params = `?tableId=${id}`
+      }
+      navigateToPage('search', params)
     },
     filterAccountList() {
       if (this.selectedTab !== 0) {

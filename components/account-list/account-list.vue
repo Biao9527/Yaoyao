@@ -3,7 +3,8 @@
     <view class="account-list-item"
           v-for="items in accountList" :key="items.id">
       <view class="account-list-item-header">
-        <view class="account-list-item-table">
+        <view class="account-list-item-table"
+              @click.stop="onTable(items.tableId)">
           <uni-icons custom-prefix="iconfont" :type="filterTable(items).icon" size="68rpx"/>
           <view class="table-name">{{ filterTable(items).name }}</view>
         </view>
@@ -33,12 +34,17 @@
 
 <script>
 export default {
-  props: ['accountList', 'tableList'],
+  props: ['accountList', 'tableList', 'onTableClick'],
   computed: {
     filterTable() {
       return function (data) {
         return this.tableList.filter(item => item.id === data.tableId)[0]
       }
+    }
+  },
+  methods: {
+    onTable(item) {
+      this.$emit('onTableClick', item)
     }
   }
 }
