@@ -19,7 +19,8 @@
                   @onClearDate="onClearFilterDate"
                   @onSortType="onSortType"
                   @removeFilterTable="removeFilterTable"
-                  @openTableList="openTableList"/>
+                  @openTableList="openTableList"
+                  @onReset="onReset"/>
       <AccountList v-if="Array.isArray(dataList) && dataList.length > 0"
                    :account-list="dataList"
                    :table-list="getMyTableList"/>
@@ -90,6 +91,13 @@ export default {
     }
   },
   methods: {
+    onReset() {
+      this.selectedTabIndex = 0
+      this.filterTableId = []
+      this.sortValue = 'time_down'
+      this.filterDateList = []
+      this.filterAccountList()
+    },
     onTabsClick(id) {
       this.selectedTabIndex = id
       this.filterAccountList()

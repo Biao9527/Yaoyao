@@ -1,5 +1,11 @@
 <template>
   <view class="search-tips">
+    <view class="search-tips-reset">
+      <view class="search-tips-reset-btn" @click="onResetClick">
+        <uni-icons type="loop" size="32rpx" color="#FFFFFF"/>
+        <view class="search-tips-reset-text">重置</view>
+      </view>
+    </view>
     <view class="search-tips-item">
       <view class="search-tips-title">排序方式：</view>
       <view class="search-tips-text" @click="onSortTypeClick">
@@ -19,7 +25,7 @@
         <view class="search-tips-date">
           <view class="search-tips-date-text">
             <uni-dateformat :date="dateList[0]" format="yyyy-M-d hh:mm"/>
-            {{' - '}}
+            {{ ' - ' }}
             <uni-dateformat :date="dateList[1]" format="yyyy-M-d hh:mm"/>
           </view>
           <view class="search-tips-date-clear"
@@ -57,7 +63,7 @@ import {SORT_TEXT} from "../helper";
 import {mapGetters} from 'vuex'
 
 export default {
-  props: ['sortValue', 'tableIds', 'dateList', 'onClearDate', 'onFilterDateClick', 'onSortType', 'removeFilterTable', 'openTableList'],
+  props: ['sortValue', 'tableIds', 'dateList', 'onClearDate', 'onFilterDateClick', 'onSortType', 'removeFilterTable', 'openTableList', 'onReset'],
   computed: {
     ...mapGetters([
       'getMyTableList'
@@ -72,6 +78,9 @@ export default {
     }
   },
   methods: {
+    onResetClick() {
+      this.$emit('onReset')
+    },
     onClearDateClick() {
       this.$emit('onClearDate')
     },
@@ -93,9 +102,35 @@ export default {
 
 <style lang="scss">
 .search-tips {
+  position: relative;
   background: #FFFFFF;
   border-top: 1PX solid #f2f2f2;
   padding-left: 26rpx;
+
+  &-reset {
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    right: 32rpx;
+    height: 80rpx;
+    display: flex;
+    align-items: center;
+
+    &-btn {
+      height: 48rpx;
+      display: flex;
+      align-items: center;
+      background: #4cd964;
+      border-radius: 100rpx;
+      padding: 0 16rpx 0 8rpx;
+    }
+
+    &-text {
+      margin-left: 6rpx;
+      color: #FFFFFF;
+      font-size: 26rpx;
+    }
+  }
 
   &-item {
     position: relative;
@@ -108,7 +143,6 @@ export default {
     white-space: nowrap;
     font-size: 30rpx;
     color: #131c38;
-    font-weight: bold;
   }
 
   .hidden {
