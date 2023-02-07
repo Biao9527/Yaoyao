@@ -12,7 +12,7 @@
 			"root": "packageA",
 			"pages": [
 				{
-					"path": "page/user/user",
+					"path": "page/statistics/statistics",
 					"style": {
 						"navigationStyle": "custom"
 					}
