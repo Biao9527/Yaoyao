@@ -3,6 +3,11 @@ export const TYPE_HASH = {
     2: '+'
 }
 
+export const TYPE_TEXT = {
+    1: '支出',
+    2: '收入'
+}
+
 export const SORT_TEXT = {
     'time_up': '时间由远到近',
     'time_down': '时间由近到远',
