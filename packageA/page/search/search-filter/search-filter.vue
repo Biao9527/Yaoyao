@@ -1,6 +1,8 @@
 <template>
   <view>
-    <view class="search-filter-mask" v-if="isOpened"
+    <view class="search-filter-mask"
+          v-if="isOpened"
+          catchtouchmove="return"
           @click="onMaskClose"/>
     <view class="search-filter" v-if="isOpened">
       <view class="search-filter-tabs">

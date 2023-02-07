@@ -1,5 +1,7 @@
 <template>
-  <view class="selected-table" @click="onMaskClick"
+  <view class="selected-table"
+        @click="onMaskClick"
+        catchtouchmove="return"
         v-if="isOpened">
     <view class="selected-table-content"
           :style="topHeight"
