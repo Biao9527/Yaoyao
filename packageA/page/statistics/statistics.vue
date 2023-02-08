@@ -6,9 +6,14 @@
             :select-date="selectDate"
             @onTypeClick="onTypeClick"
             @onDate="onDateClick"/>
-    <view v-if="dataList && dataList.length > 0">
+    <view class="statistics-content"
+          v-if="dataList && dataList.length > 0">
+      <view class="statistics-title">{{typeText}}构成</view>
       <view class="charts-box">
         <qiun-data-charts
+            :canvas2d="true"
+            canvasId="dateCanvas"
+            :tooltipShow="false"
             type="pie"
             :opts="opts"
             :chartData="chartData"
@@ -33,7 +38,7 @@ import NavBar from "../../../components/nav-bar";
 import Header from "./header/header";
 import Nothing from "../../../components/nothing/nothing";
 import {mapState, mapGetters} from 'vuex'
-import {TYPE_HASH} from "../search/helper";
+import {TYPE_HASH, TYPE_TEXT} from "../search/helper";
 import DatePopup from "./date-popup/date-popup";
 
 export default {
@@ -62,7 +67,10 @@ export default {
         money += Number(items.money)
       })
       return money
-    }
+    },
+    typeText() {
+      return TYPE_TEXT[this.selectType]
+    },
   },
   data() {
     return {
@@ -73,16 +81,23 @@ export default {
       selectDate: [],
       opts: {
         color: ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"],
-        padding: [5, 5, 5, 5],
+        padding: [10, 10, 10, 10],
         enableScroll: false,
+        fontSize: 12,
+        legend: {
+          show: false
+        },
         extra: {
+          tooltip: {
+            showBox: false
+          },
           pie: {
             activeOpacity: 0.5,
-            activeRadius: 10,
+            activeRadius: 5,
             offsetAngle: 0,
-            labelWidth: 15,
+            labelWidth: 10,
             border: true,
-            borderWidth: 3,
+            borderWidth: 1,
             borderColor: "#FFFFFF",
             linearType: "custom"
           }
@@ -93,6 +108,10 @@ export default {
   methods: {
     getServerData() {
       const data = []
+      let sumMoney = 0
+      this.dataList.map(items => {
+        sumMoney += Number(items.money)
+      })
       this.getMyTableList.map(item => {
         const list = this.dataList.filter(i => i.tableId === item.id)
         if (list && list.length > 0) {
@@ -100,7 +119,8 @@ export default {
           list.map(items => {
             money += Number(items.money)
           })
-          data.push({"name": item.name, "value": money})
+          const sliceName =  item.name.length > 3 ? item.name.slice(0, 3) + '...' : item.name
+          data.push({"name": item.name, "value": money, 'labelText': ` ${sliceName} :${(money/sumMoney*100).toFixed(1)}% `})
         }
       })
       let res = {
@@ -142,16 +162,29 @@ export default {
 </script>
 
 <style lang="scss">
+page {
+  background: #FFFFFF;
+}
 .statistics {
+
+  &-content {
+    margin-top: 30rpx;
+
+    .charts-box {
+      width: 100%;
+      height: 220px;
+    }
+  }
+
+  &-title {
+    font-size: 32rpx;
+    color: #131c38;
+    margin: 0 0 26rpx 26rpx;
+  }
 
   &-nothing {
     margin-top: 20%;
   }
-}
-
-.charts-box {
-  width: 100%;
-  height: 300px;
 }
 
 ::-webkit-scrollbar {
