@@ -1,9 +1,9 @@
 <template>
   <view class="statistics-header">
     <view class="statistics-header-tabs">
-      <view class="statistics-header-date">
+      <view class="statistics-header-date" @click="onDateClick">
         <uni-icons type="calendar" size="46rpx" color="#9B9B9B"/>
-        <view class="date-text">2022年12月</view>
+        <view class="date-text">{{computedDateText}}</view>
       </view>
       <view class="statistics-header-type">
         <view class="statistics-header-type-item left"
@@ -28,17 +28,26 @@
 
 <script>
 import {TYPE_TEXT} from "../../search/helper";
+import {month_text} from "../helper";
 
 export default {
-  props: ['typeIndex', 'totalMoney', 'onTypeClick'],
+  props: ['typeIndex', 'totalMoney', 'selectDate', 'onTypeClick', 'onDate'],
   computed: {
     typeText() {
       return TYPE_TEXT[this.typeIndex]
-    }
+    },
+    computedDateText() {
+      const year = this.selectDate[0] ? this.selectDate[0] + '年' : '2000年'
+      const month  = this.selectDate[1] ?  month_text[this.selectDate[1]] : '1月'
+      return year + month
+    },
   },
   methods: {
     onType(type) {
       this.$emit('onTypeClick', type)
+    },
+    onDateClick() {
+      this.$emit('onDate')
     }
   }
 }
