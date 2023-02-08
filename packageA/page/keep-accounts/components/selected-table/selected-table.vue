@@ -238,10 +238,4 @@ export default {
     padding-bottom: 45rpx;
   }
 }
-
-::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  color: transparent;
-}
 </style>

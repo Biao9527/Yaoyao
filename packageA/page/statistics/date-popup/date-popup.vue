@@ -181,10 +181,4 @@ export default {
     }
   }
 }
-
-::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  color: transparent;
-}
 </style>

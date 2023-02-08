@@ -153,4 +153,10 @@ export default {
   width: 100%;
   height: 300px;
 }
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+}
 </style>
