@@ -19,7 +19,8 @@
             :chartData="chartData"
         />
       </view>
-      <BarCharts :char-list="charList"/>
+      <BarCharts :char-list="charList"
+                 @onBarItem="goRankingPage"/>
     </view>
     <view class="statistics-nothing" v-else>
       <Nothing text="暂无数据"/>
@@ -42,6 +43,7 @@ import {mapState, mapGetters} from 'vuex'
 import {TYPE_HASH, TYPE_TEXT} from "../search/helper";
 import DatePopup from "./date-popup/date-popup";
 import BarCharts from "./bar-charts/bar-charts";
+import {navigateToPage} from "../../../helpers/navigateTo";
 
 export default {
   components: {
@@ -69,7 +71,7 @@ export default {
       this.dataList.map(items => {
         money += Number(items.money)
       })
-      return money
+      return Number(money.toFixed(2))
     },
     typeText() {
       return TYPE_TEXT[this.selectType]
@@ -132,7 +134,7 @@ export default {
             "value": money,
             'labelText': ` ${sliceName} :${(money / sumMoney * 100).toFixed(1)}% `
           })
-          arr.push({icon: item.icon, name: item.name, money: money})
+          arr.push({id: item.id, icon: item.icon, name: item.name, money: money})
         }
       })
       let res = {
@@ -161,6 +163,9 @@ export default {
         return year === this.selectDate[0] && month === this.selectDate[1]
       })
       this.getServerData()
+    },
+    goRankingPage(item) {
+      navigateToPage('ranking', `?tableId=${item.id}&type=${this.selectType}&year=${this.selectDate[0]}&month=${this.selectDate[1]}`)
     },
     onSelectDate(date) {
       this.selectDate = date

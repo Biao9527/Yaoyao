@@ -40,6 +40,12 @@
 					"style": {
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "page/statistics/ranking-list/ranking-list",
+					"style": {
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		}

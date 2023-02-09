@@ -1,7 +1,8 @@
 <template>
   <view class="bar-charts">
     <view class="bar-charts-item"
-          v-for="item in charList" :key="item.name">
+          @click="goRankingPage(item)"
+          v-for="item in charList" :key="item.id">
       <view class="bar-charts-left">
         <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
         <view class="left-text">{{ item.name }}</view>
@@ -22,7 +23,12 @@
 
 <script>
 export default {
-  props: ['charList']
+  props: ['charList', 'onBarItem'],
+  methods: {
+    goRankingPage(item) {
+      this.$emit('onBarItem', item)
+    }
+  }
 }
 </script>
 
