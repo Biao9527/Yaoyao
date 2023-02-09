@@ -8,7 +8,7 @@
             @onDate="onDateClick"/>
     <view class="statistics-content"
           v-if="dataList && dataList.length > 0">
-      <view class="statistics-title">{{typeText}}构成</view>
+      <view class="statistics-title">{{ typeText }}构成</view>
       <view class="charts-box">
         <qiun-data-charts
             :canvas2d="true"
@@ -19,6 +19,7 @@
             :chartData="chartData"
         />
       </view>
+      <BarCharts :char-list="charList"/>
     </view>
     <view class="statistics-nothing" v-else>
       <Nothing text="暂无数据"/>
@@ -40,6 +41,7 @@ import Nothing from "../../../components/nothing/nothing";
 import {mapState, mapGetters} from 'vuex'
 import {TYPE_HASH, TYPE_TEXT} from "../search/helper";
 import DatePopup from "./date-popup/date-popup";
+import BarCharts from "./bar-charts/bar-charts";
 
 export default {
   components: {
@@ -47,7 +49,8 @@ export default {
     NavBar,
     Header,
     Nothing,
-    DatePopup
+    DatePopup,
+    BarCharts
   },
   onReady() {
     this.setNowDate()
@@ -75,6 +78,7 @@ export default {
   data() {
     return {
       chartData: {},
+      charList: [],
       dataList: [],
       selectType: 1,
       isOpenMonth: false,
@@ -108,10 +112,12 @@ export default {
   methods: {
     getServerData() {
       const data = []
+      const arr = []
       let sumMoney = 0
       this.dataList.map(items => {
         sumMoney += Number(items.money)
       })
+      sumMoney = Number(sumMoney.toFixed(2))
       this.getMyTableList.map(item => {
         const list = this.dataList.filter(i => i.tableId === item.id)
         if (list && list.length > 0) {
@@ -119,13 +125,24 @@ export default {
           list.map(items => {
             money += Number(items.money)
           })
-          const sliceName =  item.name.length > 3 ? item.name.slice(0, 3) + '...' : item.name
-          data.push({"name": item.name, "value": money, 'labelText': ` ${sliceName} :${(money/sumMoney*100).toFixed(1)}% `})
+          money = Number(money.toFixed(2))
+          const sliceName = item.name.length > 3 ? item.name.slice(0, 3) + '...' : item.name
+          data.push({
+            "name": item.name,
+            "value": money,
+            'labelText': ` ${sliceName} :${(money / sumMoney * 100).toFixed(1)}% `
+          })
+          arr.push({icon: item.icon, name: item.name, money: money})
         }
       })
       let res = {
         series: [{data: data}]
       };
+      const sortList = arr.sort((a, b) => a.money < b.money ? 1 : -1)
+      for (let i = 0; i < sortList.length; i++) {
+        sortList[i].width = (sortList[i].money / sortList[0].money * 100).toFixed(2)
+      }
+      this.charList = sortList
       this.chartData = JSON.parse(JSON.stringify(res));
     },
     setNowDate() {
@@ -162,9 +179,12 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../../../static/icons/iconfont.css";
+
 page {
   background: #FFFFFF;
 }
+
 .statistics {
 
   &-content {
