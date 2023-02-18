@@ -12,17 +12,13 @@
           <view>共{{ headerTypeText }}</view>
         </view>
         <view class="ranking-header-money">
-          ￥<text class="money-count">{{computedMoney}}</text>
+          ￥<text class="money-count">{{ computedMoney }}</text>
         </view>
       </view>
-      <view class="ranking-list">
-        <view class="ranking-list-item" v-for="item in dataList">
-          <view class="ranking-list-icon">
-            <uni-icons custom-prefix="iconfont" :type="filterTable(item.tableId).icon" size="84rpx"/>
-            <view class="ranking-list-icon-text">{{ filterTable(item.tableId).name }}</view>
-          </view>
-          <view class="ranking-list-money">￥{{item.money}}</view>
-        </view>
+      <view v-if="Array.isArray(dataList) && dataList.length > 0"
+            class="ranking-list">
+        <PostList :list="dataList"
+                  :table-list="getMyTableList"/>
       </view>
     </view>
   </view>
@@ -33,10 +29,12 @@ import NavBar from "../../../../components/nav-bar";
 import {month_text} from "../helper";
 import {mapGetters} from 'vuex'
 import {TYPE_HASH, TYPE_TEXT} from "../../search/helper";
+import PostList from "../../../../components/post-list/post-list";
 
 export default {
   components: {
-    NavBar
+    NavBar,
+    PostList
   },
   onLoad(options) {
     if (options.tableId) {
@@ -155,44 +153,6 @@ export default {
 
   &-list {
     margin-top: 20rpx;
-
-    &-item {
-      padding: 0 26rpx;
-      background: #FFFFFF;
-      height: 120rpx;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: nowrap;
-      overflow: hidden;
-      border-bottom: 1rpx solid #f2f2f2;
-    }
-
-    &-icon {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      flex-wrap: nowrap;
-      overflow: hidden;
-
-      &-text {
-        margin-left: 20rpx;
-        font-size: 30rpx;
-        color: #454C63;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-
-    &-money {
-      text-align: right;
-      flex-grow: 1;
-      margin-left: 20rpx;
-      font-size: 32rpx;
-      color: #dd524d;
-      font-weight: bold;
-    }
   }
 }
 </style>
