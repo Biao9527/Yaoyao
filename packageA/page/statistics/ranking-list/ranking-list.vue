@@ -5,7 +5,8 @@
       <view class="ranking-header">
         <view class="ranking-header-title">
           <view>{{ headerMonthText }}</view>
-          <view class="ranking-header-table">
+          <view class="ranking-header-table"
+                v-if="filterTableId">
             <uni-icons custom-prefix="iconfont" :type="filterTable(filterTableId).icon" size="50rpx"/>
             <view class="ranking-header-table-text">{{ filterTable(filterTableId).name }}</view>
           </view>

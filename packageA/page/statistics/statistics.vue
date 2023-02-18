@@ -21,6 +21,17 @@
       </view>
       <BarCharts :char-list="charList"
                  @onBarItem="goRankingPage"/>
+      <view class="statistics-title">{{ typeText }}排行</view>
+      <view class="statistics-top">
+        <PostList :list="computedTopTen"
+                  :table-list="getMyTableList"
+                  :show-index="true"/>
+        <view class="statistics-top-more"
+              @click="goAllTop">
+          <view>全部排行</view>
+          <uni-icons type="forward" size="32rpx" color="#9b9b9b"/>
+        </view>
+      </view>
     </view>
     <view class="statistics-nothing" v-else>
       <Nothing text="暂无数据"/>
@@ -43,6 +54,7 @@ import {mapState, mapGetters} from 'vuex'
 import {TYPE_HASH, TYPE_TEXT} from "../search/helper";
 import DatePopup from "./date-popup/date-popup";
 import BarCharts from "./bar-charts/bar-charts";
+import PostList from "../../../components/post-list/post-list";
 import {navigateToPage} from "../../../helpers/navigateTo";
 
 export default {
@@ -52,7 +64,8 @@ export default {
     Header,
     Nothing,
     DatePopup,
-    BarCharts
+    BarCharts,
+    PostList
   },
   onReady() {
     this.setNowDate()
@@ -76,6 +89,9 @@ export default {
     typeText() {
       return TYPE_TEXT[this.selectType]
     },
+    computedTopTen() {
+      return this.dataList.sort((a, b) => Number(a.money) < Number(b.money) ? 1 : -1).slice(0, 10)
+    }
   },
   data() {
     return {
@@ -167,6 +183,9 @@ export default {
     goRankingPage(item) {
       navigateToPage('ranking', `?tableId=${item.id}&type=${this.selectType}&year=${this.selectDate[0]}&month=${this.selectDate[1]}`)
     },
+    goAllTop() {
+      navigateToPage('ranking', `?type=${this.selectType}&year=${this.selectDate[0]}&month=${this.selectDate[1]}`)
+    },
     onSelectDate(date) {
       this.selectDate = date
       this.filterAccountList()
@@ -205,6 +224,19 @@ page {
     font-size: 32rpx;
     color: #131c38;
     margin: 0 0 26rpx 26rpx;
+  }
+
+  &-top {
+    border-top: 1rpx solid #f2f2f2;
+
+    &-more {
+      margin: 40rpx 0 60rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30rpx;
+      color: #9b9b9b;
+    }
   }
 
   &-nothing {

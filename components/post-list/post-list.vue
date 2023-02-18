@@ -1,7 +1,8 @@
 <template>
   <view class="post-list">
-    <view class="post-list-item" v-for="item in list" :key="item.id">
+    <view class="post-list-item" v-for="(item, index) in list" :key="item.id">
       <view class="post-list-icon">
+        <view class="post-list-index" v-if="showIndex">{{ index + 1 }}</view>
         <uni-icons custom-prefix="iconfont" :type="filterTable(item.tableId).icon" size="84rpx"/>
         <view class="post-list-icon-wrapper">
           <view class="post-list-icon-text">{{ filterTable(item.tableId).name }}</view>
@@ -20,7 +21,7 @@
 
 <script>
 export default {
-  props: ['list', 'tableList'],
+  props: ['list', 'tableList', 'showIndex'],
   computed: {
     filterTable() {
       return function (id) {
@@ -33,6 +34,15 @@ export default {
 
 <style scoped lang="scss">
 .post-list {
+
+  &-index {
+    margin-right: 8rpx;
+    text-align: center;
+    width: 60rpx;
+    font-size: 30rpx;
+    font-weight: bold;
+    color: #9b9b9b;
+  }
 
   &-item {
     padding: 0 26rpx;
