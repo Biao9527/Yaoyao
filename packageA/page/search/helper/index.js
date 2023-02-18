@@ -15,6 +15,16 @@ export const SORT_TEXT = {
     'money_down': '金额由高到低',
 }
 
+export const MONEY_SORT_TEXT = {
+    'money_up': '金额 ⬆',
+    'money_down': '金额 ⬇',
+}
+
+export const TIME_SORT_TEXT = {
+    'time_up': '时间 ⬆',
+    'time_down': '时间 ⬇',
+}
+
 export const FILTER_LIST = [
     {
         id: 0,

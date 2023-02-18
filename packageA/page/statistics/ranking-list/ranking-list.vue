@@ -13,11 +13,24 @@
           <view>共{{ headerTypeText }}</view>
         </view>
         <view class="ranking-header-money">
-          ￥<text class="money-count">{{ computedMoney }}</text>
+          ￥
+          <text class="money-count">{{ computedMoney }}</text>
         </view>
       </view>
       <view v-if="Array.isArray(dataList) && dataList.length > 0"
             class="ranking-list">
+        <view class="ranking-tabs">
+          <view class="ranking-tabs-item"
+                :class="sortText === 'money_down' || sortText === 'money_up' ? 'active' : ''"
+                @click="onMoneyFilter">
+            {{ moneySortText }}
+          </view>
+          <view class="ranking-tabs-item"
+                :class="sortText === 'time_up' || sortText === 'time_down' ? 'active' : ''"
+                @click="onTimeFilter">
+            {{ timeSortText }}
+          </view>
+        </view>
         <PostList :list="dataList"
                   :table-list="getMyTableList"/>
       </view>
@@ -29,7 +42,7 @@
 import NavBar from "../../../../components/nav-bar";
 import {month_text} from "../helper";
 import {mapGetters} from 'vuex'
-import {TYPE_HASH, TYPE_TEXT} from "../../search/helper";
+import {MONEY_SORT_TEXT, TIME_SORT_TEXT, TYPE_HASH, TYPE_TEXT} from "../../search/helper";
 import PostList from "../../../../components/post-list/post-list";
 
 export default {
@@ -54,6 +67,12 @@ export default {
       'getAccountList',
       'getMyTableList'
     ]),
+    moneySortText() {
+      return this.sortText === 'money_up' || this.sortText === 'money_down' ? MONEY_SORT_TEXT[this.sortText] : '金额'
+    },
+    timeSortText() {
+      return this.sortText === 'time_up' || this.sortText === 'time_down' ? TIME_SORT_TEXT[this.sortText] : '时间'
+    },
     headerMonthText() {
       return month_text[this.filterDate[1]]
     },
@@ -78,10 +97,27 @@ export default {
       dataList: [],
       filterDate: [],
       filterTableId: null,
-      selectType: null
+      selectType: null,
+      sortText: 'money_down'
     }
   },
   methods: {
+    onMoneyFilter() {
+      if (this.sortText !== 'money_down' && this.sortText !== 'money_up') {
+        this.sortText = 'money_down'
+      } else {
+        this.sortText = this.sortText === 'money_down' ? 'money_up' : 'money_down'
+      }
+      this.filterAccountList()
+    },
+    onTimeFilter() {
+      if (this.sortText !== 'time_up' && this.sortText !== 'time_down') {
+        this.sortText = 'time_down'
+      } else {
+        this.sortText = this.sortText === 'time_down' ? 'time_up' : 'time_down'
+      }
+      this.filterAccountList()
+    },
     filterAccountList() {
       this.dataList = this.getAccountList
       //筛选类型
@@ -97,6 +133,28 @@ export default {
       //筛选标签
       if (this.filterTableId) {
         this.dataList = this.dataList.filter(item => item.tableId === this.filterTableId)
+      }
+      //筛选排序方式
+      switch (this.sortText) {
+        case "time_up":
+          this.dataList = this.dataList.sort((a, b) => {
+            return a.date > b.date ? 1 : -1
+          })
+          break
+        case "time_down":
+          break
+        case "money_up":
+          this.dataList = this.dataList.sort((a, b) => {
+            return Number(a.money) > Number(b.money) ? 1 : -1
+          })
+          break
+        case "money_down":
+          this.dataList = this.dataList.sort((a, b) => {
+            return Number(a.money) < Number(b.money) ? 1 : -1
+          })
+          break
+        default:
+          break
       }
     }
   }
@@ -154,6 +212,31 @@ export default {
 
   &-list {
     margin-top: 20rpx;
+    background: #FFFFFF;
+  }
+
+  &-tabs {
+    padding: 20rpx 26rpx;
+    display: flex;
+    align-items: center;
+
+    &-item {
+      margin-right: 26rpx;
+      background: #F6F6F6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 70rpx;
+      border-radius: 12rpx;
+      padding: 0 30rpx;
+      color: #9b9b9b;
+      font-size: 30rpx;
+    }
+
+    .active {
+      background: rgba(24, 144, 255, 0.1);
+      color: #1890FF;
+    }
   }
 }
 </style>
