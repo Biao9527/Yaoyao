@@ -1,7 +1,8 @@
 <template>
   <view class="account-list">
     <view class="account-list-item"
-          v-for="items in accountList" :key="items.id">
+          v-for="items in accountList" :key="items.id"
+          @click="onItemClick(items)">
       <view class="account-list-item-header">
         <view class="account-list-item-table"
               @click.stop="onTable(items.tableId)">
@@ -33,6 +34,8 @@
 </template>
 
 <script>
+import {navigateToPage} from "../../helpers/navigateTo";
+
 export default {
   props: ['accountList', 'tableList', 'onTableClick'],
   computed: {
@@ -45,6 +48,9 @@ export default {
   methods: {
     onTable(item) {
       this.$emit('onTableClick', item)
+    },
+    onItemClick(item) {
+      navigateToPage('orderInfo', `?id=${item.id}`)
     }
   }
 }

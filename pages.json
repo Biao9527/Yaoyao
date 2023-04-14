@@ -46,6 +46,12 @@
 					"style": {
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "page/order-info/order-info",
+					"style": {
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		}

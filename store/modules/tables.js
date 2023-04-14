@@ -10,6 +10,12 @@ export default {
             } catch (e) {
 
             }
+        },
+        getTableItem: state => {
+            return (tableId) => {
+                state.tableList = uni.getStorageSync('tables')
+                return state.tableList.filter(item => item.id === tableId)[0]
+            }
         }
     },
     mutations: {

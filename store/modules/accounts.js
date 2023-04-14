@@ -16,6 +16,12 @@ export default {
             } catch (e) {
 
             }
+        },
+        getAccountItem : state => {
+            return (id) => {
+                let list = uni.getStorageSync('tally')
+                return list.filter(item => item.id === id)[0]
+            }
         }
     },
     mutations: {
