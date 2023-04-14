@@ -37,7 +37,7 @@
           <uni-icons type="trash" size="40rpx" color="#dd524d"/>
           <view class="footer-text delete">删除</view>
         </view>
-        <view class="order-footer-item">
+        <view class="order-footer-item" @click="onEdit">
           <uni-icons type="compose" size="40rpx" color="#9b9b9b"/>
           <view class="footer-text">编辑</view>
         </view>
@@ -50,6 +50,7 @@
 import NavBar from "../../../components/nav-bar";
 import {mapGetters, mapMutations} from 'vuex'
 import {removeAccountsStorage} from "../keep-accounts/helpers/accountsStorage";
+import {navigateToPage} from "../../../helpers/navigateTo";
 
 export default {
   components: {
@@ -88,6 +89,9 @@ export default {
   },
   methods: {
     ...mapMutations(['removeAccount']),
+    onEdit() {
+      navigateToPage('keepAccounts', `?edit=true&id=${this.orderId}`)
+    },
     onDelete() {
       uni.showModal({
         title: '删除后无法恢复，是否删除？',

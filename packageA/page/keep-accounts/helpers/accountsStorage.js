@@ -1,9 +1,14 @@
-export async function updateAccountsStorage (data) {
+export async function updateAccountsStorage(data, isEdit = false) {
     return new Promise(resolve => {
         try {
             let tallyList = uni.getStorageSync('tally')
             if (tallyList) {
-                tallyList.push(data)
+                if (isEdit) {
+                    const tabIndex = tallyList.findIndex(item => item.id === data.id)
+                    tallyList[tabIndex] = data
+                } else {
+                    tallyList.push(data)
+                }
             } else {
                 tallyList = [data]
             }
@@ -37,7 +42,7 @@ export async function removeAccountsStorage(data) {
     })
 }
 
-export function verificationTallyForm (data) {
+export function verificationTallyForm(data) {
     if (!data.type) {
         this.showToast('请选择账单类型')
         return true

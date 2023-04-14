@@ -32,6 +32,10 @@ export default {
                 state.accountList = [data]
             }
         },
+        updateAccount(state, data) {
+            const tabIndex = state.accountList.findIndex(item => item.id === data.id)
+            state.accountList[tabIndex] = data
+        },
         removeAccount(state, data) {
             data.map(items => {
                 const index = state.accountList.findIndex(item => item.id === items.id)

@@ -1,6 +1,6 @@
 <template>
   <view class="accounts">
-    <NavBar title="记一笔" left-icon="left"/>
+    <NavBar :title="isEdit ? '编辑' : '记一笔'" left-icon="left"/>
     <view class="accounts-content">
       <view class="accounts-type-tabs">
         <view class="accounts-type-items"
@@ -149,7 +149,21 @@ export default {
   },
   onLoad(options) {
     if (options.tableId) {
-      this.selectedTable = this.getMyTableList.filter(item => item.id === parseInt(options.tableId))[0]
+      this.selectedTable = this.getTableItem(parseInt(options.tableId))
+      return
+    }
+    if (options.edit && options.id) {
+      this.isEdit = true
+      this.editId = parseInt(options.id)
+      const orderInfo = this.getAccountItem(this.editId)
+      this.tallyType = orderInfo.type
+      this.notes = orderInfo.notes
+      this.money = orderInfo.money
+      this.selectedTable = this.getTableItem(orderInfo.tableId)
+      this.selectedDate = orderInfo.date
+      if (orderInfo.address) {
+        this.address = orderInfo.address
+      }
     }
   },
   computed: {
@@ -157,7 +171,9 @@ export default {
       'operationHeight'
     ]),
     ...mapGetters([
-      'getMyTableList'
+      'getMyTableList',
+      'getAccountItem',
+      'getTableItem'
     ]),
     inputPlaceholderStyle() {
       return (this.money || this.money === 0) ? '' : 'color: #D6D6D6'
@@ -168,6 +184,8 @@ export default {
   },
   data() {
     return {
+      isEdit: false,
+      editId: null,
       tallyType: '-',
       notes: '',
       money: null,
@@ -182,7 +200,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['addAccount']),
+    ...mapMutations(['addAccount', 'updateAccount']),
     onNotesInput(e) {
       this.notes = e.detail.value
     },
@@ -252,10 +270,10 @@ export default {
       }
       const isPass = verificationTallyForm.call(this, payload)
       if (isPass) return
-      payload.id = autoIncrementId('tallyMaxId')
-      const success = updateAccountsStorage(payload)
+      payload.id = this.isEdit && this.editId ? this.editId : autoIncrementId('tallyMaxId')
+      const success = updateAccountsStorage(payload, this.isEdit)
       if (!success) return
-      this.addAccount(payload)
+      this.isEdit ? this.updateAccount(payload) : this.addAccount(payload)
       uni.navigateBack()
     },
     showToast(title) {
