@@ -32,7 +32,8 @@
         </view>
       </view>
       <view class="order-footer">
-        <view class="order-footer-item">
+        <view class="order-footer-item"
+              @click="onDelete">
           <uni-icons type="trash" size="40rpx" color="#dd524d"/>
           <view class="footer-text delete">删除</view>
         </view>
@@ -47,7 +48,8 @@
 
 <script>
 import NavBar from "../../../components/nav-bar";
-import {mapGetters} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
+import {removeAccountsStorage} from "../keep-accounts/helpers/accountsStorage";
 
 export default {
   components: {
@@ -82,6 +84,27 @@ export default {
       orderId: null,
       orderInfo: null,
       tableInfo: null
+    }
+  },
+  methods: {
+    ...mapMutations(['removeAccount']),
+    onDelete() {
+      uni.showModal({
+        title: '删除后无法恢复，是否删除？',
+        confirmText: '继续删除',
+        confirmColor: '#dd524d',
+        success: res => {
+          if (res.confirm) {
+            const success = removeAccountsStorage([this.orderInfo])
+            if (!success) {
+              this.showToast('删除失败')
+              return
+            }
+            this.removeAccount([this.orderInfo])
+            uni.navigateBack()
+          }
+        }
+      })
     }
   }
 }
