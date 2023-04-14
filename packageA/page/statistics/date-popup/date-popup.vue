@@ -40,11 +40,15 @@ import {month_text} from "../helper";
 export default {
   props: ['isOpened', 'operationHeight', 'selectMonth', 'onSelectDate'],
   beforeMount() {
+    const nowYear = new Date().getFullYear()
+    const nowMonth = new Date().getMonth()
+    if (this.getAccountList.length <= 0) {
+      this.dateList = [{year: nowYear, monthList: [nowMonth]}]
+      return
+    }
     const minDate = this.getAccountList[this.getAccountList.length - 1].date
     let minYear = new Date(minDate).getFullYear()
     let minMonth = new Date(minDate).getMonth()
-    const nowYear = new Date().getFullYear()
-    const nowMonth = new Date().getMonth()
     const dateList = []
     while (minYear <= nowYear) {
       const list = []

@@ -67,7 +67,7 @@ export default {
     BarCharts,
     PostList
   },
-  onReady() {
+  onShow() {
     this.setNowDate()
     this.filterAccountList();
   },

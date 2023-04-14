@@ -1,6 +1,9 @@
 <template>
   <view class="post-list">
-    <view class="post-list-item" v-for="(item, index) in list" :key="item.id">
+    <view class="post-list-item"
+          v-for="(item, index) in list"
+          :key="item.id"
+          @click="onItemClick(item)">
       <view class="post-list-icon">
         <view class="post-list-index" v-if="showIndex">{{ index + 1 }}</view>
         <uni-icons custom-prefix="iconfont" :type="filterTable(item.tableId).icon" size="84rpx"/>
@@ -12,7 +15,7 @@
       <view class="post-list-money">
         <view class="post-list-money-text">￥{{ item.money }}</view>
         <view class="post-list-money-date">
-          <uni-dateformat :date="item.date" format="yyyy-M-d hh:mm"/>
+          <uni-dateformat :date="item.date" format="yyyy.M.d hh:mm"/>
         </view>
       </view>
     </view>
@@ -20,6 +23,8 @@
 </template>
 
 <script>
+import {navigateToPage} from "../../helpers/navigateTo";
+
 export default {
   props: ['list', 'tableList', 'showIndex'],
   computed: {
@@ -28,6 +33,11 @@ export default {
         return this.tableList.filter(item => item.id === id)[0]
       }
     },
+  },
+  methods: {
+    onItemClick(item) {
+      navigateToPage('orderInfo', `?id=${item.id}`)
+    }
   }
 }
 </script>
