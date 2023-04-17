@@ -17,6 +17,7 @@
       <uni-icons type="paperplane-filled" size="60rpx" color="#FFFFFF"/>
       <view class="post-add-account-text">记一笔</view>
     </view>
+    <Sidebar/>
     <CustomTabBar :active-index="1"
                   :operation-height="operationHeight"/>
   </view>
@@ -31,9 +32,11 @@ import PostScreenTab from "./post-screen-tab/post-screen-tab";
 import {mapState, mapGetters} from 'vuex'
 import {navigateToPage} from "../../helpers/navigateTo";
 import {TYPE_HASH} from "../../packageA/page/search/helper";
+import Sidebar from "../../components/sidebar/sidebar";
 
 export default {
   components: {
+    Sidebar,
     CustomTabBar,
     NavBar,
     AccountList,
