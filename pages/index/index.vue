@@ -5,10 +5,18 @@
                    @onTabsClick="onTabsClick"
                    @onTabsSearch="onTabsSearch"/>
     <view class="post-content">
-      <AccountList v-if="Array.isArray(list) && list.length > 0"
-                   :account-list="list"
+      <AccountList v-if="listType === 'card' && Array.isArray(cardList) && cardList.length > 0"
+                   :account-list="cardList"
                    :table-list="getMyTableList"
                    @onTableClick="onTabsSearch"/>
+      <view v-else-if="listType === 'list' && Array.isArray(list) && list.length > 0"
+            v-for="(items, index) in list" :key="index">
+        <view class="post-list-title">
+          <uni-dateformat :date="items.date" format="yyyy年M月d日"/>
+        </view>
+        <PostList :list="items.list"
+                  :table-list="getMyTableList"/>
+      </view>
       <view class="post-nothing" v-else>
         <Nothing text="这里什么都没有~"/>
       </view>
@@ -17,7 +25,8 @@
       <uni-icons type="paperplane-filled" size="60rpx" color="#FFFFFF"/>
       <view class="post-add-account-text">记一笔</view>
     </view>
-    <Sidebar/>
+    <Sidebar :list-type="listType"
+             @onSidebarItem="onSidebarItem"/>
     <CustomTabBar :active-index="1"
                   :operation-height="operationHeight"/>
   </view>
@@ -33,6 +42,7 @@ import {mapState, mapGetters} from 'vuex'
 import {navigateToPage} from "../../helpers/navigateTo";
 import {TYPE_HASH} from "../../packageA/page/search/helper";
 import Sidebar from "../../components/sidebar/sidebar";
+import PostList from "../../components/post-list/post-list";
 
 export default {
   components: {
@@ -41,7 +51,8 @@ export default {
     NavBar,
     AccountList,
     Nothing,
-    PostScreenTab
+    PostScreenTab,
+    PostList
   },
   onShareAppMessage(res) {
     if (res.from === 'button') {// 来自页面内分享按钮
@@ -67,7 +78,9 @@ export default {
   data() {
     return {
       selectedTab: 0,
-      list: []
+      cardList: [],
+      list: [],
+      listType: 'list'
     }
   },
   methods: {
@@ -85,12 +98,52 @@ export default {
       }
       navigateToPage('search', params)
     },
+    onSidebarItem(item) {
+      switch (item.value) {
+        case 'list':
+          this.listType = this.listType === 'list' ? 'card' : 'list'
+          this.filterAccountList()
+          break
+        case 'kefu':
+          break
+        case 'warn':
+          break
+        default:
+          break
+      }
+    },
     filterAccountList() {
       if (this.selectedTab !== 0) {
-        this.list = this.getAccountList.filter(item => item.type === TYPE_HASH[this.selectedTab])
+        this.cardList = this.getAccountList.filter(item => item.type === TYPE_HASH[this.selectedTab])
       } else {
-        this.list = this.getAccountList
+        this.cardList = this.getAccountList
       }
+      if (this.listType === 'list') {
+        this.list = this.dataResort(this.cardList)
+      }
+    },
+    dataResort(arr) {
+      const newArr = [];
+      arr.forEach((oldData) => {
+        let index = -1;
+        const alreadyExists = newArr.some((newData, j) => {
+          if (new Date(oldData.date).toLocaleDateString() === new Date(newData.date).toLocaleDateString()) {
+            index = j;
+            return true;
+          }
+        });
+        if (!alreadyExists) {
+          const res = [];
+          res.push(oldData);
+          newArr.push({
+            date: oldData.date,
+            list: res
+          });
+        } else {
+          newArr[index].list.push(oldData);
+        }
+      });
+      return newArr.sort((a, b) => a.date < b.date ? 1 : -1);
     }
   }
 }
@@ -102,6 +155,12 @@ export default {
 .post {
 
   &-content {
+  }
+
+  &-list-title {
+    height: 60rpx;
+    font-size: 36rpx;
+    color: #131C38;
   }
 
   &-nothing {

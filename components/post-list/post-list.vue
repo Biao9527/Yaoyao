@@ -13,7 +13,7 @@
         </view>
       </view>
       <view class="post-list-money">
-        <view class="post-list-money-text">￥{{ item.money }}</view>
+        <view class="post-list-money-text">{{item.type}}{{ item.money }}</view>
         <view class="post-list-money-date">
           <uni-dateformat :date="item.date" format="yyyy.M.d hh:mm"/>
         </view>
@@ -84,7 +84,7 @@ export default {
 
     &-text {
       font-size: 30rpx;
-      color: #000000;
+      color: #131C38;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

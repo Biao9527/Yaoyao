@@ -14,8 +14,8 @@
         <view class="sidebar-list-item left-item"
               v-for="item in moreList" :key="item.id"
               @click.stop="onItemClick(item)">
-          <image :src="item.img"/>
-          <view>{{ item.text }}</view>
+          <image :src="item.value === 'list' && listType === 'list' ? item.img2 : item.img"/>
+          <view>{{item.value === 'list' && listType === 'list' ? item.text2 : item.text}}</view>
         </view>
       </view>
       <view class="sidebar-more">
@@ -26,8 +26,8 @@
         <view class="sidebar-list-item"
               v-for="item in moreList" :key="item.id"
               @click.stop="onItemClick(item)">
-          <image :src="item.img"/>
-          <view>{{ item.text }}</view>
+          <image :src="item.value === 'list' && listType === 'list' ? item.img2 : item.img"/>
+          <view>{{item.value === 'list' && listType === 'list' ? item.text2 : item.text}}</view>
         </view>
       </view>
     </movable-view>
@@ -41,8 +41,8 @@ import warn from '../../static/warn.svg'
 import card from '../../static/card.svg'
 import list from '../../static/list.svg'
 
-
 export default {
+  props: ['listType', 'onSidebarItem'],
   mounted() {
     //初始位置
     uni.getSystemInfo({
@@ -79,9 +79,9 @@ export default {
     return {
       moreSvg,
       moreList: [
-        {id: 1, text: '切换', value: 'list', img: list, img2: card},
-        {id: 3, text: '客服', value: 'list', img: kefu},
-        {id: 2, text: '须知', value: 'user', img: warn}
+        {id: 1, text: '列表', text2: '卡片', value: 'list', img: list, img2: card},
+        {id: 3, text: '客服', value: 'kefu', img: kefu},
+        {id: 2, text: '须知', value: 'warn', img: warn}
       ],
       isTouch: false,
       showList: false,
@@ -129,7 +129,7 @@ export default {
       })
     },
     onItemClick(item) {
-      console.log(item);
+      this.$emit('onSidebarItem', item)
     },
     onChange(e) {
       if (e.detail.source === "touch") {

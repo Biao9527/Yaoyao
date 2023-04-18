@@ -9,7 +9,7 @@
           <uni-icons custom-prefix="iconfont" :type="filterTable(items).icon" size="68rpx"/>
           <view class="table-name">{{ filterTable(items).name }}</view>
         </view>
-        <view class="account-list-item-money">{{items.type}}￥{{ items.money }}</view>
+        <view class="account-list-item-money">{{items.type}}{{ items.money }}</view>
       </view>
       <view class="account-list-item-notes">{{ items.notes }}</view>
       <view class="account-list-item-footer">
