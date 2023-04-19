@@ -9,14 +9,10 @@
                    :account-list="cardList"
                    :table-list="getMyTableList"
                    @onTableClick="onTabsSearch"/>
-      <view v-else-if="listType === 'list' && Array.isArray(list) && list.length > 0"
-            v-for="(items, index) in list" :key="index">
-        <view class="post-list-title">
-          <uni-dateformat :date="items.date" format="yyyy年M月d日"/>
-        </view>
-        <PostList :list="items.list"
-                  :table-list="getMyTableList"/>
-      </view>
+      <StatisticsPostList v-else-if="listType === 'list' && Array.isArray(list) && list.length > 0"
+                          :list="list"
+                          :type="selectedTab"
+                          :table-list="getMyTableList"/>
       <view class="post-nothing" v-else>
         <Nothing text="这里什么都没有~"/>
       </view>
@@ -42,7 +38,7 @@ import {mapState, mapGetters} from 'vuex'
 import {navigateToPage} from "../../helpers/navigateTo";
 import {TYPE_HASH} from "../../packageA/page/search/helper";
 import Sidebar from "../../components/sidebar/sidebar";
-import PostList from "../../components/post-list/post-list";
+import StatisticsPostList from "../../components/statistics-post-list/statistics-post-list";
 
 export default {
   components: {
@@ -52,7 +48,7 @@ export default {
     AccountList,
     Nothing,
     PostScreenTab,
-    PostList
+    StatisticsPostList
   },
   onShareAppMessage(res) {
     if (res.from === 'button') {// 来自页面内分享按钮
@@ -155,12 +151,6 @@ export default {
 .post {
 
   &-content {
-  }
-
-  &-list-title {
-    height: 60rpx;
-    font-size: 36rpx;
-    color: #131C38;
   }
 
   &-nothing {
