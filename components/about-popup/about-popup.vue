@@ -3,6 +3,7 @@
         v-if="isOpen"
         @click="onClose">
     <view class="about-popup-view"
+          @click.stop=""
           :style="contentTop">
       <view class="about-popup-close"
             @click.stop="onClose()">
@@ -30,6 +31,16 @@
             https://github.com
           </text>
         </view>
+        <view class="about-popup-contact-title">联系我们：</view>
+        <view class="about-popup-contact">
+          <button class="about-popup-contact-item"
+                  :open-type="item.value === 'share' ? 'share' : undefined"
+                  v-for="item in buttonList" :key="item.id"
+                  @click.stop="onContact(item)">
+            <image :src="item.svg"/>
+            <view class="contact-text">{{ item.text }}</view>
+          </button>
+        </view>
       </view>
       <view class="about-popup-button"
             :style="buttonStyle"
@@ -42,6 +53,10 @@
 </template>
 
 <script>
+import github from '../../static/github.svg'
+import wechat from '../../static/wechat.svg'
+import share from '../../static/share.svg'
+
 export default {
   props: ['isOpen'],
   mounted() {
@@ -49,8 +64,7 @@ export default {
     uni.getSystemInfo({
       success: (res) => {
         const pxToRpx = 750 / res.windowWidth
-        this.height = 353 * pxToRpx
-        console.log(this.height);
+        this.height = 445 * pxToRpx
       }
     })
   },
@@ -65,7 +79,12 @@ export default {
   data() {
     return {
       isLike: false,
-      height: 0
+      height: 0,
+      buttonList: [
+        {id: 1, text: 'GitHub', value: 'github', svg: github},
+        {id: 2, text: '微信', value: 'wechat', svg: wechat},
+        {id: 3, text: '分享', value: 'share', svg: share},
+      ]
     }
   },
   methods: {
@@ -82,18 +101,33 @@ export default {
       const url = {
         'uni-ui': 'https://ext.dcloud.net.cn/plugin?id=55',
         'uCharts': 'https://ext.dcloud.net.cn/plugin?id=271',
-        'GitHub': 'https://github.com/Biao9527/Yaoyao'
+        'GitHub': 'https://github.com/Biao9527/Yaoyao',
+        'wechat': 'Zhou_Biao_1998'
       }
       uni.setClipboardData({
         data: url[value],
         showToast: false,
         success: () => {
           uni.showToast({
-            title: `${value}的URL已复制`,
+            title: value === 'wechat' ? '微信号已复制' : `${value}的URL已复制`,
             icon: 'none'
           })
         }
       })
+    },
+    onContact(item) {
+      switch (item.value) {
+        case 'github':
+          this.onCopyText('GitHub')
+          break
+        case 'wechat':
+          this.onCopyText('wechat')
+          break
+        case 'share':
+          break
+        default:
+          break
+      }
     },
     onLiked() {
       try {
@@ -162,10 +196,49 @@ export default {
     }
   }
 
+  &-contact-title {
+    margin-top: 60rpx;
+    font-size: 28rpx;
+    color: #131C38;
+  }
+
+  &-contact {
+    margin-top: 16rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &-item {
+      width: 33.333%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background: #FFFFFF;
+
+      .contact-text {
+        margin-top: 8rpx;
+        font-size: 26rpx;
+        line-height: 26rpx;
+        color: #bbbbbb;
+      }
+
+      image {
+        width: 56rpx;
+        height: 56rpx;
+      }
+    }
+
+    button::after {
+      border: none;
+    }
+  }
+
   &-button {
     height: 74rpx;
     width: max-content;
-    margin: 80rpx auto 62rpx;
+    margin: 60rpx auto 60rpx;
     display: flex;
     align-items: center;
     justify-content: center;
