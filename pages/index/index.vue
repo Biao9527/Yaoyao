@@ -24,6 +24,7 @@
     </view>
     <Sidebar :list-type="listType"
              @onSidebarItem="onSidebarItem"/>
+    <AboutPopup :is-open.sync="isOpenAbout"/>
     <CustomTabBar :active-index="1"
                   :operation-height="operationHeight"/>
   </view>
@@ -40,9 +41,11 @@ import {navigateToPage} from "../../helpers/navigateTo";
 import {TYPE_HASH} from "../../packageA/page/search/helper";
 import Sidebar from "../../components/sidebar/sidebar";
 import StatisticsPostList from "../../components/statistics-post-list/statistics-post-list";
+import AboutPopup from "../../components/about-popup/about-popup";
 
 export default {
   components: {
+    AboutPopup,
     Sidebar,
     CustomTabBar,
     NavBar,
@@ -77,7 +80,8 @@ export default {
       selectedTab: 0,
       cardList: [],
       list: [],
-      listType: 'list'
+      listType: 'list',
+      isOpenAbout: false
     }
   },
   methods: {
@@ -104,6 +108,7 @@ export default {
         case 'kefu':
           break
         case 'warn':
+          this.isOpenAbout = true
           break
         default:
           break

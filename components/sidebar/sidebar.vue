@@ -83,7 +83,7 @@ export default {
       moreList: [
         {id: 1, text: '列表', text2: '卡片', value: 'list', img: list, img2: card},
         {id: 3, text: '客服', value: 'kefu', img: kefu},
-        {id: 2, text: '须知', value: 'warn', img: warn}
+        {id: 2, text: '详情', value: 'warn', img: warn}
       ],
       isTouch: false,
       showList: false,
