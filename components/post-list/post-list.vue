@@ -6,10 +6,11 @@
           @click="onItemClick(item)">
       <view class="post-list-icon">
         <view class="post-list-index" v-if="showIndex">{{ index + 1 }}</view>
-        <uni-icons @click.stop="onTableClick(item.tableId)"
-                   custom-prefix="iconfont"
-                   :type="filterTable(item.tableId).icon"
-                   size="84rpx"/>
+        <view @click.stop="onTableClick(item.tableId)">
+          <uni-icons custom-prefix="iconfont"
+                     :type="filterTable(item.tableId).icon"
+                     size="84rpx"/>
+        </view>
         <view class="post-list-icon-wrapper">
           <view class="post-list-icon-text"
                 @click.stop="onTableClick(item.tableId)">
@@ -19,7 +20,7 @@
         </view>
       </view>
       <view class="post-list-money">
-        <view class="post-list-money-text">{{item.type}}{{ item.money }}</view>
+        <view class="post-list-money-text">{{ item.type }}{{ item.money }}</view>
         <view class="post-list-money-date">
           <uni-dateformat :date="item.date" format="yyyy.M.d hh:mm"/>
         </view>
