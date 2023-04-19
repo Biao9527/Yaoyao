@@ -17,7 +17,8 @@
         </view>
       </view>
       <PostList :list="items.list"
-                :table-list="tableList"/>
+                :table-list="tableList"
+                @onTable="onTableClick"/>
     </view>
   </view>
 </template>
@@ -26,7 +27,7 @@
 import PostList from "../post-list/post-list";
 
 export default {
-  props: ['list', 'type', 'tableList'],
+  props: ['list', 'type', 'tableList', 'onTable'],
   components: {
     PostList
   },
@@ -73,6 +74,11 @@ export default {
         }
         return `M月d日 (星期${weekHash[oldDate.getDay()]})`
       }
+    }
+  },
+  methods: {
+    onTableClick(id) {
+      this.$emit('onTable', id)
     }
   }
 }

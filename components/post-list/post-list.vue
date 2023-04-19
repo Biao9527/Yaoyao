@@ -6,9 +6,15 @@
           @click="onItemClick(item)">
       <view class="post-list-icon">
         <view class="post-list-index" v-if="showIndex">{{ index + 1 }}</view>
-        <uni-icons custom-prefix="iconfont" :type="filterTable(item.tableId).icon" size="84rpx"/>
+        <uni-icons @click.stop="onTableClick(item.tableId)"
+                   custom-prefix="iconfont"
+                   :type="filterTable(item.tableId).icon"
+                   size="84rpx"/>
         <view class="post-list-icon-wrapper">
-          <view class="post-list-icon-text">{{ filterTable(item.tableId).name }}</view>
+          <view class="post-list-icon-text"
+                @click.stop="onTableClick(item.tableId)">
+            {{ filterTable(item.tableId).name }}
+          </view>
           <view class="post-list-icon-notes">{{ item.notes }}</view>
         </view>
       </view>
@@ -26,7 +32,7 @@
 import {navigateToPage} from "../../helpers/navigateTo";
 
 export default {
-  props: ['list', 'tableList', 'showIndex'],
+  props: ['list', 'tableList', 'showIndex', 'onTable'],
   computed: {
     filterTable() {
       return function (id) {
@@ -37,6 +43,9 @@ export default {
   methods: {
     onItemClick(item) {
       navigateToPage('orderInfo', `?id=${item.id}`)
+    },
+    onTableClick(id) {
+      this.$emit('onTable', id)
     }
   }
 }

@@ -12,7 +12,8 @@
       <StatisticsPostList v-else-if="listType === 'list' && Array.isArray(list) && list.length > 0"
                           :list="list"
                           :type="selectedTab"
-                          :table-list="getMyTableList"/>
+                          :table-list="getMyTableList"
+                          @onTable="onTabsSearch"/>
       <view class="post-nothing" v-else>
         <Nothing text="这里什么都没有~"/>
       </view>
