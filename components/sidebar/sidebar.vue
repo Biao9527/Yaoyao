@@ -11,24 +11,26 @@
                   @touchend.prevent="onTouchend">
       <view class="sidebar-list left-list"
             v-if="showList && direction === 'left'">
-        <view class="sidebar-list-item left-item"
-              v-for="item in moreList" :key="item.id"
-              @click.stop="onItemClick(item)">
+        <button class="sidebar-list-item left-item"
+                :open-type="item.value === 'kefu' ? 'contact' : undefined"
+                v-for="item in moreList" :key="item.id"
+                @click.stop="onItemClick(item)">
           <image :src="item.value === 'list' && listType === 'list' ? item.img2 : item.img"/>
-          <view>{{item.value === 'list' && listType === 'list' ? item.text2 : item.text}}</view>
-        </view>
+          <view>{{ item.value === 'list' && listType === 'list' ? item.text2 : item.text }}</view>
+        </button>
       </view>
       <view class="sidebar-more">
         <image :src="moreSvg"/>
       </view>
       <view class="sidebar-list"
             v-if="showList && direction === 'right'">
-        <view class="sidebar-list-item"
-              v-for="item in moreList" :key="item.id"
-              @click.stop="onItemClick(item)">
+        <button class="sidebar-list-item"
+                :open-type="item.value === 'kefu' ? 'contact' : undefined"
+                v-for="item in moreList" :key="item.id"
+                @click.stop="onItemClick(item)">
           <image :src="item.value === 'list' && listType === 'list' ? item.img2 : item.img"/>
-          <view>{{item.value === 'list' && listType === 'list' ? item.text2 : item.text}}</view>
-        </view>
+          <view>{{ item.value === 'list' && listType === 'list' ? item.text2 : item.text }}</view>
+        </button>
       </view>
     </movable-view>
   </movable-area>
@@ -223,11 +225,17 @@ export default {
       line-height: 20rpx;
       color: #9b9b9b;
       margin-right: 26rpx;
+      padding: 0;
+      background: #FFFFFF;
 
       image {
         width: 48rpx;
         height: 48rpx;
       }
+    }
+
+    button::after {
+      border: none;
     }
   }
 }
