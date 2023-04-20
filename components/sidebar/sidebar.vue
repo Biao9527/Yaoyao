@@ -54,14 +54,22 @@ export default {
         this.x2 = Number(res.windowWidth) - 100 / pxToRpx;
         this.y1 = 0;
         this.y2 = Number(res.windowHeight) - 40 / pxToRpx;
+        const bar = uni.getStorageSync('sidebar')
+        this.direction = bar && bar.x < this.x2 / 2 ? 'left' : 'right'
         this.$nextTick(() => {
-          this.y = Number(this.y2 * 0.6);
-          this.x = Number(this.x2);
+          this.y = bar ? Number(bar.y) : Number(this.y2 * 0.6);
+          this.x = bar ? Number(bar.x) : Number(this.x2);
           this.move.x = this.x;
           this.move.y = this.y;
         })
       }
     })
+  },
+  beforeDestroy() {
+    try {
+      uni.setStorageSync('sidebar', {x: this.x, y: this.y})
+    } catch (e) {
+    }
   },
   computed: {
     borderRadiusStyle() {
