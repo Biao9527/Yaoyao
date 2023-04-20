@@ -1,4 +1,5 @@
 <template>
+  <page-meta :page-style="'overflow:'+(isOpenedTable ? 'hidden':'visible')"/>
   <view class="accounts">
     <NavBar :title="isEdit ? '编辑' : '记一笔'" left-icon="left"/>
     <view class="accounts-content">

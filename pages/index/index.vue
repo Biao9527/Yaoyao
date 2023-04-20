@@ -1,4 +1,5 @@
 <template>
+  <page-meta :page-style="'overflow:'+(isOpenAbout ? 'hidden':'visible')"/>
   <view class="post">
     <NavBar title="摇摇晃摇"/>
     <PostScreenTab :selected-index.sync="selectedTab"

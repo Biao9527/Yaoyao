@@ -1,4 +1,5 @@
 <template>
+  <page-meta :page-style="'overflow:'+(isOpenedAddModal ? 'hidden':'visible')"/>
   <view class="tables">
     <NavBar title="标签"/>
     <view class="tables-list"

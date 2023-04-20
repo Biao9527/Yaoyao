@@ -1,4 +1,5 @@
 <template>
+  <page-meta :page-style="'overflow:'+(isOpenedTable || showFilter ? 'hidden':'visible')"/>
   <view class="search">
     <NavBar left-icon="left" title="摇摇晃摇"/>
     <PostScreenTab :selected-index.sync="selectedTabIndex"
