@@ -74,6 +74,7 @@ export default {
 
 <style lang="scss" scoped>
 .search-filter-mask {
+  z-index: 300;
   position: fixed;
   top: 0;
   height: 100%;

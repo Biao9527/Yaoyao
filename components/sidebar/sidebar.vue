@@ -187,7 +187,7 @@ export default {
   width: 100%;
   height: 100%;
   pointer-events: none; //设置area元素不可点击，则事件便会下移至页面下层元素
-  z-index: 999;
+  z-index: 100;
 }
 
 .sidebar {
