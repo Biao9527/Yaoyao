@@ -32,6 +32,7 @@
         <view class="search-filter-list-item"
               :class="(filterType === item.value || sortValue === item.value) ? 'active' : ''"
               v-for="(item, index) in filterList[selectedIndex].list"
+              v-if="['money_up', 'money_down'].indexOf(item.value) < 0 || listType !== 'list'"
               :key="index" @click="onFilterItemClick(item)">
           {{ item.text }}
         </view>
@@ -44,7 +45,7 @@
 import {FILTER_LIST} from "../helper";
 
 export default {
-  props: ['isOpened', 'selectedIndex', 'filterType', 'sortValue', 'onFilterItem', 'onFilterTabClick', 'onFilterDateClick'],
+  props: ['isOpened', 'listType', 'selectedIndex', 'filterType', 'sortValue', 'onFilterItem', 'onFilterTabClick', 'onFilterDateClick'],
   data() {
     return {
       filterList: FILTER_LIST
