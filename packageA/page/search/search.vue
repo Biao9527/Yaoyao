@@ -194,6 +194,7 @@ export default {
     },
     filterAccountList() {
       this.dataList = this.getAccountList
+      if (!Array.isArray(this.dataList) || this.dataList.length <= 0) return
       //筛选类型
       if (this.selectedTabIndex !== 0) {
         this.dataList = this.dataList.filter(item => item.type === TYPE_HASH[this.selectedTabIndex])
