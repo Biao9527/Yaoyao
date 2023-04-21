@@ -67,6 +67,11 @@ export default {
   },
   beforeDestroy() {
     try {
+      if (this.x < this.x2 / 2) {
+        this.x = this.x1;
+      } else {
+        this.x = this.x2;
+      }
       uni.setStorageSync('sidebar', {x: this.x, y: this.y})
     } catch (e) {
     }
