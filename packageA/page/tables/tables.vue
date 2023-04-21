@@ -113,7 +113,9 @@ export default {
       this.selectTableItem = item
     },
     removeTableModal() {
-      const filterItem = this.getAccountList.filter(item => item.tableId === this.selectTableItem.id)
+      const filterItem =
+          this.getAccountList && this.getAccountList.length > 0 ?
+          this.getAccountList.filter(item => item.tableId === this.selectTableItem.id) : []
       if (filterItem && filterItem.length > 0) {
         uni.showModal({
           title: '此标签已绑定记账数据，若继续删除会将绑定数据一同删除！',
