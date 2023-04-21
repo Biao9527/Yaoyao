@@ -239,6 +239,7 @@ export default {
     },
     dataResort(arr, sortValue) {
       let newArr = [];
+      if (!Array.isArray(arr) || arr.length <= 0) return newArr
       arr.forEach((oldData) => {
         let index = -1;
         const alreadyExists = newArr.some((newData, j) => {

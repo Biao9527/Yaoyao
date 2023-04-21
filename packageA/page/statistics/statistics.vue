@@ -80,17 +80,23 @@ export default {
       'getMyTableList'
     ]),
     computedMoney() {
-      let money = 0
-      this.dataList.map(items => {
-        money += Number(items.money)
-      })
-      return Number(money.toFixed(2))
+      if (Array.isArray(this.dataList) && this.dataList.length > 0) {
+        let money = 0
+        this.dataList.map(items => {
+          money += Number(items.money)
+        })
+        return Number(money.toFixed(2))
+      }
+      return 0
     },
     typeText() {
       return TYPE_TEXT[this.selectType]
     },
     computedTopTen() {
-      return this.dataList.sort((a, b) => Number(a.money) < Number(b.money) ? 1 : -1).slice(0, 10)
+      if (Array.isArray(this.dataList) && this.dataList.length > 0) {
+        return this.dataList.sort((a, b) => Number(a.money) < Number(b.money) ? 1 : -1).slice(0, 10)
+      }
+      return []
     }
   },
   data() {
@@ -170,6 +176,7 @@ export default {
     },
     filterAccountList() {
       this.dataList = this.getAccountList
+      if (!Array.isArray(this.dataList) || this.dataList.length <= 0) return
       //筛选类型
       this.dataList = this.dataList.filter(item => item.type === TYPE_HASH[this.selectType])
       //筛选日期
