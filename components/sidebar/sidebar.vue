@@ -42,6 +42,7 @@ import kefu from '../../static/kefu.svg'
 import warn from '../../static/warn.svg'
 import card from '../../static/card.svg'
 import list from '../../static/list.svg'
+import massage from '../../static/message.svg'
 
 export default {
   props: ['listType', 'onSidebarItem'],
@@ -96,6 +97,7 @@ export default {
       moreList: [
         {id: 1, text: '列表', text2: '卡片', value: 'list', img: list, img2: card},
         {id: 3, text: '客服', value: 'kefu', img: kefu},
+        {id: 4, text: 'AI', value: 'ai', img: massage},
         {id: 2, text: '详情', value: 'warn', img: warn}
       ],
       isTouch: false,

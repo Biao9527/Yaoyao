@@ -3,7 +3,8 @@ const PAGE_BASE_URL = {
     keepAccounts: '/packageA/page/keep-accounts/keep-accounts',
     search: '/packageA/page/search/search',
     ranking: '/packageA/page/statistics/ranking-list/ranking-list',
-    orderInfo: '/packageA/page/order-info/order-info'
+    orderInfo: '/packageA/page/order-info/order-info',
+    aiChat: '/packageA/page/ai-chat/ai-chat'
 }
 
 export const navigateToPage = (url, params = '') => {

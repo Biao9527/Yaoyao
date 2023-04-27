@@ -52,6 +52,12 @@
 					"style": {
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "page/ai-chat/ai-chat",
+					"style": {
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		}

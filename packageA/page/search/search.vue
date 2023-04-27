@@ -62,6 +62,7 @@ import AboutPopup from "../../../components/about-popup/about-popup";
 import StatisticsPostList from "../../../components/statistics-post-list/statistics-post-list";
 import {mapGetters, mapState} from 'vuex'
 import {TYPE_HASH} from "./helper";
+import {navigateToPage} from "../../../helpers/navigateTo";
 
 export default {
   components: {
@@ -187,6 +188,9 @@ export default {
           break
         case 'warn':
           this.isOpenAbout = true
+          break
+        case 'ai':
+          navigateToPage('aiChat')
           break
         default:
           break

@@ -111,6 +111,9 @@ export default {
         case 'warn':
           this.isOpenAbout = true
           break
+        case 'ai':
+          navigateToPage('aiChat')
+          break
         default:
           break
       }
