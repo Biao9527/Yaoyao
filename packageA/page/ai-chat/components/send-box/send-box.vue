@@ -7,12 +7,19 @@
       <view class="send-box-content">
         <uni-icons type="trash" size="60rpx" color="#9b9b9b"/>
         <view class="send-box-input">
-          <textarea auto-height
+          <textarea :value="chatText"
+                    :disabled="disabled"
+                    auto-height
                     :adjust-position="false"
                     :show-confirm-bar="false"
+                    @input="onMessageInput"
                     @keyboardheightchange="setInputHeight"/>
         </view>
-        <button class="send-box-ok">发送</button>
+        <button class="send-box-ok"
+                :disabled="disabled"
+                @click="onSendClick">
+          发送
+        </button>
       </view>
     </view>
   </view>
@@ -20,7 +27,7 @@
 
 <script>
 export default {
-  props: ['operationHeight'],
+  props: ['operationHeight', 'disabled', 'onSend'],
   mounted() {
     uni.getSystemInfo({
       success: (res) => {
@@ -39,12 +46,20 @@ export default {
   data() {
     return {
       keyboardHeight: 0,
-      pxToRpx: null
+      pxToRpx: null,
+      chatText: ''
     }
   },
   methods: {
     setInputHeight(e) {
       this.keyboardHeight = e.detail.height
+    },
+    onMessageInput(e) {
+      this.chatText = e.detail.value
+    },
+    onSendClick() {
+      this.$emit('onSend', this.chatText)
+      this.chatText = ''
     }
   }
 }

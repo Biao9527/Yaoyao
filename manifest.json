@@ -43,7 +43,14 @@
             /* ios打包配置 */
             "ios" : {},
             /* SDK配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "push" : {
+                    "unipush" : {
+                        "version" : "2",
+                        "offline" : false
+                    }
+                }
+            }
         }
     },
     /* 快应用特有相关 */
@@ -61,7 +68,13 @@
                 "desc" : "记账选择位置需要定位服务"
             }
         },
-        "requiredPrivateInfos" : [ "getFuzzyLocation", "chooseLocation" ]
+        "requiredPrivateInfos" : [ "getFuzzyLocation", "chooseLocation" ],
+        "unipush" : {
+            "enable" : true
+        },
+        "secureNetwork" : {
+            "enable" : false
+        }
     },
     "mp-alipay" : {
         "usingComponents" : true
