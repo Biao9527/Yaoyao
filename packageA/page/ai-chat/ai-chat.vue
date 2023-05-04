@@ -3,7 +3,7 @@
     <NavBar title="AI聊天" left-icon="left"/>
     <view v-if="chatList.length > 0">
       <view v-for="item in chatList">
-        {{ item.value }}
+        {{ item.content }}
       </view>
     </view>
     <SendBox :operation-height="operationHeight"
@@ -35,21 +35,18 @@ export default {
   },
   methods: {
     onSendMessage(value) {
-      this.chatList.push({type: 'my', value: value})
+      this.chatList.push({role: 'user', content: value})
       this.onLoadAIChat(value)
     },
-    async onLoadAIChat(content) {
+    async onLoadAIChat() {
       this.loading = true
       await uniCloud.callFunction({
         name: "uni-ai",
         data: {
-          messages: [{
-            role: 'user',
-            content
-          }],
+          messages: this.chatList,
         }
       }).then(res => {
-        this.chatList.push({type: 'ai', value: res.result.reply})
+        this.chatList.push({role: 'assistant', content: res.result.reply})
         this.loading = false
       })
     }
