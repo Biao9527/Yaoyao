@@ -1,11 +1,7 @@
 <template>
   <view>
     <NavBar title="AI聊天" left-icon="left"/>
-    <view v-if="chatList.length > 0">
-      <view v-for="item in chatList">
-        {{ item.content }}
-      </view>
-    </view>
+    <ChatList :chat-list="chatList"/>
     <SendBox :operation-height="operationHeight"
              :disabled="loading"
              @onSend="onSendMessage"/>
@@ -15,12 +11,14 @@
 <script>
 import NavBar from "../../../components/nav-bar";
 import SendBox from "./components/send-box/send-box";
+import ChatList from "./components/chat-list/chat-list";
 import {mapState} from 'vuex'
 
 export default {
   components: {
     NavBar,
-    SendBox
+    SendBox,
+    ChatList
   },
   computed: {
     ...mapState([
@@ -40,13 +38,15 @@ export default {
     },
     async onLoadAIChat() {
       this.loading = true
+      this.chatList.push({role: 'assistant', content: '正在思考中。。。'})
+      const messages = this.chatList.slice(0,this.chatList.length - 1)
       await uniCloud.callFunction({
         name: "uni-ai",
         data: {
-          messages: this.chatList,
+          messages,
         }
       }).then(res => {
-        this.chatList.push({role: 'assistant', content: res.result.reply})
+        this.chatList[this.chatList.length - 1] = {role: 'assistant', content: res.result.reply}
         this.loading = false
       })
     }
