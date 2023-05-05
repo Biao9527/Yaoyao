@@ -39,6 +39,7 @@ export default {
     async onLoadAIChat() {
       this.loading = true
       this.chatList.push({role: 'assistant', content: '正在思考中。。。'})
+      this.onScrollToBottom()
       const messages = this.chatList.slice(0,this.chatList.length - 1)
       await uniCloud.callFunction({
         name: "uni-ai",
@@ -48,6 +49,22 @@ export default {
       }).then(res => {
         this.chatList[this.chatList.length - 1] = {role: 'assistant', content: res.result.reply}
         this.loading = false
+        this.onScrollToBottom()
+      }).catch(() => {
+        this.chatList.pop()
+        this.loading = false
+        uni.showToast({
+          title: '出现异常，稍后重试！',
+          icon: 'none'
+        })
+      })
+    },
+    onScrollToBottom() {
+      this.$nextTick(() => {
+        uni.pageScrollTo({
+          scrollTop: 2000000,
+          duration: 0
+        })
       })
     }
   }

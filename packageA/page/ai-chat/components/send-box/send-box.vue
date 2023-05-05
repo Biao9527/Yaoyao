@@ -1,6 +1,6 @@
 <template>
   <view class="send-box-wrapper"
-        :class="setOperationHeight">
+        :style="setBoxHeight">
     <view class="send-box"
           :class="setOperationHeight"
           :style="setKeyBoardHeight">
@@ -8,12 +8,16 @@
         <uni-icons type="trash" size="60rpx" color="#9b9b9b"/>
         <view class="send-box-input">
           <textarea :value="chatText"
-                    :disabled="disabled"
                     auto-height
                     :adjust-position="false"
                     :show-confirm-bar="false"
+                    :hold-keyboard="true"
+                    :disable-default-padding="true"
+                    :maxlength="100"
                     @input="onMessageInput"
-                    @keyboardheightchange="setInputHeight"/>
+                    @keyboardheightchange="setInputHeight"
+                    @focus="onFocus"
+                    @confirm="onSendClick"/>
         </view>
         <button class="send-box-ok"
                 :disabled="disabled"
@@ -34,6 +38,7 @@ export default {
         this.pxToRpx = 750 / res.windowWidth
       }
     })
+    this.loadBoxHeight()
   },
   computed: {
     setOperationHeight() {
@@ -41,25 +46,44 @@ export default {
     },
     setKeyBoardHeight() {
       return this.keyboardHeight > 0 && this.pxToRpx ? `bottom: ${this.keyboardHeight * this.pxToRpx}rpx;` : ''
+    },
+    setBoxHeight() {
+      return `height: ${(this.boxHeight + this.keyboardHeight) * this.pxToRpx}rpx`
     }
   },
   data() {
     return {
       keyboardHeight: 0,
+      boxHeight: 0,
       pxToRpx: null,
       chatText: ''
     }
   },
   methods: {
+    loadBoxHeight() {
+      const query = uni.createSelectorQuery().in(this);
+      query.select('.send-box').boundingClientRect(data => {
+        this.boxHeight = data.height
+      }).exec();
+    },
     setInputHeight(e) {
       this.keyboardHeight = e.detail.height
     },
     onMessageInput(e) {
+      this.loadBoxHeight()
       this.chatText = e.detail.value
     },
     onSendClick() {
       this.$emit('onSend', this.chatText)
       this.chatText = ''
+    },
+    onFocus() {
+      this.$nextTick(() => {
+        uni.pageScrollTo({
+          scrollTop: 2000000,
+          duration: 0
+        })
+      })
     }
   }
 }
