@@ -1,6 +1,8 @@
 <template>
   <view class="send-box-wrapper"
         :style="setBoxHeight">
+    <view class="send-box-mask"
+          @click="maskClick"/>
     <view class="send-box"
           :class="setOperationHeight"
           :style="setKeyBoardHeight">
@@ -60,6 +62,9 @@ export default {
     }
   },
   methods: {
+    maskClick() {
+      uni.hideKeyboard()
+    },
     loadBoxHeight() {
       const query = uni.createSelectorQuery().in(this);
       query.select('.send-box').boundingClientRect(data => {
@@ -74,6 +79,7 @@ export default {
       this.chatText = e.detail.value
     },
     onSendClick() {
+      if (!this.chatText) return
       this.$emit('onSend', this.chatText)
       this.chatText = ''
     },
@@ -90,10 +96,17 @@ export default {
 </script>
 
 <style lang="scss">
-.send-box-wrapper {
+.send-box-mask {
+  z-index: 1;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
 }
 
 .send-box {
+  z-index: 2;
   position: fixed;
   left: 0;
   bottom: 0;
