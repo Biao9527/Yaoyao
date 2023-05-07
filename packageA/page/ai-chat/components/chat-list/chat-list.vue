@@ -4,7 +4,7 @@
           :key="index">
       <view class="chat-list-item"
             :class="item.role === 'user' ? 'item-right' : ''">
-        <image :src="github"/>
+        <image :src="renderAvatar(item.role)"/>
         <view class="chat-list-content"
               :class="item.role === 'user' ? 'right-content' : ''">
           <view class="chat-list-name">{{ renderName(item.role) }}</view>
@@ -32,6 +32,15 @@ export default {
           'assistant': 'AI机器人'
         }
         return nameHash[name]
+      }
+    },
+    renderAvatar() {
+      return (name) => {
+        const avatarHash = {
+          'user': 'https://api.multiavatar.com/USER.svg',
+          'assistant': 'https://api.multiavatar.com/AI.svg'
+        }
+        return avatarHash[name]
       }
     }
   },
@@ -68,6 +77,7 @@ export default {
     margin-bottom: 20rpx;
 
     image {
+      background: rgba(0, 0, 0, 0.1);
       height: 92rpx;
       width: 92rpx;
       min-height: 92rpx;
