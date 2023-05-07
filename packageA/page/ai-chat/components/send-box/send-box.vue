@@ -7,7 +7,7 @@
           :class="setOperationHeight"
           :style="setKeyBoardHeight">
       <view class="send-box-content">
-        <uni-icons type="trash" size="60rpx" color="#9b9b9b"/>
+        <uni-icons type="trash" size="60rpx" color="#9b9b9b" @click="removeText"/>
         <view class="send-box-input">
           <textarea :value="chatText"
                     auto-height
@@ -81,6 +81,10 @@ export default {
     onSendClick() {
       if (!this.chatText) return
       this.$emit('onSend', this.chatText)
+      this.chatText = ''
+    },
+    removeText() {
+      if (!this.chatText) return
       this.chatText = ''
     },
     onFocus() {
