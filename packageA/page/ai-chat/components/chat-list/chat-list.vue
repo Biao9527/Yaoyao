@@ -7,7 +7,7 @@
         <image :src="github"/>
         <view class="chat-list-content"
               :class="item.role === 'user' ? 'right-content' : ''">
-          <view class="chat-list-name">{{ item.role }}</view>
+          <view class="chat-list-name">{{ renderName(item.role) }}</view>
           <view class="chat-list-text">
             <view class="radius"
                   :class="item.role === 'user' ? 'right-radius' : ''"/>
@@ -24,6 +24,17 @@ import github from '../../../../../static/github.svg'
 
 export default {
   props: ['chatList', 'loading'],
+  computed: {
+    renderName() {
+      return (name) => {
+        const nameHash = {
+          'user': '用户',
+          'assistant': 'AI机器人'
+        }
+        return nameHash[name]
+      }
+    }
+  },
   data() {
     return {
       github

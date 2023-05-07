@@ -27,7 +27,7 @@ export default {
   },
   data() {
     return {
-      chatList: [],
+      chatList: [{role: 'assistant', content: '你好，有什么问题都可以向我提问。'}],
       loading: false
     }
   },
@@ -40,7 +40,7 @@ export default {
       this.loading = true
       this.chatList.push({role: 'assistant', content: '正在思考中。。。'})
       this.onScrollToBottom()
-      const messages = this.chatList.slice(0,this.chatList.length - 1)
+      const messages = this.chatList.slice(1, this.chatList.length - 1)
       await uniCloud.callFunction({
         name: "uni-ai",
         data: {
