@@ -4,7 +4,8 @@ const PAGE_BASE_URL = {
     search: '/packageA/page/search/search',
     ranking: '/packageA/page/statistics/ranking-list/ranking-list',
     orderInfo: '/packageA/page/order-info/order-info',
-    aiChat: '/packageA/page/ai-chat/ai-chat'
+    aiChat: '/packageA/page/ai-chat/ai-chat',
+    wxLogin: '/packageA/page/wx-login/wx-login'
 }
 
 export const navigateToPage = (url, params = '') => {

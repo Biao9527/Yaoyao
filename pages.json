@@ -58,6 +58,12 @@
 					"style": {
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "page/wx-login/wx-login",
+					"style": {
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		}

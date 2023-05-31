@@ -1,9 +1,14 @@
 <script>
 	import {byModelsSetAction} from "./helpers";
   import {mapMutations} from 'vuex'
+  import {navigateToPage} from "./helpers/navigateTo";
+  import {isLogin} from "./helpers/login";
   export default {
 		onLaunch: function() {
       this.getHeight()
+      if (!isLogin()) {
+        navigateToPage('wxLogin')
+      }
 		},
 		onShow: function() {
 		},
