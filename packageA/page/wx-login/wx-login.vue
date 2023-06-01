@@ -1,12 +1,21 @@
 <template>
+  <page-meta :page-style="'background: #FFFFFF'"/>
   <view class="login">
     <NavBar/>
-    <button @click="wxLogin">
-      微信登陆
-    </button>
-    <view v-if="showUserInfo">
-      <update-user-info @onSubmit="onUpdateUserInfo"/>
+    <view class="login-content">
+      <image class="login-logo" :src="logo"/>
+      <view class="login-title">
+        摇摇晃摇
+      </view>
+      <view class="login-text">个人 · 记账 · 学习</view>
+      <view class="login-button"
+            @click="wxLogin">
+        <image :src="weixin"/>
+        <view>微信授权登陆</view>
+      </view>
     </view>
+    <update-user-info v-if="showUserInfo"
+                      @onSubmit="onUpdateUserInfo"/>
   </view>
 </template>
 
@@ -14,6 +23,9 @@
 import NavBar from "../../../components/nav-bar";
 import UpdateUserInfo from "./components/update-user-info/update-user-info";
 import {updateIsLoginStorage, updateTokenStorage} from "../../../helpers/login";
+import logo from '../../../static/logo.svg'
+import weixin from '../../../static/weixin.svg'
+
 
 export default {
   components: {
@@ -22,6 +34,8 @@ export default {
   },
   data() {
     return {
+      logo,
+      weixin,
       userInfo: null,
       showUserInfo: false
     }
@@ -80,5 +94,52 @@ export default {
 </script>
 
 <style lang="scss">
+.login {
 
+  &-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 100rpx 38rpx 0;
+  }
+
+  &-logo {
+    margin: 95rpx 0 38rpx;
+    width: 160rpx;
+    height: 160rpx;
+  }
+
+  &-title {
+    text-align: center;
+    font-size: 60rpx;
+    color: #333333;
+    font-weight: bold;
+  }
+
+  &-text {
+    margin-top: 20rpx;
+    text-align: center;
+    font-size: 32rpx;
+    color: #808080;
+  }
+
+  &-button {
+    width: 100%;
+    background: #4cd964;
+    font-size: 32rpx;
+    color: #FFFFFF;
+    border-radius: 100rpx;
+    height: 88rpx;
+    margin-top: 180rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    image {
+      margin-right: 16rpx;
+      width: 58rpx;
+      height: 58rpx;
+    }
+  }
+}
 </style>
