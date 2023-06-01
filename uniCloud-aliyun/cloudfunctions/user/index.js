@@ -27,34 +27,39 @@ exports.main = async (event, context) => {    //event为客户端上传的参数
             const res_user = await pro_user.where({
                 mp_wx_openid: res_session.data.openid
             }).get()
-            if (res_user.data && res_user.data.length === 0) {                // 没有用户信息，进入注册
-                const register = await uniCloud.callFunction({
-                    name: 'user',
-                    data: {
-                        action: 'register',
-                        open_id: res_session.data.openid,
-                        user_info: event.user_info
+            // 没有用户信息，进入注册
+            if (res_user.data && res_user.data.length === 0) {
+                if (event.user_info) {
+                    const register = await uniCloud.callFunction({
+                        name: 'user',
+                        data: {
+                            action: 'register',
+                            open_id: res_session.data.openid,
+                            user_info: event.user_info
+                        }
+                    }).then(res => {
+                        result = res
+                    })
+                } else {
+                    result = {
+                        result: {
+                            result: {register: true}
+                        }
                     }
-                }).then(res => {
-                    result = res
-                })
+                }
             } else {
-                const update = await uniCloud.callFunction({
-                    name: 'user', data: {
-                        action: 'update',
-                        open_id: res_session.data.openid,
-                        _id: res_user.data[0]._id,
-                        user_info: event.user_info
+                result = {
+                    result: {
+                        result:  res_user.data[0]
                     }
-                }).then(res => {
-                    result = res
-                })
+                }
             }
             break;
         case 'register':
             const res_reg = await pro_user.add({
                 nickName: event.user_info.nickName,
                 avatarUrl: event.user_info.avatarUrl,
+                gender: event.user_info.gender,
                 mp_wx_openid: event.open_id,
                 register_date: new Date().getTime()
             })
@@ -74,7 +79,10 @@ exports.main = async (event, context) => {    //event为客户端上传的参数
             break;
         case 'update':
             const res_update = await pro_user.doc(event._id).update({
-                nickName: event.user_info.nickName, avatarUrl: event.user_info.avatarUrl, mp_wx_openid: event.open_id
+                nickName: event.user_info.nickName,
+                avatarUrl: event.user_info.avatarUrl,
+                gender: event.user_info.gender,
+                mp_wx_openid: event.open_id
             })
             const res_update_val = await uniCloud.callFunction({
                 name: 'user', data: {

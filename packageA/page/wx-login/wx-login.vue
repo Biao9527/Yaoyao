@@ -1,47 +1,41 @@
 <template>
   <view class="login">
-    <NavBar title=""/>
-    <button @click="getUserInfo">
+    <NavBar/>
+    <button @click="wxLogin">
       微信登陆
     </button>
+    <view v-if="showUserInfo">
+      <update-user-info @onSubmit="onUpdateUserInfo"/>
+    </view>
   </view>
 </template>
 
 <script>
 import NavBar from "../../../components/nav-bar";
+import UpdateUserInfo from "./components/update-user-info/update-user-info";
 import {updateIsLoginStorage, updateTokenStorage} from "../../../helpers/login";
 
 export default {
   components: {
-    NavBar
+    NavBar,
+    UpdateUserInfo
   },
   data() {
     return {
-      userInfo: null
+      userInfo: null,
+      showUserInfo: false
     }
   },
   methods: {
-    getUserInfo() {
+    onUpdateUserInfo(userInfo) {
+      this.showUserInfo = false
+      this.userInfo = userInfo
+      this.wxLogin()
+    },
+    wxLogin() {
       uni.showLoading({
         title: '登陆中...'
       });
-      const _this = this
-      uni.getUserProfile({
-        desc: '用于完善会员资料',
-        success: (result) => {
-          _this.userInfo = result.userInfo
-          _this.wxLogin()
-        }, fail: () => {
-          updateTokenStorage()
-          updateIsLoginStorage()
-          uni.showToast({
-            title: '获取用户信息失败',
-            icon: 'none'
-          })
-        }
-      })
-    },
-    wxLogin() {
       const _this = this
       uni.login({
         provider: 'weixin',
@@ -56,6 +50,10 @@ export default {
               },
               success: (res) => {
                 uni.hideLoading();
+                if (res.result.result.result.register) {
+                  _this.showUserInfo = true
+                  return
+                }
                 if (res.result.result.result._id) {
                   const data = {
                     _id: res.result.result.result._id,
