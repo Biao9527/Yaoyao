@@ -1,5 +1,5 @@
 // 根据机型设置操作栏高度
-import {verificationTallyForm} from "../packageA/page/keep-accounts/helpers/accountsStorage";
+import {navigateToPage} from "./navigateTo";
 
 export function byModelsSetAction() {
     return new Promise(resolve => {
@@ -24,6 +24,15 @@ export function byModelsSetAction() {
             }
         })
     })
+}
+
+export function getWxOpenId() {
+    const user = uni.getStorageSync('user')
+    if (!user) {
+        navigateToPage('wxLogin')
+    } else {
+        return user.mp_wx_openid
+    }
 }
 
 /**

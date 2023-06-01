@@ -41,11 +41,10 @@
 
 <script>
 import {ICON_LIST} from '../../helper/index'
-import {UpdateTablesStorage} from "../../helper/updateTablesStorage";
-import {autoIncrementId} from '../../../../../helpers'
+import {getWxOpenId} from '../../../../../helpers'
 
 export default {
-  props: ['isOpened','tableIcon', 'tableName', 'isEdit', 'selectTable'],
+  props: ['isOpened', 'tableIcon', 'tableName', 'isEdit', 'selectTable'],
   data() {
     return {
       iconList: ICON_LIST,
@@ -77,18 +76,30 @@ export default {
       }
       const isEdit = this.isEdit && !!this.selectTable
       const data = {
-        id: isEdit ? this.selectTable.id : autoIncrementId('tablesMaxId'),
         icon: this.tableIcon,
         name: this.tableName
       }
-      const success = await UpdateTablesStorage(data, isEdit)
-      if (!success) {return}
-      this.$store.commit({
-            type: isEdit ? 'updateTable' : 'addTable',
-            data: data
-          })
-      this.showToast(isEdit ? '修改成功' : '保存成功')
-      this.onCancel()
+      const wx_openid = getWxOpenId()
+      uniCloud.callFunction({
+        name: 'tables',
+        data: {
+          action: isEdit ? 'update' : 'create',
+          update_id: isEdit ? this.selectTable.id : null,
+          wx_openid: wx_openid,
+          tableInfo: data
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            this.showToast(isEdit ? '修改成功' : '保存成功')
+            this.onCancel()
+          } else {
+            this.showToast(isEdit ? '修改失败' : '保存失败')
+          }
+        },
+        fail: () => {
+        }
+      })
+
     },
     onCancel() {
       this.$emit('update:tableName', '')

@@ -1,0 +1,36 @@
+{
+  "bsonType": "object",
+  "required": [],
+  "permission": {
+    "read": true,
+    "create": true,
+    "update": true,
+    "delete": true
+  },
+  "properties": {
+    "_id": {
+      "description": "ID，系统自动生成"
+    },
+    "icon": {
+      "bsonType": "string",
+      "label": "标签图标",
+      "description": "标签图标，创建获取"
+    },
+    "name": {
+      "bsonType": "string",
+      "label": "标签名",
+      "description": "标签名称，创建获取"
+    },
+    "mp_wx_openid": {
+      "bsonType": "string",
+      "description": "微信小程序平台openid"
+    },
+    "create_date": {
+      "bsonType": "timestamp",
+      "description": "创建时间",
+      "forceDefaultValue": {
+        "$env": "now"
+      }
+    }
+  }
+}
