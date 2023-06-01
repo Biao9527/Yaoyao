@@ -25,6 +25,7 @@ import UpdateUserInfo from "./components/update-user-info/update-user-info";
 import {updateIsLoginStorage, updateTokenStorage} from "../../../helpers/login";
 import logo from '../../../static/logo.svg'
 import weixin from '../../../static/weixin.svg'
+import {uploadImage} from "../../../helpers";
 
 
 export default {
@@ -46,9 +47,21 @@ export default {
       this.userInfo = userInfo
       this.wxLogin()
     },
-    wxLogin() {
+    async wxLogin() {
+      if (this.userInfo && this.userInfo.avatarUrl) {
+        uni.showLoading({
+          title: '正在上传图片...',
+          mask: true
+        });
+        const imageUrl = await uploadImage(this.userInfo.avatarUrl)
+        if (!imageUrl) {
+          return
+        }
+        this.userInfo = {...this.userInfo, avatarUrl: imageUrl.fileID}
+      }
       uni.showLoading({
-        title: '登陆中...'
+        title: '登陆中...',
+        mask: true
       });
       const _this = this
       uni.login({
@@ -63,9 +76,9 @@ export default {
                 user_info: _this.userInfo
               },
               success: (res) => {
-                uni.hideLoading();
                 if (res.result.result.result.register) {
                   _this.showUserInfo = true
+                  uni.hideLoading();
                   return
                 }
                 if (res.result.result.result._id) {
@@ -74,20 +87,33 @@ export default {
                     mp_wx_openid: res.result.result.result.mp_wx_openid,
                     register_date: res.result.result.result.register_date
                   }
-                  updateTokenStorage(data)
-                  updateIsLoginStorage(true)
-                  uni.navigateBack()
+                  this.loginSuccess(data)
                 }
               },
               fail: () => {
-                updateTokenStorage()
-                updateIsLoginStorage()
-                uni.hideLoading();
+                this.loginFail()
               }
             })
           }
         }
       })
+    },
+    loginSuccess(data) {
+      updateTokenStorage(data)
+      updateIsLoginStorage(true)
+      uni.showToast({
+        title: '登陆成功！',
+        icon: 'none'
+      });
+      uni.navigateBack()
+    },
+    loginFail() {
+      updateTokenStorage()
+      updateIsLoginStorage()
+      uni.showToast({
+        title: '登陆失败！',
+        icon: 'none'
+      });
     }
   }
 }

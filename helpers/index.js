@@ -27,6 +27,29 @@ export function byModelsSetAction() {
 }
 
 /**
+ * 上传图片至云存储
+ */
+export async function uploadImage(url) {
+    const fileName = url.split('/')
+    return new Promise(resolve => {
+        uniCloud.uploadFile({
+            filePath: url,
+            cloudPath: fileName[fileName.length - 1],
+            success(res) {
+                resolve(res)
+            },
+            fail() {
+                uni.showToast({
+                    title: '图片上传失败！',
+                    icon: 'none'
+                })
+                resolve(false)
+            }
+        })
+    })
+}
+
+/**
  * ID自增生成器
  * @param key
  * @returns string
@@ -51,6 +74,6 @@ export function autoIncrementId(key) {
  * @returns boolean
  */
 export function verificationIsNumber(text) {
-    const reg = new RegExp('^(\\-|\\+)?\\d+(\\.\\d+)?$','g')
+    const reg = new RegExp('^(\\-|\\+)?\\d+(\\.\\d+)?$', 'g')
     return reg.test(text)
 }

@@ -2,9 +2,9 @@
   "bsonType": "object",
   "required": [],
   "permission": {
-    "read": false,
-    "create": false,
-    "update": false,
+    "read": true,
+    "create": true,
+    "update": true,
     "delete": false
   },
   "properties": {
