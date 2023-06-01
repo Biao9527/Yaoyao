@@ -3,9 +3,9 @@
   <view class="tables">
     <NavBar title="标签"/>
     <view class="tables-list"
-          v-if="Array.isArray(getMyTableList) && getMyTableList.length > 0">
+          v-if="Array.isArray(tablesList) && tablesList.length > 0">
       <uni-swipe-action>
-        <uni-swipe-action-item v-for="(item) in getMyTableList" :key="item.id"
+        <uni-swipe-action-item v-for="(item) in tablesList" :key="item._id"
                                :right-options="options"
                                @click="bindClick"
                                @change="swipeChange($event, item)">
@@ -49,10 +49,9 @@ import CustomTabBar from '../../../components/custom-tab-bar'
 import NavBar from "../../../components/nav-bar";
 import Nothing from "../../../components/nothing/nothing";
 import {navigateToPage} from "../../../helpers/navigateTo";
-import {mapState, mapGetters, mapMutations} from 'vuex'
+import {mapState} from 'vuex'
 import CreateTableModal from "./components/create-table-modal/create-table-modal";
-import {removeTableStorage} from "./helper/updateTablesStorage";
-import {removeAccountsStorage} from "../keep-accounts/helpers/accountsStorage";
+import {getWxOpenId} from "../../../helpers";
 
 export default {
   components: {
@@ -63,13 +62,11 @@ export default {
   },
   computed: {
     ...mapState([
-      'tableList',
       'operationHeight'
-    ]),
-    ...mapGetters([
-      'getMyTableList',
-      'getAccountList'
     ])
+  },
+  onShow() {
+    this.loadTableList()
   },
   data() {
     return {
@@ -86,6 +83,7 @@ export default {
           }
         }
       ],
+      tablesList: [],
       selectTableItem: null,
       tableIcon: '',
       tableName: '',
@@ -94,9 +92,26 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(['removeTable', 'removeAccount']),
     onAddTableClick() {
       navigateToPage('createTable')
+    },
+    loadTableList() {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      uniCloud.callFunction({
+        name: 'tables',
+        data: {
+          action: 'get',
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          this.tablesList = res.result
+        },
+        fail: () => {
+        }
+      })
     },
     bindClick(e) {
       if (e.index === 0) {
@@ -113,44 +128,33 @@ export default {
       this.selectTableItem = item
     },
     removeTableModal() {
-      const filterItem =
-          this.getAccountList && this.getAccountList.length > 0 ?
-          this.getAccountList.filter(item => item.tableId === this.selectTableItem.id) : []
-      if (filterItem && filterItem.length > 0) {
-        uni.showModal({
-          title: '此标签已绑定记账数据，若继续删除会将绑定数据一同删除！',
-          confirmText: '继续删除',
-          confirmColor: '#dd524d',
-          success: res => {
-            if (res.confirm) {
-              this.deleteTable(filterItem)
-            }
-          }
-        })
-      } else {
-        this.deleteTable()
-      }
+      this.deleteTable()
     },
-    deleteTable(filterItem) {
+    deleteTable() {
+      const wx_openid = getWxOpenId()
       uni.showModal({
         title: '确定删除标签',
         success: async (res) => {
           if (res.confirm) {
-            if (filterItem && filterItem.length > 0) {
-              const successAcc = removeAccountsStorage(filterItem)
-              if (!successAcc) {
-                this.showToast('删除失败')
-                return
+            uniCloud.callFunction({
+              name: 'tables',
+              data: {
+                action: 'delete',
+                tablesId: this.selectTableItem._id,
+                wx_openid: wx_openid
+              },
+              success: (res) => {
+                if (res.result.status === 200) {
+                  const tabIndex = this.tablesList.findIndex(item => item._id === this.selectTableItem._id)
+                  this.tablesList.splice(tabIndex, 1)
+                  this.showToast('删除成功')
+                } else {
+                  this.showToast('删除失败')
+                }
+              },
+              fail: () => {
               }
-              this.removeAccount(filterItem)
-            }
-            const success = await removeTableStorage(this.selectTableItem)
-            if (!success) {
-              this.showToast('删除失败')
-              return
-            }
-            this.removeTable(this.selectTableItem)
-            this.showToast('删除成功')
+            })
           }
         }
       })
