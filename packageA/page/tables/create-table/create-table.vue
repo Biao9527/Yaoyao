@@ -42,7 +42,7 @@ export default {
   },
   onLoad(options) {
     if (options.selectedId) {
-      this.selectedId = parseInt(options.selectedId)
+      this.selectedId = options.selectedId
     }
   },
   onShow() {
