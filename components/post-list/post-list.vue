@@ -2,19 +2,19 @@
   <view class="post-list">
     <view class="post-list-item"
           v-for="(item, index) in list"
-          :key="item.id"
+          :key="item._id"
           @click="onItemClick(item)">
       <view class="post-list-icon">
         <view class="post-list-index" v-if="showIndex">{{ index + 1 }}</view>
-        <view @click.stop="onTableClick(item.tableId)">
+        <view @click.stop="onTableClick(item.table._id)">
           <uni-icons custom-prefix="iconfont"
-                     :type="filterTable(item.tableId).icon"
+                     :type="item.table.icon"
                      size="84rpx"/>
         </view>
         <view class="post-list-icon-wrapper">
           <view class="post-list-icon-text"
-                @click.stop="onTableClick(item.tableId)">
-            {{ filterTable(item.tableId).name }}
+                @click.stop="onTableClick(item.table._id)">
+            {{ item.table.name }}
           </view>
           <view class="post-list-icon-notes">{{ item.notes }}</view>
         </view>
@@ -33,17 +33,10 @@
 import {navigateToPage} from "../../helpers/navigateTo";
 
 export default {
-  props: ['list', 'tableList', 'showIndex', 'onTable'],
-  computed: {
-    filterTable() {
-      return function (id) {
-        return this.tableList.filter(item => item.id === id)[0]
-      }
-    },
-  },
+  props: ['list', 'showIndex', 'onTable'],
   methods: {
     onItemClick(item) {
-      navigateToPage('orderInfo', `?id=${item.id}`)
+      navigateToPage('orderInfo', `?id=${item._id}`)
     },
     onTableClick(id) {
       this.$emit('onTable', id)

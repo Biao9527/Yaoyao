@@ -17,11 +17,7 @@
         </view>
       </view>
       <PostList :list="items.list"
-                :table-list="tableList"
                 @onTable="onTableClick"/>
-    </view>
-    <view class="statistics-list-none">
-      - 没有更多 -
     </view>
   </view>
 </template>
@@ -30,7 +26,7 @@
 import PostList from "../post-list/post-list";
 
 export default {
-  props: ['list', 'type', 'tableList', 'onTable'],
+  props: ['list', 'type', 'onTable'],
   components: {
     PostList
   },
@@ -113,13 +109,6 @@ export default {
 
   &-total {
     font-size: 24rpx;
-  }
-
-  &-none {
-    height: 140rpx;
-    text-align: center;
-    font-size: 26rpx;
-    color: #bbbbbb;
   }
 }
 </style>

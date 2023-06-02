@@ -1,13 +1,13 @@
 <template>
   <view class="account-list">
     <view class="account-list-item"
-          v-for="items in accountList" :key="items.id"
+          v-for="items in accountList" :key="items._id"
           @click="onItemClick(items)">
       <view class="account-list-item-header">
         <view class="account-list-item-table"
-              @click.stop="onTable(items.tableId)">
-          <uni-icons custom-prefix="iconfont" :type="filterTable(items).icon" size="68rpx"/>
-          <view class="table-name">{{ filterTable(items).name }}</view>
+              @click.stop="onTable(items.table._id)">
+          <uni-icons custom-prefix="iconfont" :type="items.table.icon" size="68rpx"/>
+          <view class="table-name">{{ items.table.name }}</view>
         </view>
         <view class="account-list-item-money">{{items.type}}{{ items.money }}</view>
       </view>
@@ -27,9 +27,6 @@
         </view>
       </view>
     </view>
-    <view class="account-list-none">
-      - 没有更多 -
-    </view>
   </view>
 </template>
 
@@ -37,20 +34,13 @@
 import {navigateToPage} from "../../helpers/navigateTo";
 
 export default {
-  props: ['accountList', 'tableList', 'onTableClick'],
-  computed: {
-    filterTable() {
-      return function (data) {
-        return this.tableList.filter(item => item.id === data.tableId)[0]
-      }
-    }
-  },
+  props: ['accountList', 'onTableClick'],
   methods: {
     onTable(item) {
       this.$emit('onTableClick', item)
     },
     onItemClick(item) {
-      navigateToPage('orderInfo', `?id=${item.id}`)
+      navigateToPage('orderInfo', `?id=${item._id}`)
     }
   }
 }
@@ -58,13 +48,6 @@ export default {
 
 <style scoped lang="scss">
 .account-list {
-
-  &-none {
-    height: 140rpx;
-    text-align: center;
-    font-size: 26rpx;
-    color: #bbbbbb;
-  }
 
   &-item {
     margin: 20rpx 26rpx;
