@@ -46,7 +46,7 @@ export function verificationTallyForm(data) {
     if (!data.type) {
         this.showToast('请选择账单类型')
         return true
-    } else if (!data.tableId) {
+    } else if (!data.table) {
         this.showToast('请绑定标签')
         return true
     } else if (!data.date) {

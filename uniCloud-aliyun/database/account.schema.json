@@ -16,10 +16,10 @@
       "label": "记账类型",
       "description": "记账类型，创建获取"
     },
-    "tableId": {
-      "bsonType": "string",
-      "label": "标签id",
-      "description": "标签id，创建获取"
+    "table": {
+      "bsonType": "object",
+      "label": "标签对象",
+      "description": "标签对象，创建获取"
     },
     "date": {
       "bsonType": "timestamp",

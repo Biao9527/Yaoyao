@@ -327,7 +327,7 @@ export default {
       })
       const payload = {
         type: this.tallyType,
-        tableId: this.selectedTable ? this.selectedTable._id : null,
+        table: this.selectedTable ? this.selectedTable : null,
         date: this.selectedDate,
         money: this.money ? parseFloat(this.money).toFixed(2) : null,
         notes: this.notes,
