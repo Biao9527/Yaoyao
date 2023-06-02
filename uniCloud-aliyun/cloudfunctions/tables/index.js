@@ -6,6 +6,18 @@ exports.main = async (event, context) => {
 
     let result = {};
     switch (event.action) {
+        case 'find':
+            if (event.tableInfo) {
+                const res = await tables.where({
+                    mp_wx_openid: event.wx_openid,
+                    name: event.tableInfo.name,
+                    icon: event.tableInfo.icon
+                }).get()
+                result = {status: 200, findList: res.data}
+            } else {
+                result = {status: -1, msg: '查询失败'}
+            }
+            break
         case 'get':
             if (event.getSize && event.getPage) {
                 const res_val = await tables.where({
@@ -13,7 +25,7 @@ exports.main = async (event, context) => {
                 }).orderBy('create_date', 'desc')
                     .skip((event.getPage - 1) * event.getSize)
                     .limit(event.getSize).get()
-                return result = {status: 200, dataList: res_val.data}
+                result = {status: 200, dataList: res_val.data}
             } else {
                 result = {status: -1, msg: '获取列表失败'}
             }

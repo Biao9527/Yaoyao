@@ -82,3 +82,30 @@ export const recommend_tables = [
         ]
     }
 ]
+
+/**
+ * 判断标签是否重复
+ */
+export async function findTablesItem(wx_openid, userInfo) {
+    return new Promise(resolve => {
+        uniCloud.callFunction({
+            name: 'tables',
+            data: {
+                action: 'find',
+                wx_openid: wx_openid,
+                tableInfo: userInfo
+            },
+            success: (res) => {
+                if (res.result.status === 200
+                    && res.result
+                    && res.result.findList
+                    && Array.isArray(res.result.findList)
+                    && res.result.findList.length > 0) {
+                    resolve(res.result.findList)
+                } else {
+                    resolve(false)
+                }
+            }
+        })
+    })
+}

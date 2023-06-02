@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {ICON_LIST} from '../../helper/index'
+import {findTablesItem, ICON_LIST} from '../../helper/index'
 import {getWxOpenId} from '../../../../../helpers'
 
 export default {
@@ -66,6 +66,11 @@ export default {
       this.$emit('update:tableName', e)
     },
     async onConfirm() {
+      const isEdit = this.isEdit && !!this.selectTable
+      uni.showLoading({
+        title: isEdit ? '正在修改...' : '正在创建...',
+        mask: true
+      })
       if (!this.tableIcon) {
         this.showToast('请选择图标')
         return
@@ -74,12 +79,16 @@ export default {
         this.showToast('请输入标签名')
         return
       }
-      const isEdit = this.isEdit && !!this.selectTable
       const data = {
         icon: this.tableIcon,
         name: this.tableName
       }
       const wx_openid = getWxOpenId()
+      const findItem = await findTablesItem(wx_openid, data)
+      if (findItem && findItem.length > 0) {
+        this.showToast('已存在相同标签！')
+        return
+      }
       uniCloud.callFunction({
         name: 'tables',
         data: {
@@ -98,9 +107,9 @@ export default {
           }
         },
         fail: () => {
+          this.showToast(isEdit ? '修改失败' : '保存失败')
         }
       })
-
     },
     onCancel() {
       this.$emit('update:tableName', '')
