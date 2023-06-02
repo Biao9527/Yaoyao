@@ -135,10 +135,10 @@
 import NavBar from "../../../components/nav-bar";
 import FooterActionBar from "./components/footer-action-bar/footer-action-bar";
 import SelectedTable from "./components/selected-table/selected-table";
-import {mapGetters, mapState, mapMutations} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import locationSvg from './assets/locationSvg.svg'
-import {updateAccountsStorage, verificationTallyForm} from "./helpers/accountsStorage";
-import {autoIncrementId, getWxOpenId, verificationIsNumber} from "../../../helpers";
+import {verificationTallyForm} from "./helpers/accountsStorage";
+import {getWxOpenId, verificationIsNumber} from "../../../helpers";
 
 export default {
   components: {
@@ -208,7 +208,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['addAccount', 'updateAccount']),
     loadTableList(reLoad = true) {
       if (this.tagLoading) {
         return;
@@ -328,7 +327,7 @@ export default {
       })
       const payload = {
         type: this.tallyType,
-        tableId: this.selectedTable ? this.selectedTable.id : null,
+        tableId: this.selectedTable ? this.selectedTable._id : null,
         date: this.selectedDate,
         money: this.money ? parseFloat(this.money).toFixed(2) : null,
         notes: this.notes,
@@ -338,11 +337,26 @@ export default {
       if (isPass) return
       const wx_openid = getWxOpenId()
 
-      payload.id = this.isEdit && this.editId ? this.editId : autoIncrementId('tallyMaxId')
-      const success = updateAccountsStorage(payload, this.isEdit)
-      if (!success) return
-      this.isEdit ? this.updateAccount(payload) : this.addAccount(payload)
-      uni.navigateBack()
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: isEdit ? 'update' : 'create',
+          accountId: isEdit ? this.editId : null,
+          wx_openid: wx_openid,
+          accountInfo: payload
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            this.showToast(isEdit ? '修改成功' : '保存成功')
+            uni.navigateBack()
+          } else {
+            this.showToast(isEdit ? '修改失败' : '保存失败')
+          }
+        },
+        fail: () => {
+          this.showToast(isEdit ? '修改失败' : '保存失败')
+        }
+      })
     },
     showToast(title) {
       uni.showToast({
