@@ -123,8 +123,10 @@
                      @onTableItemClick="openedTable"
                      @onSubmit="onSubmit"/>
     <SelectedTable :is-opened.sync="isOpenedTable"
-                   :table-list.sync="getMyTableList"
+                   :first-load="tagFirstLoad"
+                   :table-list.sync="tablesList"
                    :selected-table.sync="selectedTable"
+                   @scrollToLower="onTableScrollToLower"
                    :nav-bar-height="statusBarHeight + 44"/>
   </view>
 </template>
@@ -136,7 +138,7 @@ import SelectedTable from "./components/selected-table/selected-table";
 import {mapGetters, mapState, mapMutations} from 'vuex'
 import locationSvg from './assets/locationSvg.svg'
 import {updateAccountsStorage, verificationTallyForm} from "./helpers/accountsStorage";
-import {autoIncrementId, verificationIsNumber} from "../../../helpers";
+import {autoIncrementId, getWxOpenId, verificationIsNumber} from "../../../helpers";
 
 export default {
   components: {
@@ -172,7 +174,6 @@ export default {
       'operationHeight'
     ]),
     ...mapGetters([
-      'getMyTableList',
       'getAccountItem',
       'getTableItem'
     ]),
@@ -197,11 +198,69 @@ export default {
       showMoneyInput: false,
       showNotesInput: false,
       address: null,
+      tablesList: [],
+      tagLoading: false,
+      tagHasMore: true,
+      tagFirstLoad: true,
+      tagPage: 1,
+      tagSize: 40,
       locationSvg
     }
   },
   methods: {
     ...mapMutations(['addAccount', 'updateAccount']),
+    loadTableList(reLoad = true) {
+      if (this.tagLoading) {
+        return;
+      }
+      this.tagLoading = true
+      if (reLoad) {
+        this.tagPage = 1
+        this.tagFirstLoad = true
+        this.tagHasMore = true
+      }
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      uniCloud.callFunction({
+        name: 'tables',
+        data: {
+          action: 'get',
+          getSize: this.tagSize,
+          getPage: this.tagPage,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            if (res.result.dataList.length < this.tagSize) {
+              this.tagHasMore = false
+            }
+            this.tagPage += 1
+            if (reLoad) {
+              this.tablesList = res.result.dataList
+            } else {
+              this.tablesList = this.tablesList.concat(res.result.dataList)
+            }
+            this.loadTablesSuccess()
+          } else {
+            this.loadTablesSuccess()
+            this.showToast('获取列表失败')
+          }
+        },
+        fail: () => {
+        }
+      })
+    },
+    loadTablesSuccess() {
+      this.tagLoading = false
+      this.tagFirstLoad = false
+    },
+    onTableScrollToLower() {
+      if (!this.tagLoading && this.tagHasMore) {
+        this.loadTableList(false)
+      }
+    },
     onNotesInput(e) {
       this.notes = e.detail.value
     },
@@ -229,6 +288,7 @@ export default {
     },
     openedTable() {
       this.isOpenedTable = true
+      this.loadTableList()
     },
     onDateChange(e) {
       this.selectedDate = e
@@ -261,6 +321,11 @@ export default {
       })
     },
     onSubmit() {
+      const isEdit = !!this.isEdit && !!this.editId
+      uni.showLoading({
+        title: isEdit ? '正在修改...' : '正在创建...',
+        mask: true
+      })
       const payload = {
         type: this.tallyType,
         tableId: this.selectedTable ? this.selectedTable.id : null,
@@ -271,6 +336,8 @@ export default {
       }
       const isPass = verificationTallyForm.call(this, payload)
       if (isPass) return
+      const wx_openid = getWxOpenId()
+
       payload.id = this.isEdit && this.editId ? this.editId : autoIncrementId('tallyMaxId')
       const success = updateAccountsStorage(payload, this.isEdit)
       if (!success) return

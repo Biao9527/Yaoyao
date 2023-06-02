@@ -6,39 +6,51 @@
     <view class="selected-table-content"
           :style="topHeight"
           @click.stop="">
-      <view v-if="Array.isArray(tableList) && tableList.length > 0">
-        <view class="selected-table-header">
-          <view class="selected-table-title">我的标签</view>
-          <view class="selected-table-create" @click="goCreateTable">创建</view>
-        </view>
-        <scroll-view scroll-y :style="scrollHeight">
-          <view class="selected-table-list"
-                :style="footerHeight">
-            <view class="selected-table-list-item"
-                  :class="((multiSelect && selectedTable.findIndex(i => i === item.id) >= 0) ||
-                  (selectedTable && item.id === selectedTable.id)) ? 'selected' : ''"
-                  v-for="item in tableList" :key="item.id"
-                  @click="onTableItem(item)">
-              <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
-              <view class="selected-table-list-item-text">{{ item.name }}</view>
-            </view>
-          </view>
-        </scroll-view>
+      <view v-if="firstLoad"
+            class="selected-table-loading">
+        <uni-load-more status="loading"
+                       iconSize="40"
+                       color="#bbbbbb"
+                       :showText="false"/>
       </view>
-      <view class="selected-table-nothing" v-else>
-        <Nothing text="这里什么都没有~"/>
-        <view class="selected-table-none-button"
-              @click="goCreateTable">
-          去创建
+      <view v-else>
+        <view v-if="Array.isArray(tableList) && tableList.length > 0">
+          <view class="selected-table-header">
+            <view class="selected-table-title">我的标签</view>
+            <view class="selected-table-create" @click="goCreateTable">创建</view>
+          </view>
+          <scroll-view scroll-y :style="scrollHeight"
+                       @scrolltolower="tableScrollToLower">
+            <view class="selected-table-list"
+                  :style="footerHeight">
+              <view class="selected-table-list-item"
+                    :class="((multiSelect && selectedTable.findIndex(i => i === item._id) >= 0) ||
+                  (selectedTable && item._id === selectedTable._id)) ? 'selected' : ''"
+                    v-for="item in tableList" :key="item._id"
+                    @click="onTableItem(item)">
+                <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
+                <view class="selected-table-list-item-text">{{ item.name }}</view>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+        <view class="selected-table-nothing" v-else>
+          <Nothing text="这里什么都没有~"/>
+          <view class="selected-table-none-button"
+                @click="goCreateTable">
+            去创建
+          </view>
         </view>
       </view>
     </view>
     <view class="selected-table-buttons"
           :class="setOperationHeight" v-if="multiSelect">
       <view class="selected-table-buttons-item cancel"
-            @click="onMaskClick">取消</view>
+            @click="onMaskClick">取消
+      </view>
       <view class="selected-table-buttons-item confirm"
-            @click="onConfirmClick">确定</view>
+            @click="onConfirmClick">确定
+      </view>
     </view>
   </view>
 </template>
@@ -65,7 +77,18 @@ export default {
       return this.operationHeight !== '96rpx' ? 'set-height' : ''
     }
   },
-  props: ['isOpened', 'multiSelect', 'selectedTable', 'lastSelectTable', 'tableList', 'navBarHeight', 'operationHeight', 'onConfirm'],
+  props: [
+    'isOpened',
+    'multiSelect',
+    'selectedTable',
+    'lastSelectTable',
+    'tableList',
+    'navBarHeight',
+    'operationHeight',
+    'onConfirm',
+    'scrollToLower',
+    'firstLoad'
+  ],
   data() {
     return {}
   },
@@ -83,23 +106,26 @@ export default {
     },
     onTableItem(item) {
       if (this.multiSelect && Array.isArray(this.selectedTable)) {
-        const filterId = this.selectedTable.findIndex(i => i === item.id)
+        const filterId = this.selectedTable.findIndex(i => i === item._id)
         const idList = this.selectedTable
         if (filterId >= 0) {
           idList.splice(filterId, 1)
           this.$emit('update:selectedTable', idList)
         } else {
-          idList.push(item.id)
+          idList.push(item._id)
           this.$emit('update:selectedTable', idList)
         }
         return;
       }
-      if (this.selectedTable && item.id === this.selectedTable.id) return
+      if (this.selectedTable && item._id === this.selectedTable._id) return
       this.$emit('update:selectedTable', item)
       this.onMaskClick()
     },
     goCreateTable() {
-      navigateToPage('createTable', this.selectedTable ? `?selectedId=${this.selectedTable.id}` : '')
+      navigateToPage('createTable', this.selectedTable ? `?selectedId=${this.selectedTable._id}` : '')
+    },
+    tableScrollToLower() {
+      this.$emit('scrollToLower')
     }
   }
 }
@@ -191,6 +217,10 @@ export default {
     align-items: center;
   }
 
+  &-loading {
+    margin-top: 50%;
+  }
+
   &-none-button {
     font-size: 26rpx;
     color: #FFFFFF;
@@ -212,7 +242,7 @@ export default {
     bottom: 0;
     right: 0;
     display: flex;
-    background: linear-gradient(90deg, rgba(255,255,255,1) 40%, rgba(76,217,100,1) 40%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 1) 40%, rgba(76, 217, 100, 1) 40%);
 
     &-item {
       font-size: 30rpx;
