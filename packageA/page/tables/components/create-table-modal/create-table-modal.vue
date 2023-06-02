@@ -44,7 +44,7 @@ import {ICON_LIST} from '../../helper/index'
 import {getWxOpenId} from '../../../../../helpers'
 
 export default {
-  props: ['isOpened', 'tableIcon', 'tableName', 'isEdit', 'selectTable'],
+  props: ['isOpened', 'tableIcon', 'tableName', 'isEdit', 'selectTable', 'createSuccess', 'updateSuccess'],
   data() {
     return {
       iconList: ICON_LIST,
@@ -84,12 +84,13 @@ export default {
         name: 'tables',
         data: {
           action: isEdit ? 'update' : 'create',
-          update_id: isEdit ? this.selectTable.id : null,
+          tablesId: isEdit ? this.selectTable._id : null,
           wx_openid: wx_openid,
           tableInfo: data
         },
         success: (res) => {
           if (res.result.status === 200) {
+            this.$emit(isEdit ? 'updateSuccess' : 'createSuccess')
             this.showToast(isEdit ? '修改成功' : '保存成功')
             this.onCancel()
           } else {

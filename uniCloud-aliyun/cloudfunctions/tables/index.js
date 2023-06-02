@@ -29,6 +29,21 @@ exports.main = async (event, context) => {
             }
             break
         case 'update':
+            if (event.tablesId && event.tableInfo) {
+                const res_update = await tables.doc(event.tablesId).update({
+                    icon: event.tableInfo.icon,
+                    name: event.tableInfo.name,
+                    mp_wx_openid: event.wx_openid,
+                    create_date: new Date().getTime()
+                })
+                if (res_update.updated === 1) {
+                    result = {status: 200, msg: '修改成功'}
+                } else {
+                    result = {status: -1, msg: '修改失败'}
+                }
+            } else {
+                result = {status: -1, msg: '修改失败'}
+            }
             break
         case 'delete':
             if (event.tablesId) {

@@ -10,7 +10,7 @@
                                @click="bindClick"
                                @change="swipeChange($event, item)">
           <view class="tables-list-item"
-                @click="goSearchPage(item.id)">
+                @click="goSearchPage(item._id)">
             <view class="tables-list-item-right">
               <uni-icons custom-prefix="iconfont" :type="item.icon" size="88rpx"/>
               <view class="tables-list-item-text">{{ item.name }}</view>
@@ -19,7 +19,7 @@
               </view>
             </view>
             <view class="tables-list-item-left"
-                  @click.stop="goKeepAccounts(item.id)">
+                  @click.stop="goKeepAccounts(item._id)">
               <view class="left_text">去记账</view>
               <uni-icons type="right" size="34rpx" color="#BBBBBB"/>
             </view>
@@ -40,7 +40,8 @@
                       :is-edit.sync="isEdit"
                       :select-table.sync="selectTableItem"
                       :table-icon.sync="tableIcon"
-                      :table-name.sync="tableName"/>
+                      :table-name.sync="tableName"
+                      @updateSuccess="updateSuccess"/>
   </view>
 </template>
 
@@ -158,6 +159,14 @@ export default {
           }
         }
       })
+    },
+    updateSuccess() {
+      const tabIndex = this.tablesList.findIndex(item => item._id === this.selectTableItem._id)
+      this.tablesList[tabIndex] = {
+        ...this.tablesList[tabIndex],
+        name: this.tableName,
+        icon: this.tableIcon
+      }
     },
     goKeepAccounts(id) {
       navigateToPage('keepAccounts', `?tableId=${id}`)
