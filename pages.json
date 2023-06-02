@@ -20,7 +20,8 @@
 				{
 					"path": "page/tables/tables",
 					"style": {
-						"navigationStyle": "custom"
+						"navigationStyle": "custom",
+						"enablePullDownRefresh": true
 					}
 				},
 				{

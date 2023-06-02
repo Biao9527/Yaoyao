@@ -2,33 +2,44 @@
   <page-meta :page-style="'overflow:'+(isOpenedAddModal ? 'hidden':'visible')"/>
   <view class="tables">
     <NavBar title="标签"/>
-    <view class="tables-list"
-          v-if="Array.isArray(tablesList) && tablesList.length > 0">
-      <uni-swipe-action>
-        <uni-swipe-action-item v-for="(item) in tablesList" :key="item._id"
-                               :right-options="options"
-                               @click="bindClick"
-                               @change="swipeChange($event, item)">
-          <view class="tables-list-item"
-                @click="goSearchPage(item._id)">
-            <view class="tables-list-item-right">
-              <uni-icons custom-prefix="iconfont" :type="item.icon" size="88rpx"/>
-              <view class="tables-list-item-text">{{ item.name }}</view>
-              <view @click.stop="showToast('向左滑动即可操作标签')">
-                <uni-icons type="help" size="40rpx" color="#dd524d"/>
+    <view v-if="firstLoad" class="tables-loading">
+      <uni-load-more status="loading"
+                     iconSize="40"
+                     color="#bbbbbb"
+                     :showText="false"/>
+    </view>
+    <view v-else>
+      <view class="tables-list"
+            v-if="Array.isArray(tablesList) && tablesList.length > 0">
+        <uni-swipe-action>
+          <uni-swipe-action-item v-for="(item) in tablesList" :key="item._id"
+                                 :right-options="options"
+                                 @click="bindClick"
+                                 @change="swipeChange($event, item)">
+            <view class="tables-list-item"
+                  @click="goSearchPage(item._id)">
+              <view class="tables-list-item-right">
+                <uni-icons custom-prefix="iconfont" :type="item.icon" size="88rpx"/>
+                <view class="tables-list-item-text">{{ item.name }}</view>
+                <view @click.stop="showToast('向左滑动即可操作标签')">
+                  <uni-icons type="help" size="40rpx" color="#dd524d"/>
+                </view>
+              </view>
+              <view class="tables-list-item-left"
+                    @click.stop="goKeepAccounts(item._id)">
+                <view class="left_text">去记账</view>
+                <uni-icons type="right" size="34rpx" color="#BBBBBB"/>
               </view>
             </view>
-            <view class="tables-list-item-left"
-                  @click.stop="goKeepAccounts(item._id)">
-              <view class="left_text">去记账</view>
-              <uni-icons type="right" size="34rpx" color="#BBBBBB"/>
-            </view>
-          </view>
-        </uni-swipe-action-item>
-      </uni-swipe-action>
-    </view>
-    <view class="tables-nothing" v-else>
-      <Nothing text="这里什么都没有~"/>
+          </uni-swipe-action-item>
+        </uni-swipe-action>
+        <LoadMore :first-load="firstLoad"
+                  :has-more="hasMore"
+                  :loading="loading"/>
+      </view>
+      <view class="tables-nothing" v-else>
+        <Nothing text="这里什么都没有~"/>
+      </view>
     </view>
     <view class="tables-add"
           @click="onAddTableClick">
@@ -53,13 +64,15 @@ import {navigateToPage} from "../../../helpers/navigateTo";
 import {mapState} from 'vuex'
 import CreateTableModal from "./components/create-table-modal/create-table-modal";
 import {getWxOpenId} from "../../../helpers";
+import LoadMore from "../../../components/load-more/load-more";
 
 export default {
   components: {
     CustomTabBar,
     NavBar,
     CreateTableModal,
-    Nothing
+    Nothing,
+    LoadMore
   },
   computed: {
     ...mapState([
@@ -68,6 +81,14 @@ export default {
   },
   onShow() {
     this.loadTableList()
+  },
+  onPullDownRefresh() {
+    this.loadTableList()
+  },
+  onReachBottom() {
+    if (!this.loading && this.hasMore) {
+      this.loadTableList(false)
+    }
   },
   data() {
     return {
@@ -89,14 +110,28 @@ export default {
       tableIcon: '',
       tableName: '',
       isOpenedAddModal: false,
-      isEdit: false
+      isEdit: false,
+      size: 15,
+      page: 1,
+      loading: false,
+      hasMore: true,
+      firstLoad: true
     };
   },
   methods: {
     onAddTableClick() {
       navigateToPage('createTable')
     },
-    loadTableList() {
+    loadTableList(reLoad = true) {
+      if (this.loading) {
+        return;
+      }
+      this.loading = true
+      if (reLoad) {
+        this.page = 1
+        this.firstLoad = true
+        this.hasMore = true
+      }
       const wx_openid = getWxOpenId()
       if (!wx_openid) {
         return
@@ -105,14 +140,35 @@ export default {
         name: 'tables',
         data: {
           action: 'get',
+          getSize: this.size,
+          getPage: this.page,
           wx_openid: wx_openid
         },
         success: (res) => {
-          this.tablesList = res.result
+          if (res.result.status === 200) {
+            if (res.result.dataList.length < this.size) {
+              this.hasMore = false
+            }
+            this.page += 1
+            if (reLoad) {
+              this.tablesList = res.result.dataList
+            } else {
+              this.tablesList = this.tablesList.concat(res.result.dataList)
+            }
+            this.loadListSuccess()
+          } else {
+            this.loadListSuccess()
+            this.showToast('获取列表失败')
+          }
         },
         fail: () => {
         }
       })
+    },
+    loadListSuccess() {
+      this.loading = false
+      this.firstLoad = false
+      uni.stopPullDownRefresh()
     },
     bindClick(e) {
       if (e.index === 0) {
@@ -189,6 +245,10 @@ export default {
 
 .tables {
   position: relative;
+
+  &-loading {
+    margin-top: 60%;
+  }
 
   .tables-list {
     margin-top: 16rpx;
