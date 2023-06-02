@@ -1,0 +1,51 @@
+{
+  "bsonType": "object",
+  "required": [],
+  "permission": {
+    "read": true,
+    "create": true,
+    "update": true,
+    "delete": true
+  },
+  "properties": {
+    "_id": {
+      "description": "ID，系统自动生成"
+    },
+    "type": {
+      "bsonType": "string",
+      "label": "记账类型",
+      "description": "记账类型，创建获取"
+    },
+    "tableId": {
+      "bsonType": "string",
+      "label": "标签id",
+      "description": "标签id，创建获取"
+    },
+    "date": {
+      "bsonType": "timestamp",
+      "description": "记账时间",
+      "forceDefaultValue": {
+        "$env": "now"
+      },
+      "money": {
+        "bsonType": "string",
+        "label": "记账金额",
+        "description": "记账金额，创建获取"
+      },
+      "notes": {
+        "bsonType": "string",
+        "label": "记账备注",
+        "description": "记账备注，创建获取"
+      },
+      "address": {
+        "bsonType": "object",
+        "label": "记账地址",
+        "description": "记账地址，创建获取"
+      },
+      "mp_wx_openid": {
+        "bsonType": "string",
+        "description": "微信小程序平台openid"
+      }
+    }
+  }
+}
