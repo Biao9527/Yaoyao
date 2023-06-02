@@ -10,7 +10,7 @@ exports.main = async (event, context) => {
             if (event.getSize && event.getPage) {
                 const res_val = await tables.where({
                     mp_wx_openid: event.wx_openid
-                }).orderBy('create_date', 'asc')
+                }).orderBy('create_date', 'desc')
                     .skip((event.getPage - 1) * event.getSize)
                     .limit(event.getSize).get()
                 return result = {status: 200, dataList: res_val.data}

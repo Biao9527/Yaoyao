@@ -5,7 +5,7 @@
     <view class="create-table-list">
       <view class="create-table-list-item"
             @click="updateTable(item)"
-            v-for="item in getMyTableList" :key="item.id">
+            v-for="item in tablesList" :key="item._id">
         <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
         <view class="create-table-list-text">{{ item.name }}</view>
       </view>
@@ -22,7 +22,9 @@
                       :is-edit.sync="isEdit"
                       :select-table.sync="selectTable"
                       :table-icon.sync="tableIcon"
-                      :table-name.sync="tableName"/>
+                      :table-name.sync="tableName"
+                      @createSuccess="createSuccess"
+                      @updateSuccess="updateSuccess"/>
   </view>
 </template>
 
@@ -30,7 +32,7 @@
 import NavBar from "../../../../components/nav-bar";
 import RecommendTables from "../components/recommend-tables/recommend-tables";
 import CreateTableModal from "../components/create-table-modal/create-table-modal";
-import {mapGetters, mapMutations} from 'vuex'
+import {getWxOpenId} from "../../../../helpers";
 
 export default {
   components: {
@@ -43,10 +45,15 @@ export default {
       this.selectedId = parseInt(options.selectedId)
     }
   },
+  onShow() {
+    this.loadTableList()
+  },
+  onReachBottom() {
+    if (!this.loading && this.hasMore) {
+      this.loadTableList(false)
+    }
+  },
   computed: {
-    ...mapGetters([
-      'getMyTableList'
-    ])
   },
   data() {
     return {
@@ -56,16 +63,79 @@ export default {
       tableName: '',
       selectTable: null,
       isEdit: false,
-      selectedId: null
+      selectedId: null,
+      tablesList: [],
+      size: 40,
+      page: 1,
+      loading: false,
+      hasMore: true,
+      firstLoad: true
     }
   },
   methods: {
-    ...mapMutations(['addTable', 'updateTable']),
+    loadTableList(reLoad = true) {
+      if (this.loading) {
+        return;
+      }
+      this.loading = true
+      if (reLoad) {
+        this.page = 1
+        this.firstLoad = true
+        this.hasMore = true
+      }
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      uniCloud.callFunction({
+        name: 'tables',
+        data: {
+          action: 'get',
+          getSize: this.size,
+          getPage: this.page,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            if (res.result.dataList.length < this.size) {
+              this.hasMore = false
+            }
+            this.page += 1
+            if (reLoad) {
+              this.tablesList = res.result.dataList
+            } else {
+              this.tablesList = this.tablesList.concat(res.result.dataList)
+            }
+            this.loadListSuccess()
+          } else {
+            this.loadListSuccess()
+            this.showToast('获取列表失败')
+          }
+        },
+        fail: () => {
+        }
+      })
+    },
+    loadListSuccess() {
+      this.loading = false
+      this.firstLoad = false
+    },
     createTable() {
       this.isOpenedAddModal = true
     },
+    createSuccess() {
+      this.loadTableList(true)
+    },
+    updateSuccess() {
+      const tabIndex = this.tablesList.findIndex(item => item._id === this.selectTable._id)
+      this.tablesList[tabIndex] = {
+        ...this.tablesList[tabIndex],
+        name: this.tableName,
+        icon: this.tableIcon
+      }
+    },
     updateTable(item) {
-      if (this.selectedId && this.selectedId === item.id) {
+      if (this.selectedId && this.selectedId === item._id) {
         uni.showToast({
           title: '标签已选中，无法修改',
           icon: 'none'

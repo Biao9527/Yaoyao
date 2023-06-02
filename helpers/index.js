@@ -30,6 +30,7 @@ export function getWxOpenId() {
     const user = uni.getStorageSync('user')
     if (!user) {
         navigateToPage('wxLogin')
+        return false
     } else {
         return user.mp_wx_openid
     }
