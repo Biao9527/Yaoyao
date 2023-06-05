@@ -120,12 +120,17 @@ export default {
       }
       const wx_openid = getWxOpenId()
       if (!wx_openid) {return}
+      const filter = {}
+      if (TYPE_HASH[this.selectedTab]) {
+        filter.type = TYPE_HASH[this.selectedTab]
+      }
       uniCloud.callFunction({
         name: 'account',
         data: {
           action: 'get',
           getSize: this.size,
           getPage: this.page,
+          filterData: filter,
           wx_openid: wx_openid
         },
         success: (res) => {
@@ -157,6 +162,7 @@ export default {
     },
     onTabsClick(id) {
       this.selectedTab = id
+      this.loadPostList()
     },
     onTabsSearch(id) {
       let params = '?openFilter=true'

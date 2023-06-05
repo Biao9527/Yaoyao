@@ -9,6 +9,7 @@ exports.main = async (event, context) => {
 		case 'get':
 			if (event.getSize && event.getPage) {
 				const res_val = await account.where({
+					...event.filterData,
 					mp_wx_openid: event.wx_openid
 				}).orderBy('date', 'desc')
 					.skip((event.getPage - 1) * event.getSize)
