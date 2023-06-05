@@ -3,8 +3,8 @@
     <NavBar left-icon="left"/>
     <view class="order">
       <view class="order-header">
-        <uni-icons custom-prefix="iconfont" :type="tableInfo.icon" size="84rpx"/>
-        <view class="order-table">{{tableInfo.name}}</view>
+        <uni-icons custom-prefix="iconfont" :type="orderInfo.table.icon" size="84rpx"/>
+        <view class="order-table">{{orderInfo.table.name}}</view>
         <view class="order-money">{{orderInfo.type}}{{orderInfo.money}}</view>
       </view>
       <view class="order-info">
@@ -48,9 +48,8 @@
 
 <script>
 import NavBar from "../../../components/nav-bar";
-import {mapGetters, mapMutations} from 'vuex'
-import {removeAccountsStorage} from "../keep-accounts/helpers/accountsStorage";
 import {navigateToPage} from "../../../helpers/navigateTo";
+import {getWxOpenId} from "../../../helpers";
 
 export default {
   components: {
@@ -58,20 +57,15 @@ export default {
   },
   onLoad(options) {
     if (options.id) {
-      this.orderId = parseInt(options.id)
+      this.orderId = options.id
     }
   },
   onShow() {
     if (this.orderId) {
-      this.orderInfo = this.getAccountItem(this.orderId)
-      this.tableInfo = this.getTableItem(this.orderInfo.tableId)
+      this.loadAccount(this.orderId)
     }
   },
   computed: {
-    ...mapGetters([
-      'getAccountItem',
-      'getTableItem'
-    ]),
     onTypeText() {
       const typeHash = {
         '-': '支出',
@@ -88,7 +82,26 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['removeAccount']),
+    loadAccount(id) {
+      const wx_openid = getWxOpenId()
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: 'getItem',
+          accountId: id,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            this.orderInfo = res.result.account
+          } else {
+            this.showToast('账单获取失败，请稍后重试！')
+          }
+        },
+        fail: () => {
+        }
+      })
+    },
     onEdit() {
       navigateToPage('keepAccounts', `?edit=true&id=${this.orderId}`)
     },
@@ -99,14 +112,28 @@ export default {
         confirmColor: '#dd524d',
         success: res => {
           if (res.confirm) {
-            const success = removeAccountsStorage([this.orderInfo])
-            if (!success) {
-              this.showToast('删除失败')
-              return
-            }
-            this.removeAccount([this.orderInfo])
-            uni.navigateBack()
+            this.removeAccount()
           }
+        }
+      })
+    },
+    removeAccount() {
+      const wx_openid = getWxOpenId()
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: 'delete',
+          accountId: this.orderId,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            uni.navigateBack()
+          } else {
+            this.showToast('删除失败！')
+          }
+        },
+        fail: () => {
         }
       })
     }

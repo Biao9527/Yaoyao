@@ -19,6 +19,21 @@ exports.main = async (event, context) => {
 				result = {status: -1, msg: '获取列表失败'}
 			}
 			break
+		case 'getItem':
+			if (event.accountId) {
+				const res = await account.where({
+					mp_wx_openid: event.wx_openid,
+					_id: event.accountId
+				}).get()
+				if (res.data && res.data.length > 0) {
+					result = {status: 200, account: res.data[0]}
+				} else {
+					result = {status: -1, msg: '查询失败'}
+				}
+			} else {
+				result = {status: -1, msg: '查询失败'}
+			}
+			break
 		case 'create':
 			if (event.accountInfo && event.wx_openid) {
 				const res_reg = await account.add({
@@ -37,6 +52,16 @@ exports.main = async (event, context) => {
 		case 'update':
 			break
 		case 'delete':
+			if (event.accountId) {
+				const res = await account.doc(event.accountId).remove()
+				if (res.deleted === 1) {
+					result = {status: 200, msg: '删除成功'}
+				} else {
+					result = {status: -1, msg: '删除失败'}
+				}
+			} else {
+				result = {status: -1, msg: '删除失败'}
+			}
 			break
 	}
 
