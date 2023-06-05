@@ -16,7 +16,7 @@
     <view class="search-content">
       <SearchTips :sort-value="sortValue"
                   :date-list="filterDateList"
-                  :table-ids="filterTableId"
+                  :table-list="filterTable"
                   @onFilterDateClick="onFilterDate"
                   @onClearDate="onClearFilterDate"
                   @onSortType="onSortType"
@@ -54,12 +54,12 @@
                    :is-opened.sync="isOpenedTable"
                    :first-load="tagFirstLoad"
                    :table-list.sync="tablesList"
-                   :selected-table.sync="filterTableId"
+                   :selected-table.sync="filterTable"
                    :last-select-table="lastFilterTableId"
                    :nav-bar-height="statusBarHeight + 44"
                    :operation-height="operationHeight"
                    @scrollToLower="onTableScrollToLower"
-                   @onConfirm="filterAccountList"/>
+                   @onConfirm="loadPostList"/>
   </view>
 </template>
 
@@ -106,7 +106,7 @@ export default {
       this.showFilter = true
     }
     if (options.tableId) {
-      this.filterTableId = [Number(options.tableId)]
+      this.filterTable = [Number(options.tableId)]
     }
   },
   onReachBottom() {
@@ -125,7 +125,7 @@ export default {
       selectFilterIndex: 0,
       dataList: [],
       list: [],
-      filterTableId: [],
+      filterTable: [],
       lastFilterTableId: [],
       filterDateList: [],
       showFilter: false,
@@ -167,6 +167,8 @@ export default {
         name: 'account',
         data: {
           action: 'get',
+          type: TYPE_HASH[this.selectedTabIndex],
+          tables: this.filterTable.map(item => item._id),
           getSize: this.size,
           getPage: this.page,
           wx_openid: wx_openid
@@ -252,12 +254,13 @@ export default {
     },
     onReset() {
       this.selectedTabIndex = 0
-      this.filterTableId = []
+      this.filterTable = []
       this.sortValue = 'time_down'
       this.filterDateList = []
     },
     onTabsClick(id) {
       this.selectedTabIndex = id
+      this.loadPostList()
     },
     onTabsSearch() {
       this.showFilter = !this.showFilter
@@ -282,17 +285,20 @@ export default {
     openTableList() {
       this.loadTableList()
       this.showFilter = false
-      this.lastFilterTableId = this.filterTableId
+      this.lastFilterTableId = this.filterTable
       this.isOpenedTable = true
     },
     removeFilterTable(id) {
-      this.filterTableId.splice(this.filterTableId.indexOf(id), 1)
+      const index = this.filterTable.findIndex(item => item._id === id)
+      this.filterTable.splice(index, 1)
+      this.loadPostList()
     },
     onFilterItemClick(item) {
       this.showFilter = false
       switch (this.selectFilterIndex) {
         case 0:
           this.selectedTabIndex = item.value
+          this.loadPostList()
           break
         case 1:
           this.sortValue = item.value

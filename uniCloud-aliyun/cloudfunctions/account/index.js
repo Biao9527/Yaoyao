@@ -2,15 +2,27 @@
 exports.main = async (event, context) => {
 
 	const db = uniCloud.database();
+	const dbCmd = db.command
 	const account = db.collection('account');
 
 	let result = {};
 	switch (event.action) {
 		case 'get':
 			if (event.getSize && event.getPage) {
-				const res_val = await account.where({
-					...event.filterData,
+				let filterObj = {
 					mp_wx_openid: event.wx_openid
+				}
+				if (event.type) {
+					filterObj.type = event.type
+				}
+				if (event.tables && event.tables.length > 0) {
+					filterObj = {
+						...filterObj,
+						'table._id': dbCmd.in(event.tables),
+					}
+				}
+				const res_val = await account.where({
+					...filterObj
 				}).orderBy('date', 'desc')
 					.skip((event.getPage - 1) * event.getSize)
 					.limit(event.getSize).get()

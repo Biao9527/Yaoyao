@@ -36,7 +36,7 @@
       </uni-datetime-picker>
     </view>
     <view class="search-tips-item"
-          v-if="tableIds.length > 0">
+          v-if="tableList.length > 0">
       <view class="search-tips-title title-fixed">选中标签：</view>
       <scroll-view scroll-x class="search-tips-table-scroll">
         <view class="search-tips-table-list"
@@ -45,9 +45,9 @@
           <view class="search-tips-title hidden">选中标签：</view>
           <!--此处用于占位-->
           <view class="search-tips-table"
-                v-for="tag in tableIds" :key="tag">
-            <uni-icons custom-prefix="iconfont" :type="filterTable(tag).icon" size="50rpx"/>
-            <view class="search-tips-table-text">{{ filterTable(tag).name }}</view>
+                v-for="tag in tableList" :key="tag._id">
+            <uni-icons custom-prefix="iconfont" :type="tag.icon" size="50rpx"/>
+            <view class="search-tips-table-text">{{ tag.name }}</view>
             <view class="search-tips-table-delete" @click.stop="removeTable(tag)">
               <uni-icons type="clear" size="44rpx" color="#c0c4cc"/>
             </view>
@@ -60,21 +60,12 @@
 
 <script>
 import {SORT_TEXT} from "../helper";
-import {mapGetters} from 'vuex'
 
 export default {
-  props: ['sortValue', 'tableIds', 'dateList', 'onClearDate', 'onFilterDateClick', 'onSortType', 'removeFilterTable', 'openTableList', 'onReset'],
+  props: ['sortValue', 'tableList', 'dateList', 'onClearDate', 'onFilterDateClick', 'onSortType', 'removeFilterTable', 'openTableList', 'onReset'],
   computed: {
-    ...mapGetters([
-      'getMyTableList'
-    ]),
     computedSortText() {
       return SORT_TEXT[this.sortValue]
-    },
-    filterTable() {
-      return function (data) {
-        return this.getMyTableList.filter(item => item.id === data)[0]
-      }
     }
   },
   methods: {
@@ -90,8 +81,8 @@ export default {
     onSortTypeClick() {
       this.$emit('onSortType')
     },
-    removeTable(id) {
-      this.$emit('removeFilterTable', id)
+    removeTable(tag) {
+      this.$emit('removeFilterTable', tag._id)
     },
     onTableListClick() {
       this.$emit('openTableList')

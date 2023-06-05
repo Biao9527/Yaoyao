@@ -24,7 +24,7 @@
             <view class="selected-table-list"
                   :style="footerHeight">
               <view class="selected-table-list-item"
-                    :class="((multiSelect && selectedTable.findIndex(i => i === item._id) >= 0) ||
+                    :class="((multiSelect && selectedTable.findIndex(i => i._id === item._id) >= 0) ||
                   (selectedTable && item._id === selectedTable._id)) ? 'selected' : ''"
                     v-for="item in tableList" :key="item._id"
                     @click="onTableItem(item)">
@@ -106,13 +106,13 @@ export default {
     },
     onTableItem(item) {
       if (this.multiSelect && Array.isArray(this.selectedTable)) {
-        const filterId = this.selectedTable.findIndex(i => i === item._id)
+        const filterId = this.selectedTable.findIndex(i => i._id === item._id)
         const idList = this.selectedTable
         if (filterId >= 0) {
           idList.splice(filterId, 1)
           this.$emit('update:selectedTable', idList)
         } else {
-          idList.push(item._id)
+          idList.push(item)
           this.$emit('update:selectedTable', idList)
         }
         return;
