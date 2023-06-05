@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {findTablesItem, ICON_LIST} from '../../helper/index'
+import {findTablesItem, ICON_LIST, isTablesAccounts, updateTableAccounts} from '../../helper/index'
 import {getWxOpenId} from '../../../../../helpers'
 
 export default {
@@ -88,6 +88,16 @@ export default {
       if (findItem && findItem.length > 0) {
         this.showToast('已存在相同标签！')
         return
+      }
+      if (isEdit) {
+        const filterList = await isTablesAccounts(wx_openid, this.selectTable._id)
+        if (filterList && filterList.length > 0) {
+          const success = updateTableAccounts(wx_openid, this.selectTable._id, data)
+          if (!success) {
+            this.showToast('修改失败！')
+            return
+          }
+        }
       }
       uniCloud.callFunction({
         name: 'tables',

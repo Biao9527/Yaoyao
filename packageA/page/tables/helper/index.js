@@ -140,6 +140,33 @@ export async function removeTableAccounts(wx_openid, tableId) {
 }
 
 /**
+ * 修改标签时修改账单中标签字段
+ */
+export async function updateTableAccounts(wx_openid, tableId, data) {
+    return new Promise(resolve => {
+        uniCloud.callFunction({
+            name: 'account',
+            data: {
+                action: 'tableUpdate',
+                tableId: tableId,
+                tableInfo: data,
+                wx_openid: wx_openid
+            },
+            success: (res) => {
+                if (res.result.status === 200) {
+                    resolve(true)
+                } else {
+                    resolve(false)
+                }
+            },
+            fail: () => {
+                resolve(false)
+            }
+        })
+    })
+}
+
+/**
  * 判断标签是否重复
  */
 export async function findTablesItem(wx_openid, userInfo) {
