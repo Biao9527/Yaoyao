@@ -50,6 +50,19 @@ exports.main = async (event, context) => {
 			}
 			break
 		case 'update':
+			if (event.accountId && event.accountInfo) {
+				const res_update = await account.doc(event.accountId).update({
+					...event.accountInfo,
+					mp_wx_openid: event.wx_openid,
+				})
+				if (res_update.updated === 1) {
+					result = {status: 200, msg: '修改成功'}
+				} else {
+					result = {status: -1, msg: '修改失败'}
+				}
+			} else {
+				result = {status: -1, msg: '修改失败'}
+			}
 			break
 		case 'delete':
 			if (event.accountId) {

@@ -157,16 +157,8 @@ export default {
     }
     if (options.edit && options.id) {
       this.isEdit = true
-      this.editId = parseInt(options.id)
-      const orderInfo = this.getAccountItem(this.editId)
-      this.tallyType = orderInfo.type
-      this.notes = orderInfo.notes
-      this.money = orderInfo.money
-      this.selectedTable = null
-      this.selectedDate = orderInfo.date
-      if (orderInfo.address) {
-        this.address = orderInfo.address
-      }
+      this.editId = options.id
+      this.loadAccountInfo(options.id)
     }
   },
   computed: {
@@ -265,6 +257,34 @@ export default {
             this.selectedTable = res.result.table
           } else {
             this.showToast('标签查找失败，请重新选择')
+          }
+        },
+        fail: () => {
+        }
+      })
+    },
+    loadAccountInfo(id) {
+      const wx_openid = getWxOpenId()
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: 'getItem',
+          accountId: id,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            const orderInfo = res.result.account
+            this.tallyType = orderInfo.type
+            this.notes = orderInfo.notes
+            this.money = orderInfo.money
+            this.selectedTable = orderInfo.table
+            this.selectedDate = orderInfo.date
+            if (orderInfo.address) {
+              this.address = orderInfo.address
+            }
+          } else {
+            this.showToast('账单获取失败，请稍后重试！')
           }
         },
         fail: () => {
