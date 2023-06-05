@@ -52,11 +52,13 @@
     <AboutPopup :is-open.sync="isOpenAbout"/>
     <SelectedTable :multi-select="true"
                    :is-opened.sync="isOpenedTable"
-                   :table-list.sync="getMyTableList"
+                   :first-load="tagFirstLoad"
+                   :table-list.sync="tablesList"
                    :selected-table.sync="filterTableId"
                    :last-select-table="lastFilterTableId"
                    :nav-bar-height="statusBarHeight + 44"
                    :operation-height="operationHeight"
+                   @scrollToLower="onTableScrollToLower"
                    @onConfirm="filterAccountList"/>
   </view>
 </template>
@@ -73,7 +75,7 @@ import Sidebar from "../../../components/sidebar/sidebar";
 import AboutPopup from "../../../components/about-popup/about-popup";
 import StatisticsPostList from "../../../components/statistics-post-list/statistics-post-list";
 import LoadMore from "../../../components/load-more/load-more";
-import {mapGetters, mapState} from 'vuex'
+import {mapState} from 'vuex'
 import {TYPE_HASH} from "./helper";
 import {navigateToPage} from "../../../helpers/navigateTo";
 import {getWxOpenId} from "../../../helpers";
@@ -115,10 +117,6 @@ export default {
   computed: {
     ...mapState([
       'operationHeight'
-    ]),
-    ...mapGetters([
-      'getAccountList',
-      'getMyTableList'
     ])
   },
   data() {
@@ -140,7 +138,13 @@ export default {
       page: 1,
       loading: false,
       hasMore: true,
-      firstLoad: true
+      firstLoad: true,
+      tablesList: [],
+      tagLoading: false,
+      tagHasMore: true,
+      tagFirstLoad: true,
+      tagPage: 1,
+      tagSize: 40,
     }
   },
   methods: {
@@ -189,21 +193,71 @@ export default {
         }
       })
     },
+    loadTableList(reLoad = true) {
+      if (this.tagLoading) {
+        return;
+      }
+      this.tagLoading = true
+      if (reLoad) {
+        this.tagPage = 1
+        this.tagFirstLoad = true
+        this.tagHasMore = true
+      }
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      uniCloud.callFunction({
+        name: 'tables',
+        data: {
+          action: 'get',
+          getSize: this.tagSize,
+          getPage: this.tagPage,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            if (res.result.dataList.length < this.tagSize) {
+              this.tagHasMore = false
+            }
+            this.tagPage += 1
+            if (reLoad) {
+              this.tablesList = res.result.dataList
+            } else {
+              this.tablesList = this.tablesList.concat(res.result.dataList)
+            }
+            this.loadTablesSuccess()
+          } else {
+            this.loadTablesSuccess()
+            this.showToast('获取列表失败')
+          }
+        },
+        fail: () => {
+        }
+      })
+    },
     loadListSuccess() {
       this.loading = false
       this.firstLoad = false
       uni.stopPullDownRefresh()
+    },
+    loadTablesSuccess() {
+      this.tagLoading = false
+      this.tagFirstLoad = false
+    },
+    onTableScrollToLower() {
+      if (!this.tagLoading && this.tagHasMore) {
+        this.loadTableList(false)
+      }
     },
     onReset() {
       this.selectedTabIndex = 0
       this.filterTableId = []
       this.sortValue = 'time_down'
       this.filterDateList = []
-      this.filterAccountList()
     },
     onTabsClick(id) {
       this.selectedTabIndex = id
-      this.filterAccountList()
     },
     onTabsSearch() {
       this.showFilter = !this.showFilter
@@ -221,20 +275,18 @@ export default {
     },
     onFilterDate(date) {
       this.filterDateList = date
-      this.filterAccountList()
     },
     onClearFilterDate() {
       this.filterDateList = []
-      this.filterAccountList()
     },
     openTableList() {
+      this.loadTableList()
       this.showFilter = false
       this.lastFilterTableId = this.filterTableId
       this.isOpenedTable = true
     },
     removeFilterTable(id) {
       this.filterTableId.splice(this.filterTableId.indexOf(id), 1)
-      this.filterAccountList()
     },
     onFilterItemClick(item) {
       this.showFilter = false
@@ -248,7 +300,6 @@ export default {
         default:
           break
       }
-      this.filterAccountList()
     },
     onSidebarItem(item) {
       switch (item.value) {
@@ -269,52 +320,6 @@ export default {
         default:
           break
       }
-    },
-    filterAccountList() {
-      this.dataList = this.getAccountList
-      if (!Array.isArray(this.dataList) || this.dataList.length <= 0) return
-      //筛选类型
-      if (this.selectedTabIndex !== 0) {
-        this.dataList = this.dataList.filter(item => item.type === TYPE_HASH[this.selectedTabIndex])
-      }
-      //筛选标签
-      if (this.filterTableId.length > 0) {
-        let list = []
-        this.filterTableId.map(item => {
-          list = list.concat(this.dataList.filter(i => i.tableId === item))
-        })
-        this.dataList = list
-      }
-      //筛选日期
-      if (this.filterDateList.length === 2) {
-        this.dataList = this.dataList.filter(i => i.date >= this.filterDateList[0] && i.date <= this.filterDateList[1])
-      }
-      if (this.listType === 'list') {
-        this.list = this.dataResort(this.dataList, this.sortValue)
-      }
-      //筛选排序方式
-      if (this.listType === 'card') {
-        this.dataList = this.onSortList(this.dataList, this.sortValue)
-      }
-    },
-    onSortList(list, sortValue) {
-      let sortList = list
-      switch (sortValue) {
-        case "time_up":
-          sortList = sortList.sort((a, b) => a.date > b.date ? 1 : -1)
-          break
-        case "time_down":
-          break
-        case "money_up":
-          sortList = sortList.sort((a, b) => Number(a.money) > Number(b.money) ? 1 : -1)
-          break
-        case "money_down":
-          sortList = sortList.sort((a, b) => Number(a.money) < Number(b.money) ? 1 : -1)
-          break
-        default:
-          break
-      }
-      return sortList
     },
     dataResort(arr) {
       const newArr = [];
