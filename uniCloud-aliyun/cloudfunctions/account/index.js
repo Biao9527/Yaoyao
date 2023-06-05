@@ -21,6 +21,9 @@ exports.main = async (event, context) => {
 						'table._id': dbCmd.in(event.tables),
 					}
 				}
+				if (event.dateList && event.dateList.length === 2) {
+					filterObj.date = dbCmd.gte(event.dateList[0]).and(dbCmd.lte(event.dateList[1]))
+				}
 				const sortKey = event.sortKey ? event.sortKey : 'date'
 				const sortValue = event.sortValue ? event.sortValue : 'desc'
 				const res_val = await account.where({

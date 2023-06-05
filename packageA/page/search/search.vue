@@ -169,6 +169,7 @@ export default {
           action: 'get',
           type: TYPE_HASH[this.selectedTabIndex],
           tables: this.filterTable.map(item => item._id),
+          dateList: this.filterDateList,
           sortKey: SORT_TYPE_OBJ[this.sortValue].key,
           sortValue: SORT_TYPE_OBJ[this.sortValue].value,
           getSize: this.size,
@@ -285,9 +286,11 @@ export default {
     },
     onFilterDate(date) {
       this.filterDateList = date
+      this.loadPostList()
     },
     onClearFilterDate() {
       this.filterDateList = []
+      this.loadPostList()
     },
     openTableList() {
       this.loadTableList()
