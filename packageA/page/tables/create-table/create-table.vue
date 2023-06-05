@@ -113,6 +113,8 @@ export default {
           }
         },
         fail: () => {
+          this.loadListSuccess()
+          this.showToast('获取列表失败')
         }
       })
     },
@@ -152,6 +154,12 @@ export default {
       this.tableName = item.text
       this.tableIcon = item.icon
       this.isOpenedAddModal = true
+    },
+    showToast(title) {
+      uni.showToast({
+        title,
+        icon: 'none'
+      })
     }
   }
 }

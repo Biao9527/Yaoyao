@@ -105,6 +105,9 @@ export async function findTablesItem(wx_openid, userInfo) {
                 } else {
                     resolve(false)
                 }
+            },
+            fail: () => {
+                resolve(false)
             }
         })
     })

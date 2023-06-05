@@ -111,6 +111,7 @@ export default {
           }
         },
         fail: () => {
+          this.showToast('账单获取失败，请稍后重试！')
           this.loading = false
         }
       })
@@ -147,7 +148,14 @@ export default {
           }
         },
         fail: () => {
+          this.showToast('删除失败！')
         }
+      })
+    },
+    showToast(title) {
+      uni.showToast({
+        title,
+        icon: 'none'
       })
     }
   }

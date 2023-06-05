@@ -147,11 +147,13 @@ export default {
             this.list = this.dataResort(this.cardList)
             this.loadListSuccess()
           } else {
-            this.loadListSuccess()
             this.showToast('获取列表失败')
+            this.loadListSuccess()
           }
         },
         fail: () => {
+          this.showToast('获取列表失败')
+          this.loadListSuccess()
         }
       })
     },
@@ -212,6 +214,12 @@ export default {
         }
       });
       return newArr.sort((a, b) => a.date < b.date ? 1 : -1);
+    },
+    showToast(title) {
+      uni.showToast({
+        title,
+        icon: 'none'
+      })
     }
   }
 }

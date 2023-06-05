@@ -162,6 +162,8 @@ export default {
           }
         },
         fail: () => {
+          this.loadListSuccess()
+          this.showToast('获取列表失败')
         }
       })
     },
@@ -210,6 +212,7 @@ export default {
                 }
               },
               fail: () => {
+                this.showToast('删除失败')
               }
             })
           }

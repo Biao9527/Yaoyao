@@ -236,6 +236,8 @@ export default {
           }
         },
         fail: () => {
+          this.loadTablesSuccess()
+          this.showToast('获取列表失败')
         }
       })
     },
@@ -288,6 +290,7 @@ export default {
           }
         },
         fail: () => {
+          this.showToast('账单获取失败，请稍后重试！')
         }
       })
     },
