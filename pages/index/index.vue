@@ -110,7 +110,9 @@ export default {
       navigateToPage('keepAccounts')
     },
     loadPostList(reLoad = true) {
-      if (this.loading) {return;}
+      if (this.loading) {
+        return;
+      }
 
       this.loading = true
       if (reLoad) {
@@ -119,7 +121,9 @@ export default {
         this.hasMore = true
       }
       const wx_openid = getWxOpenId()
-      if (!wx_openid) {return}
+      if (!wx_openid) {
+        return
+      }
       uniCloud.callFunction({
         name: 'account',
         data: {
@@ -171,6 +175,7 @@ export default {
       switch (item.value) {
         case 'list':
           this.listType = this.listType === 'list' ? 'card' : 'list'
+          this.loadPostList()
           break
         case 'kefu':
           break

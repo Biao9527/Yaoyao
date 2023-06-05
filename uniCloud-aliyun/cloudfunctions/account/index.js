@@ -21,9 +21,11 @@ exports.main = async (event, context) => {
 						'table._id': dbCmd.in(event.tables),
 					}
 				}
+				const sortKey = event.sortKey ? event.sortKey : 'date'
+				const sortValue = event.sortValue ? event.sortValue : 'desc'
 				const res_val = await account.where({
 					...filterObj
-				}).orderBy('date', 'desc')
+				}).orderBy(sortKey, sortValue)
 					.skip((event.getPage - 1) * event.getSize)
 					.limit(event.getSize).get()
 				result = {status: 200, dataList: res_val.data}

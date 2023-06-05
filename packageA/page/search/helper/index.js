@@ -25,6 +25,13 @@ export const TIME_SORT_TEXT = {
     'time_down': '时间 ⬇',
 }
 
+export const SORT_TYPE_OBJ = {
+    'time_up': {key: 'date', value: 'asc'},
+    'time_down': {key: 'date', value: 'desc'},
+    'money_up': {key: 'money', value: 'asc'},
+    'money_down': {key: 'money', value: 'desc'}
+}
+
 export const FILTER_LIST = [
     {
         id: 0,

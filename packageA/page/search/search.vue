@@ -76,7 +76,7 @@ import AboutPopup from "../../../components/about-popup/about-popup";
 import StatisticsPostList from "../../../components/statistics-post-list/statistics-post-list";
 import LoadMore from "../../../components/load-more/load-more";
 import {mapState} from 'vuex'
-import {TYPE_HASH} from "./helper";
+import {SORT_TYPE_OBJ, TYPE_HASH} from "./helper";
 import {navigateToPage} from "../../../helpers/navigateTo";
 import {getWxOpenId} from "../../../helpers";
 
@@ -169,6 +169,8 @@ export default {
           action: 'get',
           type: TYPE_HASH[this.selectedTabIndex],
           tables: this.filterTable.map(item => item._id),
+          sortKey: SORT_TYPE_OBJ[this.sortValue].key,
+          sortValue: SORT_TYPE_OBJ[this.sortValue].value,
           getSize: this.size,
           getPage: this.page,
           wx_openid: wx_openid
@@ -257,6 +259,7 @@ export default {
       this.filterTable = []
       this.sortValue = 'time_down'
       this.filterDateList = []
+      this.loadPostList()
     },
     onTabsClick(id) {
       this.selectedTabIndex = id
@@ -298,7 +301,6 @@ export default {
       switch (this.selectFilterIndex) {
         case 0:
           this.selectedTabIndex = item.value
-          this.loadPostList()
           break
         case 1:
           this.sortValue = item.value
@@ -306,6 +308,7 @@ export default {
         default:
           break
       }
+      this.loadPostList()
     },
     onSidebarItem(item) {
       switch (item.value) {
@@ -314,6 +317,7 @@ export default {
           if (['money_up', 'money_down'].indexOf(this.sortValue) >= 0 && this.listType === 'list') {
             this.sortValue = 'time_down'
           }
+          this.loadPostList()
           break
         case 'kefu':
           break
@@ -328,7 +332,7 @@ export default {
       }
     },
     dataResort(arr) {
-      const newArr = [];
+      let newArr = [];
       if (!Array.isArray(arr) || arr.length <= 0) return newArr
       arr.forEach((oldData) => {
         let index = -1;
@@ -349,8 +353,13 @@ export default {
           newArr[index].list.push(oldData);
         }
       });
-      return newArr.sort((a, b) => a.date < b.date ? 1 : -1);
-    }
+      if (this.sortValue === 'time_down') {
+        newArr = newArr.sort((a, b) => a.date < b.date ? 1 : -1)
+      }
+      if (this.sortValue === 'time_up') {
+        newArr = newArr.sort((a, b) => a.date > b.date ? 1 : -1)
+      }
+      return newArr;    }
   }
 }
 </script>
