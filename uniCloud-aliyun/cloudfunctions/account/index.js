@@ -93,7 +93,32 @@ exports.main = async (event, context) => {
 				result = {status: -1, msg: '删除失败'}
 			}
 			break
-	}
+		case 'tableDelete':
+			if (event.tableId) {
+				const res = await account.where({
+					mp_wx_openid: event.wx_openid,
+					'table._id': event.tableId
+				}).remove()
+				if (res.deleted >= 1) {
+					result = {status: 200, msg: '删除成功'}
+				} else {
+					result = {status: -1, msg: '删除失败'}
+				}
+			} else {
+				result = {status: -1, msg: '删除失败'}
+			}
+			break
+        case 'tableFilter':
+            if (event.tables) {
+                const res = await account.where({
+                    mp_wx_openid: event.wx_openid,
+                    'table._id': dbCmd.in(event.tables)
+                }).get()
+                result = {status: 200, tableAccount: res.data}
+            } else {
+                result = {status: -1, msg: '查询失败'}
+            }
+    }
 
 	//返回数据给客户端
 	return result

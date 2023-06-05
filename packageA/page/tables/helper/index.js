@@ -84,6 +84,62 @@ export const recommend_tables = [
 ]
 
 /**
+ * 判断标签是否绑定订单
+ */
+export async function isTablesAccounts(wx_openid, tableId) {
+    return new Promise(resolve => {
+        uniCloud.callFunction({
+            name: 'account',
+            data: {
+                action: 'tableFilter',
+                wx_openid: wx_openid,
+                tables: [tableId]
+            },
+            success: (res) => {
+                if (res.result.status === 200
+                    && res.result
+                    && res.result.tableAccount
+                    && Array.isArray(res.result.tableAccount)
+                    && res.result.tableAccount.length > 0) {
+                    resolve(res.result.tableAccount)
+                } else {
+                    resolve(false)
+                }
+            },
+            fail: () => {
+                resolve(false)
+            }
+        })
+    })
+}
+
+/**
+ * 根据标签删除账单
+ */
+export async function removeTableAccounts(wx_openid, tableId) {
+    return new Promise(resolve => {
+        uniCloud.callFunction({
+            name: 'account',
+            data: {
+                action: 'tableDelete',
+                tableId: tableId,
+                wx_openid: wx_openid
+            },
+            success: (res) => {
+                if (res.result.status === 200) {
+                    resolve(true)
+                } else {
+                    resolve(false)
+                }
+            },
+            fail: () => {
+                resolve(false)
+            }
+        })
+    })
+}
+
+/**
  * 判断标签是否重复
  */
 export async function findTablesItem(wx_openid, userInfo) {

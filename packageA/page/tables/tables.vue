@@ -65,6 +65,7 @@ import {mapState} from 'vuex'
 import CreateTableModal from "./components/create-table-modal/create-table-modal";
 import {getWxOpenId} from "../../../helpers";
 import LoadMore from "../../../components/load-more/load-more";
+import {isTablesAccounts, removeTableAccounts} from "./helper";
 
 export default {
   components: {
@@ -186,15 +187,37 @@ export default {
     swipeChange(e, item) {
       this.selectTableItem = item
     },
-    removeTableModal() {
-      this.deleteTable()
-    },
-    deleteTable() {
+    async removeTableModal() {
       const wx_openid = getWxOpenId()
+      const accounts = await isTablesAccounts(wx_openid, this.selectTableItem._id)
+      if (accounts && accounts.length > 0) {
+        uni.showModal({
+          title: '此标签已绑定记账数据，若继续删除会将绑定数据一同删除！',
+          confirmText: '继续删除',
+          confirmColor: '#dd524d',
+          success: res => {
+            if (res.confirm) {
+              this.deleteTable(wx_openid, true)
+            }
+          }
+        })
+      } else {
+        this.deleteTable(wx_openid)
+      }
+    },
+    deleteTable(wx_openid, isAccount) {
       uni.showModal({
         title: '确定删除标签',
         success: async (res) => {
           if (res.confirm) {
+            uni.showLoading({title: '正在删除...'})
+            if (isAccount) {
+              const success = await removeTableAccounts(wx_openid, this.selectTableItem._id)
+              if (!success) {
+                this.showToast('删除失败')
+                return
+              }
+            }
             uniCloud.callFunction({
               name: 'tables',
               data: {
