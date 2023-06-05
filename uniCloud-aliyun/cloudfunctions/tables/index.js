@@ -18,6 +18,21 @@ exports.main = async (event, context) => {
                 result = {status: -1, msg: '查询失败'}
             }
             break
+        case 'findItem':
+            if (event.tableId) {
+                const res = await tables.where({
+                    mp_wx_openid: event.wx_openid,
+                    _id: event.tableId
+                }).get()
+                if (res.data && res.data.length > 0) {
+                    result = {status: 200, table: res.data[0]}
+                } else {
+                    result = {status: -1, msg: '查询失败'}
+                }
+            } else {
+                result = {status: -1, msg: '查询失败'}
+            }
+            break
         case 'get':
             if (event.getSize && event.getPage) {
                 const res_val = await tables.where({

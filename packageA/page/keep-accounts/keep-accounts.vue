@@ -135,7 +135,7 @@
 import NavBar from "../../../components/nav-bar";
 import FooterActionBar from "./components/footer-action-bar/footer-action-bar";
 import SelectedTable from "./components/selected-table/selected-table";
-import {mapGetters, mapState} from 'vuex'
+import {mapState} from 'vuex'
 import locationSvg from './assets/locationSvg.svg'
 import {verificationTallyForm} from "./helpers/accountsStorage";
 import {getWxOpenId, verificationIsNumber} from "../../../helpers";
@@ -152,7 +152,7 @@ export default {
   },
   onLoad(options) {
     if (options.tableId) {
-      this.selectedTable = this.getTableItem(parseInt(options.tableId))
+      this.loadTableItem(options.tableId)
       return
     }
     if (options.edit && options.id) {
@@ -162,7 +162,7 @@ export default {
       this.tallyType = orderInfo.type
       this.notes = orderInfo.notes
       this.money = orderInfo.money
-      this.selectedTable = this.getTableItem(orderInfo.tableId)
+      this.selectedTable = null
       this.selectedDate = orderInfo.date
       if (orderInfo.address) {
         this.address = orderInfo.address
@@ -172,10 +172,6 @@ export default {
   computed: {
     ...mapState([
       'operationHeight'
-    ]),
-    ...mapGetters([
-      'getAccountItem',
-      'getTableItem'
     ]),
     inputPlaceholderStyle() {
       return (this.money || this.money === 0) ? '' : 'color: #D6D6D6'
@@ -254,6 +250,26 @@ export default {
     loadTablesSuccess() {
       this.tagLoading = false
       this.tagFirstLoad = false
+    },
+    loadTableItem(id) {
+      const wx_openid = getWxOpenId()
+      uniCloud.callFunction({
+        name: 'tables',
+        data: {
+          action: 'findItem',
+          tableId: id,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            this.selectedTable = res.result.table
+          } else {
+            this.showToast('标签查找失败，请重新选择')
+          }
+        },
+        fail: () => {
+        }
+      })
     },
     onTableScrollToLower() {
       if (!this.tagLoading && this.tagHasMore) {
