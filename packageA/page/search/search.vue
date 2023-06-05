@@ -23,16 +23,28 @@
                   @removeFilterTable="removeFilterTable"
                   @openTableList="openTableList"
                   @onReset="onReset"/>
-      <AccountList v-if="listType === 'card' && Array.isArray(dataList) && dataList.length > 0"
-                   :account-list="dataList"
-                   :table-list="getMyTableList"/>
-      <StatisticsPostList v-else-if="listType === 'list' && Array.isArray(list) && list.length > 0"
-                          :list="list"
-                          :type="selectedTabIndex"
-                          :table-list="getMyTableList"
-                          @onTable="onTabsSearch"/>
-      <view class="search-nothing" v-else>
-        <Nothing text="这里什么都没有~"/>
+      <view v-if="firstLoad"
+            class="search-loading">
+        <uni-load-more status="loading"
+                       iconSize="40"
+                       color="#bbbbbb"
+                       :showText="false"/>
+      </view>
+      <view v-else>
+        <view v-if="list.length > 0 && dataList.length > 0">
+          <AccountList v-if="listType === 'card' && Array.isArray(dataList) && dataList.length > 0"
+                       :account-list="dataList"/>
+          <StatisticsPostList v-else-if="listType === 'list' && Array.isArray(list) && list.length > 0"
+                              :list="list"
+                              :type="selectedTabIndex"
+                              @onTable="onTabsSearch"/>
+          <LoadMore :first-load="firstLoad"
+                    :has-more="hasMore"
+                    :loading="loading"/>
+        </view>
+        <view class="search-nothing" v-else>
+          <Nothing text="这里什么都没有~"/>
+        </view>
       </view>
     </view>
     <Sidebar :list-type="selectedTabIndex"
@@ -60,9 +72,11 @@ import SearchTips from "./search-tips/search-tips";
 import Sidebar from "../../../components/sidebar/sidebar";
 import AboutPopup from "../../../components/about-popup/about-popup";
 import StatisticsPostList from "../../../components/statistics-post-list/statistics-post-list";
+import LoadMore from "../../../components/load-more/load-more";
 import {mapGetters, mapState} from 'vuex'
 import {TYPE_HASH} from "./helper";
 import {navigateToPage} from "../../../helpers/navigateTo";
+import {getWxOpenId} from "../../../helpers";
 
 export default {
   components: {
@@ -75,14 +89,15 @@ export default {
     SearchTips,
     Sidebar,
     AboutPopup,
-    StatisticsPostList
+    StatisticsPostList,
+    LoadMore
   },
   onReady() {
     const {statusBarHeight} = uni.getSystemInfoSync()
     this.statusBarHeight = statusBarHeight ? statusBarHeight : 44
   },
   onShow() {
-    this.filterAccountList()
+    this.loadPostList()
   },
   onLoad(options) {
     if (options.openFilter) {
@@ -90,6 +105,11 @@ export default {
     }
     if (options.tableId) {
       this.filterTableId = [Number(options.tableId)]
+    }
+  },
+  onReachBottom() {
+    if (!this.loading && this.hasMore) {
+      this.loadPostList(false)
     }
   },
   computed: {
@@ -115,10 +135,65 @@ export default {
       sortValue: 'time_down',
       isOpenAbout: false,
       listType: 'list',
-      statusBarHeight: 44
+      statusBarHeight: 44,
+      size: 15,
+      page: 1,
+      loading: false,
+      hasMore: true,
+      firstLoad: true
     }
   },
   methods: {
+    loadPostList(reLoad = true) {
+      if (this.loading) {
+        return;
+      }
+
+      this.loading = true
+      if (reLoad) {
+        this.page = 1
+        this.firstLoad = true
+        this.hasMore = true
+      }
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: 'get',
+          getSize: this.size,
+          getPage: this.page,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            if (res.result.dataList.length < this.size) {
+              this.hasMore = false
+            }
+            this.page += 1
+            if (reLoad) {
+              this.dataList = res.result.dataList
+            } else {
+              this.dataList = this.dataList.concat(res.result.dataList)
+            }
+            this.list = this.dataResort(this.dataList)
+            this.loadListSuccess()
+          } else {
+            this.loadListSuccess()
+            this.showToast('获取列表失败')
+          }
+        },
+        fail: () => {
+        }
+      })
+    },
+    loadListSuccess() {
+      this.loading = false
+      this.firstLoad = false
+      uni.stopPullDownRefresh()
+    },
     onReset() {
       this.selectedTabIndex = 0
       this.filterTableId = []
@@ -182,7 +257,6 @@ export default {
           if (['money_up', 'money_down'].indexOf(this.sortValue) >= 0 && this.listType === 'list') {
             this.sortValue = 'time_down'
           }
-          this.filterAccountList()
           break
         case 'kefu':
           break
@@ -242,8 +316,8 @@ export default {
       }
       return sortList
     },
-    dataResort(arr, sortValue) {
-      let newArr = [];
+    dataResort(arr) {
+      const newArr = [];
       if (!Array.isArray(arr) || arr.length <= 0) return newArr
       arr.forEach((oldData) => {
         let index = -1;
@@ -254,8 +328,8 @@ export default {
           }
         });
         if (!alreadyExists) {
-          let res = [];
-          res.push(oldData)
+          const res = [];
+          res.push(oldData);
           newArr.push({
             date: oldData.date,
             list: res
@@ -264,13 +338,7 @@ export default {
           newArr[index].list.push(oldData);
         }
       });
-      if (sortValue === 'time_down') {
-        newArr = newArr.sort((a, b) => a.date < b.date ? 1 : -1)
-      }
-      if (sortValue === 'time_up') {
-        newArr = newArr.sort((a, b) => a.date > b.date ? 1 : -1)
-      }
-      return newArr;
+      return newArr.sort((a, b) => a.date < b.date ? 1 : -1);
     }
   }
 }
@@ -280,6 +348,10 @@ export default {
 @import "../../../static/icons/iconfont.css";
 
 .search {
+
+  &-loading {
+    margin-top: 60%;
+  }
 
   &-nothing {
     margin-top: 40%;
