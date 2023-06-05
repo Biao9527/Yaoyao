@@ -365,7 +365,7 @@ export default {
         type: this.tallyType,
         table: this.selectedTable ? this.selectedTable : null,
         date: this.selectedDate,
-        money: this.money ? parseFloat(this.money).toFixed(2) : null,
+        money: this.money ? Number(parseFloat(this.money).toFixed(2)) : null,
         notes: this.notes,
         address: this.address
       }

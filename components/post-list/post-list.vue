@@ -20,7 +20,7 @@
         </view>
       </view>
       <view class="post-list-money">
-        <view class="post-list-money-text">{{ item.type }}{{ item.money }}</view>
+        <view class="post-list-money-text">{{ item.type }}{{ Number(item.money).toFixed(2) }}</view>
         <view class="post-list-money-date">
           <uni-dateformat :date="item.date" format="yyyy.M.d hh:mm"/>
         </view>

@@ -28,7 +28,7 @@
         "$env": "now"
       },
       "money": {
-        "bsonType": "string",
+        "bsonType": "double",
         "label": "记账金额",
         "description": "记账金额，创建获取"
       },

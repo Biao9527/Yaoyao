@@ -9,7 +9,7 @@
           <uni-icons custom-prefix="iconfont" :type="items.table.icon" size="68rpx"/>
           <view class="table-name">{{ items.table.name }}</view>
         </view>
-        <view class="account-list-item-money">{{items.type}}{{ items.money }}</view>
+        <view class="account-list-item-money">{{items.type}}{{ Number(items.money).toFixed(2) }}</view>
       </view>
       <view class="account-list-item-notes">{{ items.notes }}</view>
       <view class="account-list-item-footer">
