@@ -27,16 +27,18 @@
             v-if="filterList[selectedIndex].name">
         {{ filterList[selectedIndex].name }}
       </view>
-      <view class="search-filter-list"
-            v-if="filterList[selectedIndex].list">
-        <view class="search-filter-list-item"
-              :class="(filterType === item.value || sortValue === item.value) ? 'active' : ''"
-              v-for="(item, index) in filterList[selectedIndex].list"
-              v-if="['money_up', 'money_down'].indexOf(item.value) < 0 || listType !== 'list'"
-              :key="index" @click="onFilterItemClick(item)">
-          {{ item.text }}
+      <scroll-view scroll-x>
+        <view class="search-filter-list"
+              v-if="filterList[selectedIndex].list">
+          <view class="search-filter-list-item"
+                :class="(filterType === item.value || sortValue === item.value) ? 'active' : ''"
+                v-for="(item, index) in filterList[selectedIndex].list"
+                v-if="['money_up', 'money_down'].indexOf(item.value) < 0 || listType !== 'list'"
+                :key="index" @click="onFilterItemClick(item)">
+            {{ item.text }}
+          </view>
         </view>
-      </view>
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -123,6 +125,7 @@ export default {
   }
 
   &-list {
+    width: max-content;
     display: flex;
     padding: 0 26rpx 40rpx;
 
@@ -146,5 +149,11 @@ export default {
       border: 1PX solid #007aff;
     }
   }
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
 }
 </style>
