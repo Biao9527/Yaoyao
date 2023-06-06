@@ -1,6 +1,6 @@
 export function updateTokenStorage(data = null) {
     if (data) {
-        const expiresTime = data.register_date + 7 * 24 * 60 * 60 * 1000
+        const expiresTime = new Date().getTime() + 7 * 24 * 60 * 60 * 1000
         data = {...data, expiresTime: expiresTime}
     }
     uni.setStorageSync('user', data)
