@@ -106,7 +106,8 @@ export default {
       this.showFilter = true
     }
     if (options.tableId) {
-      this.filterTable = [Number(options.tableId)]
+      this.filterTable = [{_id: options.tableId}]
+      this.loadTableItem(options.tableId)
     }
   },
   onReachBottom() {
@@ -148,6 +149,26 @@ export default {
     }
   },
   methods: {
+    loadTableItem(id) {
+      const wx_openid = getWxOpenId()
+      uniCloud.callFunction({
+        name: 'tables',
+        data: {
+          action: 'findItem',
+          tableId: id,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            this.filterTable = [res.result.table]
+          } else {
+            this.showToast('标签查找失败，请重新选择')
+          }
+        },
+        fail: () => {
+        }
+      })
+    },
     loadPostList(reLoad = true) {
       if (this.loading) {
         return;
