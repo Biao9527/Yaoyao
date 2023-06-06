@@ -36,5 +36,6 @@ export default {
 <style lang="scss">
 .load-more {
   height: 200rpx;
+  background: #F6F6F6;
 }
 </style>
