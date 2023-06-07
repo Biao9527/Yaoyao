@@ -153,10 +153,11 @@ exports.main = async (event, context) => {
 				const month = event.monthList[1]
 				const firstDayOfMonth = new Date(year, month, 1) // Mon May 01 2023 00:00:00 GMT+0800 (中国标准时间)
 				const lastDayOfMonth = new Date(year, month + 1, 0)
+				const lastDayTime = lastDayOfMonth.getTime() + 24 * 60 * 60 * 1000 - 1
 				const res = await account.where({
 					mp_wx_openid: event.wx_openid,
 					type: event.type,
-					date: dbCmd.gte(firstDayOfMonth.getTime()).and(db.command.lte(lastDayOfMonth.getTime()))
+					date: dbCmd.gte(firstDayOfMonth.getTime()).and(db.command.lte(lastDayTime))
 				}).get()
 				let sumMoney = 0
 				let chartData = []

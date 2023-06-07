@@ -161,6 +161,11 @@ export default {
       this.loadAccountInfo(options.id)
     }
   },
+  onShow() {
+    if (this.isOpenedTable) {
+      this.loadTableList()
+    }
+  },
   computed: {
     ...mapState([
       'operationHeight'
