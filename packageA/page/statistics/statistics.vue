@@ -6,33 +6,43 @@
             :select-date="selectDate"
             @onTypeClick="onTypeClick"
             @onDate="onDateClick"/>
-    <view class="statistics-content">
-      <view class="statistics-title">{{ typeText }}构成</view>
-      <view class="charts-box">
-        <qiun-data-charts
-            :canvas2d="true"
-            canvasId="dateCanvas"
-            :tooltipShow="false"
-            type="pie"
-            :opts="opts"
-            :chartData="chartData"
-        />
-      </view>
-      <BarCharts :char-list="charList"
-                 @onBarItem="goRankingPage"/>
-      <view class="statistics-title">{{ typeText }}排行</view>
-      <view class="statistics-top">
-        <PostList :list="[]"
-                  :show-index="true"/>
-        <view class="statistics-top-more"
-              @click="goAllTop">
-          <view>全部排行</view>
-          <uni-icons type="forward" size="32rpx" color="#9b9b9b"/>
+    <view v-if="postLoading || chartLoading"
+          class="statistics-loading">
+      <uni-load-more status="loading"
+                     iconSize="40"
+                     color="#bbbbbb"
+                     :showText="false"/>
+    </view>
+    <view v-else>
+      <view class="statistics-content"
+            v-if="Array.isArray(topTenPostList) && topTenPostList.length > 0">
+        <view class="statistics-title">{{ typeText }}构成</view>
+        <view class="charts-box">
+          <qiun-data-charts
+              :canvas2d="true"
+              canvasId="dateCanvas"
+              :tooltipShow="false"
+              type="pie"
+              :opts="opts"
+              :chartData="chartData"
+          />
+        </view>
+        <BarCharts :char-list="charList"
+                   @onBarItem="goRankingPage"/>
+        <view class="statistics-title">{{ typeText }}排行</view>
+        <view class="statistics-top">
+          <PostList :list="topTenPostList"
+                    :show-index="true"/>
+          <view class="statistics-top-more"
+                @click="goAllTop">
+            <view>全部排行</view>
+            <uni-icons type="forward" size="32rpx" color="#9b9b9b"/>
+          </view>
         </view>
       </view>
-    </view>
-    <view class="statistics-nothing">
-      <Nothing text="暂无数据"/>
+      <view class="statistics-nothing" v-else>
+        <Nothing text="暂无数据"/>
+      </view>
     </view>
     <DatePopup v-if="isOpenMonth"
                :is-opened.sync="isOpenMonth"
@@ -69,7 +79,7 @@ export default {
   },
   onShow() {
     this.setNowDate()
-    this.loadStatisticsData()
+    this.onDataInit()
   },
   computed: {
     ...mapState([
@@ -84,6 +94,9 @@ export default {
       totalMoney: 0,
       chartData: {},
       charList: [],
+      chartLoading: false,
+      topTenPostList: [],
+      postLoading: false,
       selectType: 1,
       isOpenMonth: false,
       selectDate: [],
@@ -114,16 +127,21 @@ export default {
     };
   },
   methods: {
+    onDataInit() {
+      this.loadStatisticsData()
+      this.loadTopTenList()
+    },
     loadStatisticsData() {
       const wx_openid = getWxOpenId()
       if (!wx_openid) {
         return
       }
+      this.chartLoading = true
       uniCloud.callFunction({
         name: 'account',
         data: {
           action: 'statistics',
-          date: new Date().getTime(),
+          monthList: this.selectDate,
           type: TYPE_HASH[this.selectType],
           wx_openid: wx_openid
         },
@@ -133,8 +151,10 @@ export default {
             series: [{data: res.result.data.chartData}]
           }
           this.charList = res.result.data.barChartList
+          this.chartLoading = false
         },
         fail: () => {
+          this.chartLoading = false
           uni.showToast({title: '获取数据失败！', icon: 'none'})
         }
       })
@@ -144,11 +164,13 @@ export default {
       if (!wx_openid) {
         return
       }
+      this.postLoading = true
       uniCloud.callFunction({
         name: 'account',
         data: {
           action: 'get',
           type: TYPE_HASH[this.selectType],
+          monthList: this.selectDate,
           sortKey: 'money',
           sortValue: 'desc',
           getSize: 10,
@@ -156,8 +178,11 @@ export default {
           wx_openid: wx_openid
         },
         success: (res) => {
+          this.topTenPostList = res.result.dataList
+          this.postLoading = false
         },
         fail: () => {
+          this.postLoading = false
           uni.showToast({title: '获取数据失败！', icon: 'none'})
         }
       })
@@ -175,10 +200,12 @@ export default {
     },
     onSelectDate(date) {
       this.selectDate = date
+      this.onDataInit()
     },
     onTypeClick(type) {
       if (type === this.selectType) return
       this.selectType = type
+      this.onDataInit()
     },
     onDateClick() {
       this.isOpenMonth = true
@@ -195,6 +222,10 @@ page {
 }
 
 .statistics {
+
+  &-loading {
+    margin-top: 30%;
+  }
 
   &-content {
     margin-top: 30rpx;

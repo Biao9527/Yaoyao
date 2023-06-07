@@ -24,6 +24,14 @@ exports.main = async (event, context) => {
 				if (event.dateList && event.dateList.length === 2) {
 					filterObj.date = dbCmd.gte(event.dateList[0]).and(dbCmd.lte(event.dateList[1]))
 				}
+				if (event.monthList) {
+					const year = event.monthList[0]
+					const month = event.monthList[1]
+					const firstDayOfMonth = new Date(year, month, 1)
+					const lastDayOfMonth = new Date(year, month + 1, 0)
+					const lastDayTime = lastDayOfMonth.getTime() + 24 * 60 * 60 * 1000 - 1
+					filterObj.date = dbCmd.gte(firstDayOfMonth.getTime()).and(db.command.lte(lastDayTime))
+				}
 				const sortKey = event.sortKey ? event.sortKey : 'date'
 				const sortValue = event.sortValue ? event.sortValue : 'desc'
 				const res_val = await account.where({
@@ -140,10 +148,9 @@ exports.main = async (event, context) => {
             }
 			break
 		case 'statistics':
-			if (event.date && event.type) {
-				const currentDate = new Date(event.date) // Mon May 01 2023 02:00:51 GMT+0800 (中国标准时间)
-				const year = currentDate.getFullYear() // 2023
-				const month = currentDate.getMonth() // 4
+			if (event.monthList && event.type) {
+				const year = event.monthList[0]
+				const month = event.monthList[1]
 				const firstDayOfMonth = new Date(year, month, 1) // Mon May 01 2023 00:00:00 GMT+0800 (中国标准时间)
 				const lastDayOfMonth = new Date(year, month + 1, 0)
 				const res = await account.where({
