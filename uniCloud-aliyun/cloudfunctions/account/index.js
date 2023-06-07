@@ -199,6 +199,34 @@ exports.main = async (event, context) => {
 				result = {status: -1, msg: '获取失败'}
 			}
 			break
+		case 'statistics_date':
+			const res = await account.where({
+				mp_wx_openid: event.wx_openid,
+			}).orderBy('date', 'desc').get()
+			let dateList = []
+			const nowYear = new Date().getFullYear()
+			const nowMonth = new Date().getMonth()
+			if (res.data.length <= 0) {
+				dateList = [{year: nowYear, monthList: [nowMonth]}]
+			} else {
+				const minDate = res.data[res.data.length - 1].date
+				let minYear = new Date(minDate).getFullYear()
+				let minMonth = new Date(minDate).getMonth()
+				while (minYear <= nowYear) {
+					const list = []
+					const count = nowYear === minYear ? nowMonth : 11
+					while (minMonth <= count) {
+						list.push(minMonth)
+						minMonth += 1
+					}
+					dateList.push({year: minYear, monthList: list})
+					minMonth = 0
+					minYear += 1
+				}
+				dateList = dateList.sort((a, b) => a.year < b.year ? 1 : -1)
+			}
+			result = {status: 200, dateList: dateList}
+			break
     }
 
 	//返回数据给客户端

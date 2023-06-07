@@ -34,7 +34,8 @@
     <view class="statistics-nothing">
       <Nothing text="暂无数据"/>
     </view>
-    <DatePopup :is-opened.sync="isOpenMonth"
+    <DatePopup v-if="isOpenMonth"
+               :is-opened.sync="isOpenMonth"
                :operation-height="operationHeight"
                :select-month="selectDate"
                @onSelectDate="onSelectDate"/>
@@ -134,6 +135,7 @@ export default {
           this.charList = res.result.data.barChartList
         },
         fail: () => {
+          uni.showToast({title: '获取数据失败！', icon: 'none'})
         }
       })
     },
@@ -156,6 +158,7 @@ export default {
         success: (res) => {
         },
         fail: () => {
+          uni.showToast({title: '获取数据失败！', icon: 'none'})
         }
       })
     },

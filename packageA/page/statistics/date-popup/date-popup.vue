@@ -12,7 +12,15 @@
       </view>
       <view class="date-popup-content">
         <scroll-view class="date-popup-scroll" scroll-y>
-          <view class="date-popup-list"
+          <view v-if="loading"
+                class="date-popup-loading">
+            <uni-load-more status="loading"
+                           iconSize="40"
+                           color="#bbbbbb"
+                           :showText="false"/>
+          </view>
+          <view v-else
+                class="date-popup-list"
                 :class="setOperationHeight">
             <view class="date-popup-list-item"
                   v-for="items in dateList" :key="items">
@@ -34,39 +42,15 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
 import {month_text} from "../helper";
+import {getWxOpenId} from "../../../../helpers";
 
 export default {
   props: ['isOpened', 'operationHeight', 'selectMonth', 'onSelectDate'],
   beforeMount() {
-    const nowYear = new Date().getFullYear()
-    const nowMonth = new Date().getMonth()
-    if (this.getAccountList.length <= 0) {
-      this.dateList = [{year: nowYear, monthList: [nowMonth]}]
-      return
-    }
-    const minDate = this.getAccountList[this.getAccountList.length - 1].date
-    let minYear = new Date(minDate).getFullYear()
-    let minMonth = new Date(minDate).getMonth()
-    const dateList = []
-    while (minYear <= nowYear) {
-      const list = []
-      const count = nowYear === minYear ? nowMonth : 11
-      while (minMonth <= count) {
-        list.push(minMonth)
-        minMonth += 1
-      }
-      dateList.push({year: minYear, monthList: list})
-      minMonth = 0
-      minYear += 1
-    }
-    this.dateList = dateList.sort((a, b) => a.year < b.year ? 1 : -1)
+    this.loadDateList()
   },
   computed: {
-    ...mapGetters([
-      'getAccountList'
-    ]),
     computedMonthText() {
       return (month) => month_text[month]
     },
@@ -76,10 +60,33 @@ export default {
   },
   data() {
     return {
-      dateList: []
+      dateList: [],
+      loading: false
     }
   },
   methods: {
+    loadDateList() {
+      this.loading = true
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: 'statistics_date',
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          this.dateList = res.result.dateList
+          this.loading = false
+        },
+        fail: () => {
+          uni.showToast({title: '获取数据失败！', icon: 'none'})
+          this.loading = false
+        }
+      })
+    },
     onClose() {
       this.$emit('update:isOpened', false)
     },
@@ -111,6 +118,13 @@ export default {
   background: #F6F6F6;
   border-radius: 18rpx 18rpx 0 0;
 
+  &-loading {
+    height: 600rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   &-close {
     position: absolute;
     top: 0;
@@ -138,7 +152,7 @@ export default {
   }
 
   &-scroll {
-    max-height: 600rpx;
+    height: 600rpx;
   }
 
   &-list {
