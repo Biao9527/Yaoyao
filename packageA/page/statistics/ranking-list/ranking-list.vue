@@ -6,33 +6,47 @@
         <view class="ranking-header-title">
           <view>{{ headerMonthText }}</view>
           <view class="ranking-header-table"
-                v-if="filterTableId">
-            <uni-icons custom-prefix="iconfont" :type="filterTable(filterTableId).icon" size="50rpx"/>
-            <view class="ranking-header-table-text">{{ filterTable(filterTableId).name }}</view>
+                v-if="filterTableId && tableItem">
+            <uni-icons custom-prefix="iconfont" :type="tableItem.icon" size="50rpx"/>
+            <view class="ranking-header-table-text">{{ tableItem.name }}</view>
           </view>
           <view>共{{ headerTypeText }}</view>
         </view>
         <view class="ranking-header-money">
           ￥
-          <text class="money-count">{{ computedMoney }}</text>
+          <text class="money-count">{{ moneyCounts }}</text>
         </view>
       </view>
-      <view v-if="Array.isArray(dataList) && dataList.length > 0"
-            class="ranking-list">
-        <view class="ranking-tabs">
-          <view class="ranking-tabs-item"
-                :class="sortText === 'money_down' || sortText === 'money_up' ? 'active' : ''"
-                @click="onMoneyFilter">
-            {{ moneySortText }}
+      <view v-if="firstLoad"
+            class="ranking-loading">
+        <uni-load-more status="loading"
+                       iconSize="40"
+                       color="#bbbbbb"
+                       :showText="false"/>
+      </view>
+      <view v-else>
+        <view v-if="Array.isArray(dataList) && dataList.length > 0"
+              class="ranking-list">
+          <view class="ranking-tabs">
+            <view class="ranking-tabs-item"
+                  :class="sortText === 'money_down' || sortText === 'money_up' ? 'active' : ''"
+                  @click="onMoneyFilter">
+              {{ moneySortText }}
+            </view>
+            <view class="ranking-tabs-item"
+                  :class="sortText === 'time_up' || sortText === 'time_down' ? 'active' : ''"
+                  @click="onTimeFilter">
+              {{ timeSortText }}
+            </view>
           </view>
-          <view class="ranking-tabs-item"
-                :class="sortText === 'time_up' || sortText === 'time_down' ? 'active' : ''"
-                @click="onTimeFilter">
-            {{ timeSortText }}
-          </view>
+          <PostList :list="dataList"/>
+          <LoadMore :first-load="firstLoad"
+                    :has-more="hasMore"
+                    :loading="loading"/>
         </view>
-        <PostList :list="dataList"
-                  :table-list="getMyTableList"/>
+        <view class="ranking-nothing" v-else>
+          <Nothing text="暂无数据"/>
+        </view>
       </view>
     </view>
   </view>
@@ -41,18 +55,23 @@
 <script>
 import NavBar from "../../../../components/nav-bar";
 import {month_text} from "../helper";
-import {mapGetters} from 'vuex'
-import {MONEY_SORT_TEXT, TIME_SORT_TEXT, TYPE_HASH, TYPE_TEXT} from "../../search/helper";
+import {MONEY_SORT_TEXT, SORT_TYPE_OBJ, TIME_SORT_TEXT, TYPE_HASH, TYPE_TEXT} from "../../search/helper";
 import PostList from "../../../../components/post-list/post-list";
+import Nothing from "../../../../components/nothing/nothing";
+import LoadMore from "../../../../components/load-more/load-more";
+import {getWxOpenId} from "../../../../helpers";
 
 export default {
   components: {
     NavBar,
-    PostList
+    PostList,
+    Nothing,
+    LoadMore
   },
   onLoad(options) {
     if (options.tableId) {
-      this.filterTableId = JSON.parse(options.tableId)
+      this.filterTableId = options.tableId
+      this.loadTableItem(options.tableId)
     }
     if (options.year && options.month) {
       this.filterDate = [JSON.parse(options.year), JSON.parse(options.month)]
@@ -60,13 +79,17 @@ export default {
     if (options.type) {
       this.selectType = JSON.parse(options.type)
     }
-    this.filterAccountList()
+  },
+  onShow() {
+    this.loadPostList()
+    this.loadMoneyCounts()
+  },
+  onReachBottom() {
+    if (!this.loading && this.hasMore) {
+      this.loadPostList(false)
+    }
   },
   computed: {
-    ...mapGetters([
-      'getAccountList',
-      'getMyTableList'
-    ]),
     moneySortText() {
       return this.sortText === 'money_up' || this.sortText === 'money_down' ? MONEY_SORT_TEXT[this.sortText] : '金额'
     },
@@ -79,36 +102,133 @@ export default {
     headerTypeText() {
       return TYPE_TEXT[this.selectType]
     },
-    filterTable() {
-      return function (id) {
-        return this.getMyTableList.filter(item => item.id === id)[0]
-      }
-    },
-    computedMoney() {
-      let money = 0
-      this.dataList.map(items => {
-        money += Number(items.money)
-      })
-      return Number(money.toFixed(2))
-    },
   },
   data() {
     return {
       dataList: [],
       filterDate: [],
       filterTableId: null,
+      tableItem: null,
       selectType: null,
-      sortText: 'money_down'
+      moneyCounts: 0,
+      sortText: 'money_down',
+      size: 15,
+      page: 1,
+      loading: false,
+      hasMore: true,
+      firstLoad: true
     }
   },
   methods: {
+    loadTableItem(id) {
+      const wx_openid = getWxOpenId()
+      uniCloud.callFunction({
+        name: 'tables',
+        data: {
+          action: 'findItem',
+          tableId: id,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            this.tableItem = res.result.table
+          } else {
+            this.showToast('标签查找失败!')
+          }
+        },
+        fail: () => {
+          this.showToast('标签查找失败!')
+        }
+      })
+    },
+    loadPostList(reLoad = true) {
+      if (this.loading) {
+        return;
+      }
+
+      this.loading = true
+      if (reLoad) {
+        this.page = 1
+        this.firstLoad = true
+        this.hasMore = true
+      }
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: 'get',
+          type: TYPE_HASH[this.selectType],
+          tables: this.filterTableId ? [this.filterTableId] : null,
+          monthList: this.filterDate,
+          sortKey: SORT_TYPE_OBJ[this.sortText].key,
+          sortValue: SORT_TYPE_OBJ[this.sortText].value,
+          getSize: this.size,
+          getPage: this.page,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            if (res.result.dataList.length < this.size) {
+              this.hasMore = false
+            }
+            this.page += 1
+            if (reLoad) {
+              this.dataList = res.result.dataList
+            } else {
+              this.dataList = this.dataList.concat(res.result.dataList)
+            }
+            this.loadListSuccess()
+          } else {
+            this.loadListSuccess()
+            this.showToast('获取列表失败')
+          }
+        },
+        fail: () => {
+          this.loadListSuccess()
+          this.showToast('获取列表失败')
+        }
+      })
+    },
+    loadListSuccess() {
+      this.loading = false
+      this.firstLoad = false
+    },
+    loadMoneyCounts() {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: 'getMoneyCount',
+          type: TYPE_HASH[this.selectType],
+          tables: this.filterTableId ? [this.filterTableId] : null,
+          monthList: this.filterDate,
+          sortKey: SORT_TYPE_OBJ[this.sortText].key,
+          sortValue: SORT_TYPE_OBJ[this.sortText].value,
+          getSize: this.size,
+          getPage: this.page,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+            this.moneyCounts = res.result.sumMoney
+        },
+        fail: () => {
+          this.showToast('获取金额总数失败！')
+        }
+      })
+    },
     onMoneyFilter() {
       if (this.sortText !== 'money_down' && this.sortText !== 'money_up') {
         this.sortText = 'money_down'
       } else {
         this.sortText = this.sortText === 'money_down' ? 'money_up' : 'money_down'
       }
-      this.filterAccountList()
+      this.loadPostList()
     },
     onTimeFilter() {
       if (this.sortText !== 'time_up' && this.sortText !== 'time_down') {
@@ -116,47 +236,8 @@ export default {
       } else {
         this.sortText = this.sortText === 'time_down' ? 'time_up' : 'time_down'
       }
-      this.filterAccountList()
+      this.loadPostList()
     },
-    filterAccountList() {
-      this.dataList = this.getAccountList
-      //筛选类型
-      if (this.selectType) {
-        this.dataList = this.dataList.filter(item => item.type === TYPE_HASH[this.selectType])
-      }
-      //筛选日期
-      this.dataList = this.dataList.filter(item => {
-        const year = new Date(item.date).getFullYear()
-        const month = new Date(item.date).getMonth()
-        return year === this.filterDate[0] && month === this.filterDate[1]
-      })
-      //筛选标签
-      if (this.filterTableId) {
-        this.dataList = this.dataList.filter(item => item.tableId === this.filterTableId)
-      }
-      //筛选排序方式
-      switch (this.sortText) {
-        case "time_up":
-          this.dataList = this.dataList.sort((a, b) => {
-            return a.date > b.date ? 1 : -1
-          })
-          break
-        case "time_down":
-          break
-        case "money_up":
-          this.dataList = this.dataList.sort((a, b) => {
-            return Number(a.money) > Number(b.money) ? 1 : -1
-          })
-          break
-        case "money_down":
-          this.dataList = this.dataList.sort((a, b) => {
-            return Number(a.money) < Number(b.money) ? 1 : -1
-          })
-          break
-        default:
-          break
-      }
-    }
   }
 }
 </script>
@@ -165,6 +246,14 @@ export default {
 @import "../../../../static/icons/iconfont.css";
 
 .ranking {
+
+  &-loading {
+    margin-top: 30%;
+  }
+
+  &-nothing {
+    margin-top: 20%;
+  }
 
   &-header {
     background: #FFFFFF;

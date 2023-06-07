@@ -44,6 +44,42 @@ exports.main = async (event, context) => {
 				result = {status: -1, msg: '获取列表失败'}
 			}
 			break
+		case 'getMoneyCount':
+			let filterObj = {
+				mp_wx_openid: event.wx_openid
+			}
+			if (event.type) {
+				filterObj.type = event.type
+			}
+			if (event.tables && event.tables.length > 0) {
+				filterObj = {
+					...filterObj,
+					'table._id': dbCmd.in(event.tables),
+				}
+			}
+			if (event.dateList && event.dateList.length === 2) {
+				filterObj.date = dbCmd.gte(event.dateList[0]).and(dbCmd.lte(event.dateList[1]))
+			}
+			if (event.monthList) {
+				const year = event.monthList[0]
+				const month = event.monthList[1]
+				const firstDayOfMonth = new Date(year, month, 1)
+				const lastDayOfMonth = new Date(year, month + 1, 0)
+				const lastDayTime = lastDayOfMonth.getTime() + 24 * 60 * 60 * 1000 - 1
+				filterObj.date = dbCmd.gte(firstDayOfMonth.getTime()).and(db.command.lte(lastDayTime))
+			}
+			const res_val = await account.where({
+				...filterObj
+			}).get()
+			let sumMoney = 0
+			if (res_val.data && res_val.data.length > 0) {
+				res_val.data.forEach(items => {
+					sumMoney += Number(items.money)
+				})
+			}
+			sumMoney = Number(sumMoney.toFixed(2))
+			result = {status: 200, sumMoney}
+			break
 		case 'getItem':
 			if (event.accountId) {
 				const res = await account.where({
