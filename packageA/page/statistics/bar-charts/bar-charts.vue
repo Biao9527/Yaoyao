@@ -4,8 +4,8 @@
           @click="goRankingPage(item)"
           v-for="item in charList" :key="item.id">
       <view class="bar-charts-left">
-        <uni-icons custom-prefix="iconfont" :type="item.icon" size="50rpx"/>
-        <view class="left-text">{{ item.name }}</view>
+        <uni-icons custom-prefix="iconfont" :type="item.table.icon" size="50rpx"/>
+        <view class="left-text">{{ item.table.name }}</view>
       </view>
       <view class="bar-charts-right">
         <view class="bar-charts-progress">

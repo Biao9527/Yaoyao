@@ -2,12 +2,11 @@
   <view class="statistics">
     <NavBar title="统计"/>
     <Header :type-index.sync="selectType"
-            :total-money="computedMoney"
+            :total-money="totalMoney"
             :select-date="selectDate"
             @onTypeClick="onTypeClick"
             @onDate="onDateClick"/>
-    <view class="statistics-content"
-          v-if="dataList && dataList.length > 0">
+    <view class="statistics-content">
       <view class="statistics-title">{{ typeText }}构成</view>
       <view class="charts-box">
         <qiun-data-charts
@@ -23,8 +22,7 @@
                  @onBarItem="goRankingPage"/>
       <view class="statistics-title">{{ typeText }}排行</view>
       <view class="statistics-top">
-        <PostList :list="computedTopTen"
-                  :table-list="getMyTableList"
+        <PostList :list="[]"
                   :show-index="true"/>
         <view class="statistics-top-more"
               @click="goAllTop">
@@ -33,7 +31,7 @@
         </view>
       </view>
     </view>
-    <view class="statistics-nothing" v-else>
+    <view class="statistics-nothing">
       <Nothing text="暂无数据"/>
     </view>
     <DatePopup :is-opened.sync="isOpenMonth"
@@ -50,12 +48,13 @@ import CustomTabBar from '../../../components/custom-tab-bar'
 import NavBar from "../../../components/nav-bar";
 import Header from "./header/header";
 import Nothing from "../../../components/nothing/nothing";
-import {mapState, mapGetters} from 'vuex'
+import {mapState} from 'vuex'
 import {TYPE_HASH, TYPE_TEXT} from "../search/helper";
 import DatePopup from "./date-popup/date-popup";
 import BarCharts from "./bar-charts/bar-charts";
 import PostList from "../../../components/post-list/post-list";
 import {navigateToPage} from "../../../helpers/navigateTo";
+import {getWxOpenId} from "../../../helpers";
 
 export default {
   components: {
@@ -69,41 +68,21 @@ export default {
   },
   onShow() {
     this.setNowDate()
-    this.filterAccountList();
+    this.loadStatisticsData()
   },
   computed: {
     ...mapState([
       'operationHeight'
     ]),
-    ...mapGetters([
-      'getAccountList',
-      'getMyTableList'
-    ]),
-    computedMoney() {
-      if (Array.isArray(this.dataList) && this.dataList.length > 0) {
-        let money = 0
-        this.dataList.map(items => {
-          money += Number(items.money)
-        })
-        return Number(money.toFixed(2))
-      }
-      return 0
-    },
     typeText() {
       return TYPE_TEXT[this.selectType]
     },
-    computedTopTen() {
-      if (Array.isArray(this.dataList) && this.dataList.length > 0) {
-        return this.dataList.sort((a, b) => Number(a.money) < Number(b.money) ? 1 : -1).slice(0, 10)
-      }
-      return []
-    }
   },
   data() {
     return {
+      totalMoney: 0,
       chartData: {},
       charList: [],
-      dataList: [],
       selectType: 1,
       isOpenMonth: false,
       selectDate: [],
@@ -134,73 +113,69 @@ export default {
     };
   },
   methods: {
-    getServerData() {
-      const data = []
-      const arr = []
-      let sumMoney = 0
-      this.dataList.map(items => {
-        sumMoney += Number(items.money)
-      })
-      sumMoney = Number(sumMoney.toFixed(2))
-      this.getMyTableList.map(item => {
-        const list = this.dataList.filter(i => i.tableId === item.id)
-        if (list && list.length > 0) {
-          let money = 0
-          list.map(items => {
-            money += Number(items.money)
-          })
-          money = Number(money.toFixed(2))
-          const sliceName = item.name.length > 3 ? item.name.slice(0, 3) + '...' : item.name
-          data.push({
-            "name": item.name,
-            "value": money,
-            'labelText': ` ${sliceName} :${(money / sumMoney * 100).toFixed(1)}% `
-          })
-          arr.push({id: item.id, icon: item.icon, name: item.name, money: money})
+    loadStatisticsData() {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: 'statistics',
+          date: new Date().getTime(),
+          type: TYPE_HASH[this.selectType],
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+          this.totalMoney = res.result.data.sumMoney
+          this.chartData = {
+            series: [{data: res.result.data.chartData}]
+          }
+          this.charList = res.result.data.barChartList
+        },
+        fail: () => {
         }
       })
-      let res = {
-        series: [{data: data}]
-      };
-      const sortList = arr.sort((a, b) => a.money < b.money ? 1 : -1)
-      for (let i = 0; i < sortList.length; i++) {
-        sortList[i].width = (sortList[i].money / sortList[0].money * 100).toFixed(2)
+    },
+    loadTopTenList() {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
       }
-      this.charList = sortList
-      this.chartData = JSON.parse(JSON.stringify(res));
+      uniCloud.callFunction({
+        name: 'account',
+        data: {
+          action: 'get',
+          type: TYPE_HASH[this.selectType],
+          sortKey: 'money',
+          sortValue: 'desc',
+          getSize: 10,
+          getPage: 1,
+          wx_openid: wx_openid
+        },
+        success: (res) => {
+        },
+        fail: () => {
+        }
+      })
     },
     setNowDate() {
       const nowYear = new Date().getFullYear()
       const nowMonth = new Date().getMonth()
       this.selectDate = [nowYear, nowMonth]
     },
-    filterAccountList() {
-      this.dataList = this.getAccountList
-      if (!Array.isArray(this.dataList) || this.dataList.length <= 0) return
-      //筛选类型
-      this.dataList = this.dataList.filter(item => item.type === TYPE_HASH[this.selectType])
-      //筛选日期
-      this.dataList = this.dataList.filter(item => {
-        const year = new Date(item.date).getFullYear()
-        const month = new Date(item.date).getMonth()
-        return year === this.selectDate[0] && month === this.selectDate[1]
-      })
-      this.getServerData()
-    },
     goRankingPage(item) {
-      navigateToPage('ranking', `?tableId=${item.id}&type=${this.selectType}&year=${this.selectDate[0]}&month=${this.selectDate[1]}`)
+      navigateToPage('ranking', `?tableId=${item.table._id}&type=${this.selectType}&year=${this.selectDate[0]}&month=${this.selectDate[1]}`)
     },
     goAllTop() {
       navigateToPage('ranking', `?type=${this.selectType}&year=${this.selectDate[0]}&month=${this.selectDate[1]}`)
     },
     onSelectDate(date) {
       this.selectDate = date
-      this.filterAccountList()
     },
     onTypeClick(type) {
       if (type === this.selectType) return
       this.selectType = type
-      this.filterAccountList()
     },
     onDateClick() {
       this.isOpenMonth = true

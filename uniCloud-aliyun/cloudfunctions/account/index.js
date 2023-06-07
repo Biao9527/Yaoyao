@@ -138,6 +138,67 @@ exports.main = async (event, context) => {
             } else {
                 result = {status: -1, msg: '查询失败'}
             }
+			break
+		case 'statistics':
+			if (event.date && event.type) {
+				const currentDate = new Date(event.date) // Mon May 01 2023 02:00:51 GMT+0800 (中国标准时间)
+				const year = currentDate.getFullYear() // 2023
+				const month = currentDate.getMonth() // 4
+				const firstDayOfMonth = new Date(year, month, 1) // Mon May 01 2023 00:00:00 GMT+0800 (中国标准时间)
+				const lastDayOfMonth = new Date(year, month + 1, 0)
+				const res = await account.where({
+					mp_wx_openid: event.wx_openid,
+					type: event.type,
+					date: dbCmd.gte(firstDayOfMonth.getTime()).and(db.command.lte(lastDayOfMonth.getTime()))
+				}).get()
+				let sumMoney = 0
+				let chartData = []
+				let barChartList = []
+				let charItem = {}
+				let barCharItem = {}
+				if (res.data && res.data.length > 0) {
+					res.data.forEach(items => {
+						sumMoney += Number(items.money)
+						if (charItem[items.table._id]) {
+							charItem[items.table._id].value += items.money
+						} else {
+							charItem[items.table._id] = {}
+							charItem[items.table._id].name = items.table.name
+							charItem[items.table._id].value = items.money
+						}
+						if (barCharItem[items.table._id]) {
+							barCharItem[items.table._id].id = items._id
+							barCharItem[items.table._id].money += items.money
+						} else {
+							barCharItem[items.table._id] = {}
+							barCharItem[items.table._id].id = items._id
+							barCharItem[items.table._id].table = items.table
+							barCharItem[items.table._id].money = items.money
+						}
+					})
+					for (let k in charItem) {
+						chartData.push(charItem[k])
+					}
+					for (let b in barCharItem) {
+						barChartList.push(barCharItem[b])
+					}
+
+					sumMoney = Number(sumMoney.toFixed(2))
+
+					chartData.map(item => {
+						const sliceName = item.name.length > 3 ? item.name.slice(0, 3) + '...' : item.name
+						item.labelText = ` ${sliceName} :${(item.value / sumMoney * 100).toFixed(1)}% `
+					})
+					barChartList = barChartList.sort((a, b) => a.money < b.money ? 1 : -1)
+					for (let i = 0; i < barChartList.length; i++) {
+						barChartList[i].width = (barChartList[i].money / barChartList[0].money * 100).toFixed(2)
+					}
+				}
+				result = {status: 200, data: {sumMoney, chartData, barChartList}}
+			} else {
+				result = {status: -1, msg: '获取失败'}
+			}
+			break
     }
 
 	//返回数据给客户端
