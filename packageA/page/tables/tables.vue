@@ -124,6 +124,10 @@ export default {
       navigateToPage('createTable')
     },
     loadTableList(reLoad = true) {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       if (this.loading) {
         return;
       }
@@ -132,10 +136,6 @@ export default {
         this.page = 1
         this.firstLoad = true
         this.hasMore = true
-      }
-      const wx_openid = getWxOpenId()
-      if (!wx_openid) {
-        return
       }
       uniCloud.callFunction({
         name: 'tables',
@@ -189,6 +189,9 @@ export default {
     },
     async removeTableModal() {
       const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       const accounts = await isTablesAccounts(wx_openid, this.selectTableItem._id)
       if (accounts && accounts.length > 0) {
         uni.showModal({

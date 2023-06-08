@@ -84,6 +84,9 @@ export default {
         name: this.tableName
       }
       const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       const findItem = await findTablesItem(wx_openid, data)
       if (findItem && findItem.length > 0) {
         this.showToast('已存在相同标签！')

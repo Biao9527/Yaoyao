@@ -71,7 +71,6 @@ export default {
   onLoad(options) {
     if (options.tableId) {
       this.filterTableId = options.tableId
-      this.loadTableItem(options.tableId)
     }
     if (options.year && options.month) {
       this.filterDate = [JSON.parse(options.year), JSON.parse(options.month)]
@@ -83,6 +82,9 @@ export default {
   onShow() {
     this.loadPostList()
     this.loadMoneyCounts()
+    if (this.filterTableId) {
+      this.loadTableItem(this.filterTableId)
+    }
   },
   onReachBottom() {
     if (!this.loading && this.hasMore) {
@@ -122,6 +124,9 @@ export default {
   methods: {
     loadTableItem(id) {
       const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       uniCloud.callFunction({
         name: 'tables',
         data: {
@@ -142,19 +147,18 @@ export default {
       })
     },
     loadPostList(reLoad = true) {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       if (this.loading) {
         return;
       }
-
       this.loading = true
       if (reLoad) {
         this.page = 1
         this.firstLoad = true
         this.hasMore = true
-      }
-      const wx_openid = getWxOpenId()
-      if (!wx_openid) {
-        return
       }
       uniCloud.callFunction({
         name: 'account',

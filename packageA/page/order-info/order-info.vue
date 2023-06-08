@@ -92,8 +92,11 @@ export default {
   },
   methods: {
     loadAccount(id) {
-      this.loading = true
       const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      this.loading = true
       uniCloud.callFunction({
         name: 'account',
         data: {
@@ -133,6 +136,9 @@ export default {
     },
     removeAccount() {
       const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       uniCloud.callFunction({
         name: 'account',
         data: {

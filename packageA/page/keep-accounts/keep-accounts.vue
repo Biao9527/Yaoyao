@@ -152,18 +152,22 @@ export default {
   },
   onLoad(options) {
     if (options.tableId) {
-      this.loadTableItem(options.tableId)
-      return
+      this.tableId = options.tableId
     }
     if (options.edit && options.id) {
       this.isEdit = true
       this.editId = options.id
-      this.loadAccountInfo(options.id)
     }
   },
   onShow() {
     if (this.isOpenedTable) {
       this.loadTableList()
+    }
+    if (this.isEdit && this.editId) {
+      this.loadAccountInfo(this.editId)
+    }
+    if (this.tableId) {
+      this.loadTableItem(this.tableId)
     }
   },
   computed: {
@@ -181,6 +185,7 @@ export default {
     return {
       isEdit: false,
       editId: null,
+      tableId: null,
       tallyType: '-',
       notes: '',
       money: null,
@@ -202,6 +207,10 @@ export default {
   },
   methods: {
     loadTableList(reLoad = true) {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       if (this.tagLoading) {
         return;
       }
@@ -210,10 +219,6 @@ export default {
         this.tagPage = 1
         this.tagFirstLoad = true
         this.tagHasMore = true
-      }
-      const wx_openid = getWxOpenId()
-      if (!wx_openid) {
-        return
       }
       uniCloud.callFunction({
         name: 'tables',
@@ -252,6 +257,9 @@ export default {
     },
     loadTableItem(id) {
       const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       uniCloud.callFunction({
         name: 'tables',
         data: {
@@ -272,6 +280,9 @@ export default {
     },
     loadAccountInfo(id) {
       const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       uniCloud.callFunction({
         name: 'account',
         data: {
@@ -364,6 +375,10 @@ export default {
       })
     },
     onSubmit() {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return;
+      }
       const isEdit = !!this.isEdit && !!this.editId
       uni.showLoading({
         title: isEdit ? '正在修改...' : '正在创建...',
@@ -379,7 +394,6 @@ export default {
       }
       const isPass = verificationTallyForm.call(this, payload)
       if (isPass) return
-      const wx_openid = getWxOpenId()
 
       uniCloud.callFunction({
         name: 'account',

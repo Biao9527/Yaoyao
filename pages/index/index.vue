@@ -110,6 +110,10 @@ export default {
       navigateToPage('keepAccounts')
     },
     loadPostList(reLoad = true) {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       if (this.loading) {
         return;
       }
@@ -119,10 +123,6 @@ export default {
         this.page = 1
         this.firstLoad = true
         this.hasMore = true
-      }
-      const wx_openid = getWxOpenId()
-      if (!wx_openid) {
-        return
       }
       uniCloud.callFunction({
         name: 'account',

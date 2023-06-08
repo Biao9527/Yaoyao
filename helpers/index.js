@@ -1,5 +1,6 @@
 // 根据机型设置操作栏高度
 import {navigateToPage} from "./navigateTo";
+import {isLogin} from "./login";
 
 export function byModelsSetAction() {
     return new Promise(resolve => {
@@ -28,11 +29,11 @@ export function byModelsSetAction() {
 
 export function getWxOpenId() {
     const user = uni.getStorageSync('user')
-    if (!user) {
+    if (isLogin() && user) {
+        return user.mp_wx_openid
+    } else {
         navigateToPage('wxLogin')
         return false
-    } else {
-        return user.mp_wx_openid
     }
 }
 

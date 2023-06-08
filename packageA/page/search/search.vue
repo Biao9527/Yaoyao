@@ -100,6 +100,9 @@ export default {
   },
   onShow() {
     this.loadPostList()
+    if (this.filterTable && this.filterTable.length > 0) {
+      this.loadTableItem(this.filterTable[0]._id)
+    }
   },
   onLoad(options) {
     if (options.openFilter) {
@@ -107,7 +110,6 @@ export default {
     }
     if (options.tableId) {
       this.filterTable = [{_id: options.tableId}]
-      this.loadTableItem(options.tableId)
     }
   },
   onReachBottom() {
@@ -151,6 +153,9 @@ export default {
   methods: {
     loadTableItem(id) {
       const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       uniCloud.callFunction({
         name: 'tables',
         data: {
@@ -171,6 +176,10 @@ export default {
       })
     },
     loadPostList(reLoad = true) {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       if (this.loading) {
         return;
       }
@@ -180,10 +189,6 @@ export default {
         this.page = 1
         this.firstLoad = true
         this.hasMore = true
-      }
-      const wx_openid = getWxOpenId()
-      if (!wx_openid) {
-        return
       }
       uniCloud.callFunction({
         name: 'account',
@@ -223,6 +228,10 @@ export default {
       })
     },
     loadTableList(reLoad = true) {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
       if (this.tagLoading) {
         return;
       }
@@ -231,10 +240,6 @@ export default {
         this.tagPage = 1
         this.tagFirstLoad = true
         this.tagHasMore = true
-      }
-      const wx_openid = getWxOpenId()
-      if (!wx_openid) {
-        return
       }
       uniCloud.callFunction({
         name: 'tables',

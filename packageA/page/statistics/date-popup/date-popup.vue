@@ -66,11 +66,11 @@ export default {
   },
   methods: {
     loadDateList() {
-      this.loading = true
       const wx_openid = getWxOpenId()
       if (!wx_openid) {
         return
       }
+      this.loading = true
       uniCloud.callFunction({
         name: 'account',
         data: {
