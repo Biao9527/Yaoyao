@@ -15,7 +15,8 @@
 				{
 					"path": "page/user/user",
 					"style": {
-						"navigationStyle": "custom"
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "white"
 					}
 				},
 				{

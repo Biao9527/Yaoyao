@@ -1,22 +1,11 @@
 <template>
-  <view>
-    <NavBar title="我的"/>
-    <view class="user">
-      <view class="user-header">
-        <view class="user-avatar">
-          <image mode="aspectFill" :src="userInfo.avatarUrl"/>
-        </view>
-        <view class="user-name">
-          <view>{{userInfo && userInfo.nickName ? userInfo.nickName : ''}}</view>
-          <image v-if="userInfo && userInfo.gender"
-                 class="user-gender"
-                 :src="genderHash[userInfo.gender]" />
-          <view v-if="userInfo && userInfo._id"
-                class="user-id">
-            ID：{{ userInfo._id.slice(0, 10) }}
-          </view>
-        </view>
-      </view>
+  <view class="user">
+    <NavBar background-color="rgba(0, 0, 0, 0)"/>
+    <view class="user-bg">
+      <image mode="aspectFill" :src="randomBg"/>
+    </view>
+    <view class="user-content">
+      <UserHeader :user-info="userInfo"/>
     </view>
     <CustomTabBar :active-index="4"
                   :operation-height="operationHeight"/>
@@ -26,15 +15,15 @@
 <script>
 import CustomTabBar from "../../../components/custom-tab-bar";
 import NavBar from "../../../components/nav-bar";
+import UserHeader from "./components/user-header/user-header";
 import {mapState} from 'vuex'
 import {getWxOpenId} from "../../../helpers";
-import women from './assets/women.svg'
-import men from './assets/men.svg'
 
 export default {
   components: {
     CustomTabBar,
-    NavBar
+    NavBar,
+    UserHeader
   },
   onShow() {
     this.loadUserInfo()
@@ -47,10 +36,7 @@ export default {
   data() {
     return {
       userInfo: null,
-      genderHash: {
-        1: men,
-        2: women
-      }
+      randomBg: 'https://api.isoyu.com/bing_images.php' || 'https://www.dmoe.cc/random.php'
     }
   },
   methods: {
@@ -89,59 +75,24 @@ export default {
 
 <style lang="scss">
 .user {
+  position: relative;
 
-  &-header {
-    padding-top: 110rpx;
+  &-bg {
+    z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    position: relative;
-    margin-top: 200rpx;
-    background: #FFFFFF;
-  }
-
-  &-avatar {
-    position: absolute;
-    left: 48rpx;
-    top: -76rpx;
-    overflow: hidden;
-    background: #FFFFFF;
-    width: 152rpx;
-    height: 152rpx;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: 500rpx;
 
     image {
-      width: 144rpx;
-      height: 144rpx;
-      border-radius: 50%;
-
+      width: 100%;
+      height: 100%;
     }
   }
 
-  &-name {
-    margin-left: 60rpx;
-    display: flex;
-    align-items: center;
-    font-size: 30rpx;
-    color: #131C38;
-    font-weight: bold;
-  }
-
-  &-gender {
-    margin-left: 16rpx;
-    width: 28rpx;
-    height: 28rpx;
-  }
-
-  &-id {
-    margin-left: 16rpx;
-    padding: 0 12rpx;
-    height: 32rpx;
-    border-radius: 100rpx;
-    background: #F6F6F6;
-    font-size: 20rpx;
-    color: #BBBBBB;
+  &-content {
+    margin-top: 280rpx;
   }
 }
 </style>
