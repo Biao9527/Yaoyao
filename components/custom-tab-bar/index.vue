@@ -31,9 +31,10 @@ export default {
   data() {
     return {
       tabList: [
-        {id: 2, text: '标签', icon: 'flag', color: '#454C63'},
         {id: 1, text: '记账', icon: 'home', color: '#454C63'},
+        {id: 2, text: '标签', icon: 'flag', color: '#454C63'},
         {id: 3, text: '统计', icon: 'map', color: '#454C63'},
+        {id: 4, text: '我的', icon: 'person', color: '#454C63'},
       ]
     }
   },
@@ -62,6 +63,11 @@ export default {
         case 3:
           uni.redirectTo({
             url: '/packageA/page/statistics/statistics'
+          })
+          break
+        case 4:
+          uni.redirectTo({
+            url: '/packageA/page/user/user'
           })
           break
         default:
