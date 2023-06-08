@@ -333,7 +333,7 @@ export default {
     onMoneyBlur(e) {
       if (!e.detail.value && e.detail.value !== 0) return
       if (!verificationIsNumber(e.detail.value)) {
-        this.showToast('输的什么勾吧')
+        this.showToast('请输入正确金额！')
         this.money = ''
         return
       }

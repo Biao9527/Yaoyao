@@ -85,6 +85,6 @@ export function autoIncrementId(key) {
  * @returns boolean
  */
 export function verificationIsNumber(text) {
-    const reg = new RegExp('^(\\-|\\+)?\\d+(\\.\\d+)?$', 'g')
+    const reg = new RegExp('^(\\+)?\\d+(\\.\\d+)?$', 'g')
     return reg.test(text)
 }
