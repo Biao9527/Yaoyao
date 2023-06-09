@@ -8,7 +8,11 @@
         <image :src="item.img"/>
         <view>{{ item.text }}</view>
       </view>
-      <view>
+      <view class="user-list-item-right">
+        <view v-if="userInfo && userInfo.background && item.value === 'bg'"
+              class="user-list-bg-name">
+          {{userInfo.background.name}}
+        </view>
         <uni-icons type="right" size="36rpx" color="#131C38"/>
       </view>
     </button>
@@ -22,7 +26,7 @@ import contact from "../../assets/contact.svg";
 import bg from "../../assets/bg.svg"
 
 export default {
-  props: ['onItem'],
+  props: ['onItem', 'userInfo'],
   data() {
     return {
       list: [
@@ -56,6 +60,13 @@ export default {
     padding: 0 38rpx 0 0;
     border-bottom: 1rpx solid #f2f2f2;
 
+    &-right {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     &-left {
       display: flex;
       align-items: center;
@@ -68,6 +79,12 @@ export default {
         height: 60rpx;
       }
     }
+  }
+
+  &-bg-name {
+    margin-right: 12rpx;
+    font-size: 30rpx;
+    color: #9b9b9b;
   }
 
   button::after {

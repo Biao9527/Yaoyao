@@ -78,19 +78,16 @@ exports.main = async (event, context) => {    //event为客户端上传的参数
             }
             break;
         case 'update':
-            const res_update = await pro_user.doc(event._id).update({
-                nickName: event.user_info.nickName,
-                avatarUrl: event.user_info.avatarUrl,
-                gender: event.user_info.gender,
-                mp_wx_openid: event.open_id
-            })
-            const res_update_val = await uniCloud.callFunction({
-                name: 'user', data: {
-                    action: 'getUser', open_id: event.open_id
+            if (event._id && event.info) {
+                const res_update = await pro_user.doc(event._id).update(event.info)
+                if (res_update.updated === 1) {
+                    result = {status: 200, msg: '修改成功'}
+                } else {
+                    result = {status: -1, msg: '修改失败'}
                 }
-            }).then(res => {
-                result = res
-            })
+            } else {
+                result = {status: -1, msg: '修改失败'}
+            }
             break;
         case 'getUser':
             const res_val = await pro_user.where({

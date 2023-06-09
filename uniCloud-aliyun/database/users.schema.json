@@ -31,8 +31,8 @@
 	  "label": "个性签名",
 	  "description": "个性签名，编辑资料获取"
 	},
-	"backgroungUrl": {
-	  "bsonType": "string",
+	"background": {
+	  "bsonType": "object",
 	  "label": "个人中心背景图",
 	  "description": "个人中心背景图，编辑资料获取"
 	},
