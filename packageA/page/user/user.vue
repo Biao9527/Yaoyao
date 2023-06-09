@@ -60,8 +60,8 @@ export default {
           open_id: wx_openid
         },
         success: (res) => {
-          if (res.result.status === 200) {
-            this.userInfo = res.result.userInfo
+          if (res.result) {
+            this.userInfo = res.result
           } else {
             this.showToast('获取用户资料失败！')
           }

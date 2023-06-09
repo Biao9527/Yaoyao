@@ -93,14 +93,10 @@ exports.main = async (event, context) => {    //event为客户端上传的参数
             })
             break;
         case 'getUser':
-            if (event.open_id) {
-                const res_val = await pro_user.where({
-                    mp_wx_openid: event.open_id
-                }).get()
-                result = {status: 200, userInfo: res_val.data[0]}
-            } else {
-                result = {status: -1, msg: '获取用户资料失败！'}
-            }
+            const res_val = await pro_user.where({
+                mp_wx_openid: event.open_id
+            }).get()
+            return res_val.data[0]
             break;
     }
     return result;

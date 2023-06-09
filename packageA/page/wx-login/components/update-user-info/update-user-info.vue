@@ -21,7 +21,7 @@
         <view class='update-user_input_content'>
           <input class='update-user_input_value'
                  type='nickname'
-                 maxlength='12'
+                 maxlength='10'
                  placeholder='请填写'
                  placeholder-class='update-user_input_placeholder'
                  :value='nickName'
