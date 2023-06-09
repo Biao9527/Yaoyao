@@ -12,10 +12,11 @@
       <image v-if="userInfo && userInfo.gender"
              class="user-header-gender"
              :src="genderHash[userInfo.gender]"/>
-      <view v-if="userInfo && userInfo._id"
-            class="user-header-id">
-        ID：{{ userInfo._id.slice(0, 10) }}
-      </view>
+    </view>
+    <view v-if="userInfo && userInfo._id"
+          class="user-header-id"
+          @click="onCopyText(userInfo._id)">
+      ID：{{ userInfo._id.slice(0, 16) }}
     </view>
     <view class="user-header-personalize">
       {{ userInfo && userInfo.personalize ? userInfo.personalize : '你还没有填写个性签名～' }}
@@ -39,6 +40,20 @@ export default {
       },
       editSvg,
       bgSvg
+    }
+  },
+  methods: {
+    onCopyText(id) {
+      uni.setClipboardData({
+        data: id,
+        showToast: false,
+        success: () => {
+          uni.showToast({
+            title: '用户ID已复制',
+            icon: 'none'
+          })
+        }
+      })
     }
   }
 }
@@ -110,17 +125,17 @@ export default {
   }
 
   &-id {
-    margin-left: 16rpx;
-    padding: 0 16rpx;
+    text-decoration: underline;
+    width: max-content;
+    margin: 8rpx 60rpx 0;
     height: 32rpx;
     border-radius: 100rpx;
-    background: #F6F6F6;
-    font-size: 20rpx;
+    font-size: 22rpx;
     color: #BBBBBB;
   }
 
   &-personalize {
-    margin: 26rpx 60rpx 0;
+    margin: 16rpx 60rpx 0;
     opacity: 0.65;
     font-size: 22rpx;
     color: #9B9B9B;
