@@ -20,6 +20,12 @@
 					}
 				},
 				{
+					"path": "page/user/update-user/update-user",
+					"style": {
+						"navigationStyle": "custom"
+					}
+				},
+				{
 					"path": "page/statistics/statistics",
 					"style": {
 						"navigationStyle": "custom"

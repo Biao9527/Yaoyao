@@ -3,7 +3,8 @@
     <view class="user-header-avatar">
       <image mode="aspectFill" :src="userInfo.avatarUrl"/>
     </view>
-    <view class="user-header-buttons">
+    <view class="user-header-buttons"
+          @click="onEditUserInfo">
       <image :src="editSvg"/>
       <view>编辑资料</view>
     </view>
@@ -29,6 +30,7 @@ import men from "../../assets/men.svg";
 import women from "../../assets/women.svg";
 import editSvg from '../../assets/edit.svg'
 import bgSvg from '../../assets/bg.svg'
+import {navigateToPage} from "../../../../../helpers/navigateTo";
 
 export default {
   props: ['userInfo'],
@@ -43,6 +45,9 @@ export default {
     }
   },
   methods: {
+    onEditUserInfo() {
+      navigateToPage('updateUser')
+    },
     onCopyText(id) {
       uni.setClipboardData({
         data: id,
