@@ -6,7 +6,9 @@
     </view>
     <view class="user-content">
       <UserHeader :user-info="userInfo"/>
+      <UserList @onItem="onListItem"/>
     </view>
+    <AboutPopup :is-open.sync="isOpenAbout"/>
     <CustomTabBar :active-index="4"
                   :operation-height="operationHeight"/>
   </view>
@@ -16,14 +18,19 @@
 import CustomTabBar from "../../../components/custom-tab-bar";
 import NavBar from "../../../components/nav-bar";
 import UserHeader from "./components/user-header/user-header";
+import UserList from "./components/user-list/user-list";
+import AboutPopup from "../../../components/about-popup/about-popup";
 import {mapState} from 'vuex'
 import {getWxOpenId} from "../../../helpers";
+import {navigateToPage} from "../../../helpers/navigateTo";
 
 export default {
   components: {
     CustomTabBar,
     NavBar,
-    UserHeader
+    UserHeader,
+    UserList,
+    AboutPopup
   },
   onShow() {
     this.loadUserInfo()
@@ -36,6 +43,7 @@ export default {
   data() {
     return {
       userInfo: null,
+      isOpenAbout: false,
       randomBg: 'https://api.isoyu.com/bing_images.php' || 'https://www.dmoe.cc/random.php'
     }
   },
@@ -68,6 +76,20 @@ export default {
         title,
         icon: 'none'
       })
+    },
+    onListItem(value) {
+      switch (value) {
+        case 'chat':
+          navigateToPage('aiChat')
+          break
+        case 'contact':
+          break
+        case 'warn':
+          this.isOpenAbout = true
+          break
+        case 'bg':
+          break
+      }
     }
   }
 }
