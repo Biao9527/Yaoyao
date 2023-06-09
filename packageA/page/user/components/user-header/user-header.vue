@@ -3,6 +3,10 @@
     <view class="user-header-avatar">
       <image mode="aspectFill" :src="userInfo.avatarUrl"/>
     </view>
+    <view class="user-header-buttons">
+      <image :src="editSvg"/>
+      <view>编辑资料</view>
+    </view>
     <view class="user-header-name">
       <view>{{ userInfo && userInfo.nickName ? userInfo.nickName : '' }}</view>
       <image v-if="userInfo && userInfo.gender"
@@ -13,12 +17,17 @@
         ID：{{ userInfo._id.slice(0, 10) }}
       </view>
     </view>
+    <view class="user-header-personalize">
+      {{ userInfo && userInfo.personalize ? userInfo.personalize : '你还没有填写个性签名～' }}
+    </view>
   </view>
 </template>
 
 <script>
 import men from "../../assets/men.svg";
 import women from "../../assets/women.svg";
+import editSvg from '../../assets/edit.svg'
+import bgSvg from '../../assets/bg.svg'
 
 export default {
   props: ['userInfo'],
@@ -27,7 +36,9 @@ export default {
       genderHash: {
         1: men,
         2: women
-      }
+      },
+      editSvg,
+      bgSvg
     }
   }
 }
@@ -35,11 +46,32 @@ export default {
 
 <style lang="scss">
 .user-header {
-  padding-top: 110rpx;
+  padding: 110rpx 0 40rpx;
   width: 100%;
   position: relative;
   background: #FFFFFF;
   border-radius: 28rpx 28rpx 0 0;
+
+  &-buttons {
+    position: absolute;
+    right: 40rpx;
+    top: 26rpx;
+    padding: 0 24rpx;
+    border: 1rpx solid gainsboro;
+    border-radius: 100rpx;
+    height: 58rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24rpx;
+    color: #9b9b9b;
+
+    image {
+      margin-right: 8rpx;
+      width: 28rpx;
+      height: 28rpx;
+    }
+  }
 
   &-avatar {
     position: absolute;
@@ -85,6 +117,13 @@ export default {
     background: #F6F6F6;
     font-size: 20rpx;
     color: #BBBBBB;
+  }
+
+  &-personalize {
+    margin: 26rpx 60rpx 0;
+    opacity: 0.65;
+    font-size: 22rpx;
+    color: #9B9B9B;
   }
 }
 </style>
