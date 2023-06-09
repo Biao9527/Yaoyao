@@ -22,7 +22,7 @@ import UserHeader from "./components/user-header/user-header";
 import UserList from "./components/user-list/user-list";
 import AboutPopup from "../../../components/about-popup/about-popup";
 import {mapState} from 'vuex'
-import {getWxOpenId, uploadImage} from "../../../helpers";
+import {BING_IMAGE_URL, CARTOON_IMAGE_URL, getWxOpenId, uploadImage} from "../../../helpers";
 import {navigateToPage} from "../../../helpers/navigateTo";
 
 export default {
@@ -63,8 +63,8 @@ export default {
           if (res.result) {
             if (!res.result.background) {
               const bgList = [
-                {name: '每日 Bing', url: 'https://api.isoyu.com/bing_images.php'},
-                {name: '二次元', url: 'https://www.dmoe.cc/random.php'}
+                {name: '每日 Bing', url: BING_IMAGE_URL},
+                {name: '二次元', url: CARTOON_IMAGE_URL}
               ]
               this.userInfo = {
                 ...res.result,
@@ -112,14 +112,14 @@ export default {
             case 0:
               const bing = {
                 name: '每日 Bing',
-                url: 'https://api.isoyu.com/bing_images.php'
+                url: BING_IMAGE_URL
               }
               this.updateUserBg(bing)
               break
             case 1:
               const payload = {
                 name: '二次元',
-                url: 'https://www.dmoe.cc/random.php'
+                url: CARTOON_IMAGE_URL
               }
               this.updateUserBg(payload)
               break

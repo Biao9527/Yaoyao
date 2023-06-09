@@ -2,6 +2,9 @@
 import {navigateToPage} from "./navigateTo";
 import {isLogin} from "./login";
 
+export const BING_IMAGE_URL = 'https://api.7585.net.cn/bing/api.php'
+export const CARTOON_IMAGE_URL = 'https://www.dmoe.cc/random.php'
+
 export function byModelsSetAction() {
     return new Promise(resolve => {
         uni.getSystemInfo({
