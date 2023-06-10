@@ -1,7 +1,15 @@
 {
-  "name": "uni-ai",
-  "dependencies": {},
-  "extensions": {
-    "uni-cloud-ai": {}
-  }
+    "name": "uni-ai",
+    "dependencies": [],
+    "extensions": {
+        "uni-cloud-ai": []
+    },
+    "cloudfunction-config": {
+        "memorySize": 2048,
+        "timeout": 60,
+        "triggers": [],
+        "path": "",
+        "runtime": "Nodejs8",
+        "concurrency": 6
+    }
 }

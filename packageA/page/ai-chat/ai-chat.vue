@@ -61,6 +61,12 @@ export default {
         }
       })
     },
+    showToast(title) {
+      uni.showToast({
+        title,
+        icon: 'none'
+      })
+    },
     onSendMessage(value) {
       this.chatList.push({role: 'user', content: value})
       this.onLoadAIChat(value)
