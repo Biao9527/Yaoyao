@@ -54,6 +54,7 @@ import StatisticsPostList from "../../components/statistics-post-list/statistics
 import AboutPopup from "../../components/about-popup/about-popup";
 import LoadMore from "../../components/load-more/load-more";
 import {getWxOpenId} from "../../helpers";
+import {isLogin} from "../../helpers/login";
 
 export default {
   components: {
@@ -110,6 +111,10 @@ export default {
       navigateToPage('keepAccounts')
     },
     loadPostList(reLoad = true) {
+      if (!isLogin()) {
+        this.loadListSuccess()
+        return;
+      }
       const wx_openid = getWxOpenId()
       if (!wx_openid) {
         return

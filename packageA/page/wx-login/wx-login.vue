@@ -1,7 +1,7 @@
 <template>
   <page-meta :page-style="'background: #FFFFFF'"/>
   <view class="login">
-    <NavBar/>
+    <NavBar left-icon="left"/>
     <view class="login-content">
       <image class="login-logo" :src="logo"/>
       <view class="login-title">
