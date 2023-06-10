@@ -1,6 +1,8 @@
 <template>
+  <page-meta :page-style="'background:#FFFFFF'"/>
   <view>
     <NavBar title="编辑资料" left-icon="left"/>
+    <view class="update-user-header"/>
     <view class="update-user">
       <button class="update-user-avatar"
               open-type='chooseAvatar'
@@ -62,13 +64,12 @@
         </view>
       </view>
     </view>
-    <view :style="{height: '80rpx'}"/>
   </view>
 </template>
 
 <script>
 import NavBar from "../../../../components/nav-bar";
-import {getWxOpenId} from "../../../../helpers";
+import {getWxOpenId, uploadImage} from "../../../../helpers";
 
 export default {
   components: {
@@ -95,7 +96,8 @@ export default {
       nickName: null,
       gender: null,
       personalize: null,
-      genderList: [{text: '男', value: 1}, {text: '女', value: 2}]
+      genderList: [{text: '男', value: 1}, {text: '女', value: 2}],
+      userInfo: null
     }
   },
   methods: {
@@ -112,6 +114,7 @@ export default {
         },
         success: (res) => {
           if (res.result) {
+            this.userInfo = res.result
             this.avatar = res.result.avatarUrl
             this.nickName = res.result.nickName
             this.gender = res.result.gender
@@ -150,6 +153,52 @@ export default {
         this.showToast('请选择性别')
         return;
       }
+      this.updateUserInfo()
+    },
+    async updateUserInfo() {
+      const wx_openid = getWxOpenId()
+      if (!wx_openid) {
+        return
+      }
+      if (this.userInfo.avatarUrl !== this.avatar) {
+        uni.showLoading({
+          title: '正在上传图片...',
+          mask: true
+        });
+        const url = await uploadImage(this.avatar)
+        if (!url) {
+          return
+        }
+        this.avatar = url.fileID
+      }
+      uni.showLoading({
+        title: '正在保存资料...',
+        mask: true
+      })
+      uniCloud.callFunction({
+        name: 'user',
+        data: {
+          action: 'update',
+          _id: this.userInfo._id,
+          info: {
+            nickName: this.nickName,
+            avatarUrl: this.avatar,
+            gender: this.gender,
+            personalize: this.personalize
+          }
+        },
+        success: (res) => {
+          if (res.result.status === 200) {
+            this.loadUserInfo()
+            this.showToast('保存成功')
+          } else {
+            this.showToast('保存失败！')
+          }
+        },
+        fail: () => {
+          this.showToast('保存失败！')
+        }
+      })
     },
     showToast(title) {
       uni.showToast({
@@ -162,8 +211,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.update-user-header {
+  background: #F6F6F6;
+  height: 200rpx;
+}
+
 .update-user {
-  margin-top: 200rpx;
   background: #FFFFFF;
   position: relative;
 
@@ -193,7 +246,7 @@ export default {
   }
 
   &-content {
-    padding: 160rpx 0 80rpx;
+    padding: 160rpx 0;
   }
 
   &-title {

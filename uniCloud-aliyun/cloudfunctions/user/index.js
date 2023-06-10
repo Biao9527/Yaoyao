@@ -80,7 +80,7 @@ exports.main = async (event, context) => {    //event为客户端上传的参数
         case 'update':
             if (event._id && event.info) {
                 const res_update = await pro_user.doc(event._id).update(event.info)
-                if (res_update.updated === 1) {
+                if (res_update.updated >= 0) {
                     result = {status: 200, msg: '修改成功'}
                 } else {
                     result = {status: -1, msg: '修改失败'}

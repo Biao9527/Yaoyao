@@ -135,7 +135,6 @@ export default {
                   });
                   const imageUrl = await uploadImage(res.tempFilePaths[0])
                   if (!imageUrl) {
-                    that.showToast('图片上传失败！')
                     return
                   }
                   const bg = {
