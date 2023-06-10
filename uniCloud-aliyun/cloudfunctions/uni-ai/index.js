@@ -29,10 +29,14 @@ exports.main = async (event, context) => {
             errMsg
         }
     }
+    const LLMManager = uniCloud.ai.getLLMManager({
+		  // provider: 'openai',
+		  // apiKey: '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',
+		  // proxy: 'https://api.next.bspapp.com'
+	})
 
-    const LLMManager = uniCloud.ai.getLLMManager() //创建llm对象
-    return await LLMManager.chatCompletion({
-        messages
+	return await LLMManager.chatCompletion({
+		messages,
+        tokensToGenerate: 3000
     })
-
 };
