@@ -75,7 +75,7 @@ export default {
   components: {
     NavBar
   },
-  onShow() {
+  onLoad() {
     this.loadUserInfo()
   },
   computed: {

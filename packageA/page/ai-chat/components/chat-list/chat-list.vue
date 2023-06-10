@@ -23,12 +23,12 @@
 import github from '../../../../../static/github.svg'
 
 export default {
-  props: ['chatList', 'loading'],
+  props: ['chatList', 'loading', 'userInfo'],
   computed: {
     renderName() {
       return (name) => {
         const nameHash = {
-          'user': '用户',
+          'user': this.userInfo && this.userInfo.nickName ? this.userInfo.nickName : '用户',
           'assistant': 'AI机器人'
         }
         return nameHash[name]
@@ -37,7 +37,7 @@ export default {
     renderAvatar() {
       return (name) => {
         const avatarHash = {
-          'user': 'https://api.multiavatar.com/USER.svg',
+          'user': this.userInfo && this.userInfo.avatarUrl ? this.userInfo.avatarUrl : 'https://api.multiavatar.com/USER.svg',
           'assistant': 'https://api.multiavatar.com/AI.svg'
         }
         return avatarHash[name]
