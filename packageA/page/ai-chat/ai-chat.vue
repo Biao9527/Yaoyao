@@ -14,7 +14,7 @@ import NavBar from "../../../components/nav-bar";
 import SendBox from "./components/send-box/send-box";
 import ChatList from "./components/chat-list/chat-list";
 import {mapState} from 'vuex'
-import {BING_IMAGE_URL, CARTOON_IMAGE_URL, getWxOpenId} from "../../../helpers";
+import {getWxOpenId} from "../../../helpers";
 
 export default {
   components: {
@@ -24,6 +24,9 @@ export default {
   },
   onLoad() {
     this.loadUserInfo()
+  },
+  onUnload() {
+    this.closeSSEChannel()
   },
   computed: {
     ...mapState([
@@ -35,6 +38,8 @@ export default {
       chatList: [{role: 'assistant', content: '你好，有什么问题都可以向我提问。'}],
       loading: false,
       userInfo: null,
+      channel: null,
+      messageText: ''
     }
   },
   methods: {
@@ -72,6 +77,20 @@ export default {
       this.onLoadAIChat(value)
     },
     async onLoadAIChat() {
+      const that = this
+      if (this.channel) {
+        this.closeSSEChannel()
+      }
+      this.channel = new uniCloud.SSEChannel() // 创建消息通道
+      this.channel.on('message', (message) => { // 监听message事件
+        that.addChatList(message)
+      })
+      this.channel.on('end', (message) => { // 监听end事件，如果云端执行end时传了message，会在客户端end事件内收到传递的消息
+        that.messageText = ''
+        that.loading = false
+      })
+      await this.channel.open() // 等待通道开启
+
       this.loading = true
       this.chatList.push({role: 'assistant', content: '正在思考中...'})
       this.onScrollToBottom()
@@ -80,12 +99,9 @@ export default {
         name: "uni-ai",
         data: {
           messages,
+          channel: this.channel
         }
-      }).then(res => {
-        this.chatList[this.chatList.length - 1] = {role: 'assistant', content: res.result.reply}
-        this.loading = false
-        this.onScrollToBottom()
-      }).catch(() => {
+      }).then().catch(() => {
         this.chatList.pop()
         this.loading = false
         uni.showToast({
@@ -93,6 +109,20 @@ export default {
           icon: 'none'
         })
       })
+    },
+    addChatList(message) {
+      this.messageText = this.messageText.concat(message)
+      this.chatList[this.chatList.length - 1] = {
+        role: 'assistant',
+        content: this.messageText
+      }
+      this.onScrollToBottom()
+    },
+    closeSSEChannel() {
+      if (this.channel) {
+        this.channel.close()
+        this.channel = null
+      }
     },
     onScrollToBottom() {
       this.$nextTick(() => {
