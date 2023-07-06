@@ -11,7 +11,7 @@
           <view class="chat-list-text">
             <view class="radius"
                   :class="item.role === 'user' ? 'right-radius' : ''"/>
-            <view>{{ item.content }}</view>
+            <zero-markdown-view :markdown="item.content"/>
           </view>
         </view>
       </view>
@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import github from '../../../../../static/github.svg'
+import AI from '../../../../../static/AI.svg'
+import avatar from '../../../../../static/avatar.svg'
 
 export default {
   props: ['chatList', 'loading', 'userInfo'],
@@ -37,8 +38,8 @@ export default {
     renderAvatar() {
       return (name) => {
         const avatarHash = {
-          'user': this.userInfo && this.userInfo.avatarUrl ? this.userInfo.avatarUrl : 'https://api.multiavatar.com/USER.svg',
-          'assistant': 'https://api.multiavatar.com/AI.svg'
+          'user': this.userInfo && this.userInfo.avatarUrl ? this.userInfo.avatarUrl : avatar,
+          'assistant': AI
         }
         return avatarHash[name]
       }
@@ -46,7 +47,8 @@ export default {
   },
   data() {
     return {
-      github
+      AI,
+      avatar
     }
   }
 }
@@ -93,11 +95,11 @@ export default {
   }
 
   &-text {
+    z-index: 2;
     position: relative;
     font-size: 32rpx;
     color: #131C38;
-    max-width: 450rpx;
-    padding: 20rpx;
+    max-width: 480rpx;
     background: #FFFFFF;
     border-radius: 14rpx;
 
