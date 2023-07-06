@@ -11,9 +11,10 @@
       </view>
       <view class="about-popup-title">关于我们</view>
       <view class="about-popup-content">
-        <view class="about-popup-tips">⚠️ 小程序使用本地缓存（Storage）存储数据，删除小程序会导致数据全部清空！</view>
+        <view class="about-popup-tips">⚠️ 小程序已弃用本地缓存（Storage）存储数据，改用uniCloud云服务器存储数据，请登陆后使用！</view>
         <view class="about-popup-text">·本小程序属于个人学习的开源项目。</view>
         <view class="about-popup-text">·本项目基于 uni-app / Vue2 / JavaScript / Scss 开发的记账类型微信小程序</view>
+        <view class="about-popup-text">·主要功能：快速记账、AI对话（uni-ai）</view>
         <view class="about-popup-text">·用到的扩展组件：
           <text class="und"
                 @click.stop="onCopyText('uni-ui')">
