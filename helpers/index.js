@@ -2,7 +2,7 @@
 import {navigateToPage} from "./navigateTo";
 import {isLogin} from "./login";
 
-export const BING_IMAGE_URL = 'https://api.7585.net.cn/bing/api.php'
+export const BING_IMAGE_URL = 'https://cn.bing.com/th?id=OHR.SwiftcurrentLake_ZH-CN1513761894_1920x1080.webp&qlt=50%22'
 export const CARTOON_IMAGE_URL = 'https://www.dmoe.cc/random.php'
 
 export function byModelsSetAction() {
