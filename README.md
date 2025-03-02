@@ -20,6 +20,6 @@
 
 ## 小程序码
 
-![code](https://mp-ce1d4597-4c71-4f33-ae63-655b36a476af.cdn.bspapp.com/QRcodeImage/yaoyao.png)
+![code](https://mp-9a6b7328-f9f9-41fa-8c7c-dea8358479db.cdn.bspapp.com/QRcodeImage/YaoYao.png)
 
 
